@@ -25,6 +25,7 @@ import {
   GasPrice,
 } from "@cosmjs/stargate";
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import useMultiChain from "../../hook/useMultiChain";
 
 export enum SwapType {
   DEPOSIT = "deposit",
@@ -111,6 +112,7 @@ const getWallets = async ({
 const QuickSwap: React.FC<QuickSwapProps> = ({ closeNewWindow, swapInfo }) => {
   const [swapAmount, setSwapAmount] = useState("");
   const [errMsg, setErrMsg] = useState("");
+  const { origin, foreign } = useMultiChain(swapInfo.swapChains);
 
   const handleAccept = async () => {
     // closeNewWindow(100);
