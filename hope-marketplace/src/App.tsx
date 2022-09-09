@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import {
   // HashRouter,
   Router,
-  useLocation,
 } from "react-router-dom";
 // import { ChainInfo } from "@keplr-wallet/types";
 // import { coin } from "@cosmjs/proto-signing";
@@ -29,9 +28,6 @@ import {
 
 import { RefreshContextProvider } from "./context/RefreshContext";
 import Updater from "./context/Updater";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import Main from "./pages/Main";
 import { useAppDispatch } from "./app/hooks";
 // import { deleteAccount } from "./features/accounts/accountsSlice";
 // import useContract from "./hook/useContract";
@@ -45,6 +41,7 @@ import { ThemeContextProvider } from "./context/ThemeContext";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
 import "react-slideshow-image/dist/styles.css";
+import Text from "./components/Text";
 
 const history = createBrowserHistory();
 
@@ -83,14 +80,6 @@ const MainWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.backgroundColor};
 `;
 
-const ScrollToTopOnRouting = () => {
-  const { pathname } = useLocation(); // consider about the key when you want to trigger on change params
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  return null;
-};
-
 function App() {
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -105,54 +94,6 @@ function App() {
   const { isXs, isSm } = useMatchBreakpoints();
   const isMobile = isXs || isSm;
   const config = ChainConfigs[ChainTypes.JUNO];
-  // const chainInfo: ChainInfo = getChainConfig(config);
-
-  // const enableWallet = async (wallet: Wallet, client: WalletClient) => {
-  //   if (!(client instanceof KeplrWalletConnectV1)) {
-  //     await client.experimentalSuggestChain(getChainConfig(config));
-  //   }
-  //   await client.enable(config.chainId);
-  //   const { name: label, bech32Address: address } = await client.getKey(
-  //     config.chainId
-  //   );
-  //   dispatch(
-  //     setKeplrAccount({
-  //       label,
-  //       address,
-  //       type: AccountType.Keplr,
-  //       balance: coin(0, config["microDenom"]),
-  //     })
-  //   );
-  // };
-
-  // const walletInfoList: any[] = [
-  //   {
-  //     id: "keplr-wallet-extension",
-  //     name: "Keplr Wallet",
-  //     description: "Keplr Browser Extension",
-  //     imageUrl: "/wallet-images/keplr-wallet-extension.png",
-  //     isWalletConnect: false,
-  //     getClient: getKeplrFromWindow,
-  //     onSelect: async () => {
-  //       const hasKeplr = !!(await getKeplrFromWindow());
-  //       if (!hasKeplr) {
-  //         // throw new KeplrNotInstalledError();
-  //       }
-  //     },
-  //   },
-  //   {
-  //     id: "walletconnect-keplr",
-  //     name: "WalletConnect",
-  //     description: "Keplr Mobile",
-  //     imageUrl: "/wallet-images/walletconnect-keplr.png",
-  //     isWalletConnect: true,
-  //     getClient: async (walletConnect?: WalletConnect) => {
-  //       if (walletConnect?.connected)
-  //         return new KeplrWalletConnectV1(walletConnect, [chainInfo]);
-  //       throw new Error("Mobile wallet not connected.");
-  //     },
-  //   },
-  // ];
 
   return (
     <ThemeContextProvider>
@@ -174,10 +115,12 @@ function App() {
             <Updater />
             <MainWrapper className="main">
               <Router history={history}>
-                <ScrollToTopOnRouting />
-                <Header />
-                <Main />
-                <Footer />
+                <div className="main">
+                  <Text margin="20vh 0 0 0" fontSize="70px">
+                    Site is Updating now. Just wait some minutes.
+                  </Text>
+                  <Text fontSize="50px">Your NFTs are safe.</Text>
+                </div>
                 <ToastContainer
                   position="top-right"
                   autoClose={5000}
