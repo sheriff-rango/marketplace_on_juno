@@ -561,7 +561,6 @@ const useFetch = () => {
 								runQuery(stakingAddress, {
 									staker_info: {
 										staker: account?.address,
-										block_time: Math.floor(Number(new Date()) / 1e3),
 									},
 								})
 							);
@@ -642,6 +641,7 @@ const useFetch = () => {
 							let reward = rewards[index]?.pending_reward;
 							reward = Number(reward);
 							reward = isNaN(reward) ? 0 : reward / 1e6;
+							liquidities[index].pendingReward = reward;
 
 							let bonded = rewards[index]?.bond_amount;
 							bonded = Number(bonded);
