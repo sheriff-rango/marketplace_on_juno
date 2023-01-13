@@ -159,8 +159,14 @@ const MakeOfferTooltip: React.FC<MakeOfferTooltipProps> = ({
 		children,
 		...props
 	}: ControlProps<any, false>) => {
+		const {
+			innerProps: { onMouseDown, onTouchEnd },
+		} = props;
 		return (
-			<CustomExpirationControl>
+			<CustomExpirationControl
+				onMouseDown={onMouseDown}
+				onTouchEnd={onTouchEnd}
+			>
 				<CalendarIcon width={20} />
 				{children}
 			</CustomExpirationControl>
@@ -191,7 +197,12 @@ const MakeOfferTooltip: React.FC<MakeOfferTooltipProps> = ({
 									""
 								)}.png`}
 							/>
-							<Text bold margin="0 20px 0 0">
+							<Text
+								bold
+								margin="0 20px 0 0"
+								cursor="pointer"
+								onClick={() => setIsOpenTokenTypes((prev) => !prev)}
+							>
 								{selectedTokenType.title}
 							</Text>
 							<DropdownIndicator

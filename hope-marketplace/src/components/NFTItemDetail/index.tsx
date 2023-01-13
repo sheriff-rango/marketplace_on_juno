@@ -242,8 +242,11 @@ const NFTItemDetail: React.FC<NFTItemDetailProps> = ({ item }) => {
 		children,
 		...props
 	}: ControlProps<any, false>) => {
+		const {
+			innerProps: { onMouseDown, onTouchEnd },
+		} = props;
 		return (
-			<CustomControl>
+			<CustomControl onMouseDown={onMouseDown} onTouchEnd={onTouchEnd}>
 				<CustomSelectItem option={selectValue} />
 				{children}
 			</CustomControl>
@@ -284,8 +287,11 @@ const NFTItemDetail: React.FC<NFTItemDetailProps> = ({ item }) => {
 		children,
 		...props
 	}: ControlProps<any, false>) => {
+		const {
+			innerProps: { onMouseDown, onTouchEnd },
+		} = props;
 		return (
-			<CustomControl>
+			<CustomControl onMouseDown={onMouseDown} onTouchEnd={onTouchEnd}>
 				{nftPriceType && (
 					<StatisticIcon
 						alt=""

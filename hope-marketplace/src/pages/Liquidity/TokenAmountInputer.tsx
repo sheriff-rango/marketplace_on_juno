@@ -83,8 +83,11 @@ const TokenAmountInputer: React.FC<TTokenAmountInputer> = ({
 	};
 
 	const CustomControl = ({ children, ...props }: ControlProps<any, false>) => {
+		const {
+			innerProps: { onMouseDown, onTouchEnd },
+		} = props;
 		return (
-			<Flex>
+			<Flex onMouseDown={onMouseDown} onTouchEnd={onTouchEnd}>
 				<TokenImageItem token={token} />
 				{children}
 			</Flex>

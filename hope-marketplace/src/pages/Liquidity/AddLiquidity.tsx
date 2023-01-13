@@ -200,8 +200,11 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 	};
 
 	const CustomPoolItem = ({ children, ...props }: ControlProps<any, false>) => {
+		const {
+			innerProps: { onMouseDown, onTouchEnd },
+		} = props;
 		return (
-			<SelectPoolContainer>
+			<SelectPoolContainer onMouseDown={onMouseDown} onTouchEnd={onTouchEnd}>
 				<CustomPoolSelectItem option={pool} />
 				{children}
 			</SelectPoolContainer>

@@ -172,8 +172,11 @@ const SwapAmountInput: React.FC<SwapAmountInputProps> = ({
 		children,
 		...props
 	}: ControlProps<any, false>) => {
+		const {
+			innerProps: { onMouseDown, onTouchEnd },
+		} = props;
 		return (
-			<CustomControl>
+			<CustomControl onMouseDown={onMouseDown} onTouchEnd={onTouchEnd}>
 				<CustomSelectItem option={{ value: selectedTokenType }} container />
 				{children}
 			</CustomControl>

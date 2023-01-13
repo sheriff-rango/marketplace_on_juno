@@ -284,7 +284,8 @@ export const SelectRemovePoolContainer = styled.div`
 export const SelectRemovePoolItem = styled.div<{ checked?: boolean }>`
 	display: flex;
 	flex-direction: column;
-	padding: 10px 0;
+	align-items: center;
+	padding: 10px;
 	${({ checked }) =>
 		checked &&
 		css`
