@@ -1,5 +1,5 @@
-import { useCallback, useEffect } from "react";
-import { useAppDispatch } from "../app/hooks";
+import { useCallback, useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import Collections, {
 	MarketplaceContracts,
 	MarketplaceInfo,
@@ -24,6 +24,10 @@ import {
 import { Liquidities } from "../constants/Liquidities";
 import { TPool } from "../types/pools";
 import { setLiquidityInfo } from "../features/liquidities/liquiditiesSlice";
+import {
+	TokenCoingeckoIds,
+	setTokenPrice,
+} from "../features/tokenPrices/tokenPricesSlice";
 
 type AttributeType = {
 	trait_type: string;
@@ -91,7 +95,11 @@ export const getTokenIdNumber = (id: string): string => {
 
 const useFetch = () => {
 	const { runQuery, getBalances } = useContract();
+	const [liquiditiesInfo, setLiquiditiesInfo] = useState<TPool[]>([]);
 	const dispatch = useAppDispatch();
+	const junoPrice = useAppSelector(
+		(state) => state.tokenPrices[TokenType.JUNO]
+	);
 
 	useEffect(() => {
 		Collections.forEach(async (collection: MarketplaceInfo) => {
@@ -566,6 +574,8 @@ const useFetch = () => {
 							);
 							fetchConfigQueries.push(runQuery(stakingAddress, { config: {} }));
 
+							const ratio = token1Reserve ? token2Reserve / token1Reserve : 0;
+
 							return {
 								id: index + 1,
 								token1: Liquidities[index].tokenA,
@@ -579,7 +589,7 @@ const useFetch = () => {
 								volume: 18000,
 								token1Reserve,
 								token2Reserve,
-								ratio: token1Reserve ? token2Reserve / token1Reserve : 0,
+								ratio,
 							};
 						}
 					);
@@ -654,12 +664,52 @@ const useFetch = () => {
 							liquidities[index].totalEarned = totalEarned;
 						}
 					}
+					setLiquiditiesInfo(liquidities);
 					dispatch(setLiquidityInfo(liquidities));
 				})
 				.catch((err) => console.log(err));
 		},
 		[dispatch, runQuery]
 	);
+
+	const fetchOtherTokenPrice = useCallback(() => {
+		// First, calculate HOPERS price
+		const hopersJunoLiquidity = liquiditiesInfo.find(
+			(liquidity) =>
+				liquidity.token1 === TokenType.HOPERS &&
+				liquidity.token2 === TokenType.JUNO
+		);
+		const junoPriceInUsd =
+			Number(junoPrice?.market_data?.current_price?.usd) || 0;
+		const ratio = hopersJunoLiquidity?.ratio || 0;
+		const hopersPrice = junoPriceInUsd * ratio;
+		dispatch(
+			setTokenPrice([
+				TokenType.HOPERS,
+				{ market_data: { current_price: { usd: hopersPrice } } },
+			])
+		);
+
+		// Second calculates price of tokens which can't be fetched from coingecko
+		Object.keys(TokenCoingeckoIds).forEach((key: string) => {
+			const tokenType = key as TokenType;
+			if (tokenType !== TokenType.HOPERS && !TokenCoingeckoIds[tokenType]) {
+				const targetPool = liquiditiesInfo.find(
+					(liquidity) =>
+						liquidity.token1 === TokenType.HOPERS &&
+						liquidity.token2 === tokenType
+				);
+				const ratio = targetPool?.ratio || 0;
+				const targetPrice = ratio ? hopersPrice / ratio : 0;
+				dispatch(
+					setTokenPrice([
+						tokenType,
+						{ market_data: { current_price: { usd: targetPrice } } },
+					])
+				);
+			}
+		});
+	}, [dispatch, junoPrice?.market_data?.current_price?.usd, liquiditiesInfo]);
 
 	return {
 		fetchAllNFTs,
@@ -669,6 +719,7 @@ const useFetch = () => {
 		getTokenBalances,
 		clearAllNFTs,
 		fetchLiquidities,
+		fetchOtherTokenPrice,
 	};
 };
 

@@ -177,6 +177,10 @@ export const tokenPricesSlice = createSlice({
 				}
 			);
 		},
+		setTokenPrice: (state, action: PayloadAction<[TokenType, any]>) => {
+			const [key, data] = action.payload;
+			state[key] = data;
+		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(fetchTokenPrices.fulfilled, (state, action) => {
@@ -188,6 +192,6 @@ export const tokenPricesSlice = createSlice({
 	},
 });
 
-export const { clearTokenPrice } = tokenPricesSlice.actions;
+export const { clearTokenPrice, setTokenPrice } = tokenPricesSlice.actions;
 
 export default tokenPricesSlice.reducer;

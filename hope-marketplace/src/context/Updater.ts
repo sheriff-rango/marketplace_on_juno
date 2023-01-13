@@ -10,7 +10,12 @@ export default function Updater(): null {
 		// priceRefresh,
 	} = useRefresh();
 	const account = useAppSelector((state) => state?.accounts?.keplrAccount);
-	const { fetchAllNFTs, clearAllNFTs, fetchLiquidities } = useFetch();
+	const { fetchAllNFTs, clearAllNFTs, fetchLiquidities, fetchOtherTokenPrice } =
+		useFetch();
+
+	useEffect(() => {
+		fetchOtherTokenPrice();
+	}, [fetchOtherTokenPrice, nftRefresh]);
 
 	useEffect(() => {
 		fetchLiquidities(account);

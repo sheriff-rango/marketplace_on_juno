@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { IDOIds } from "../../constants/IDOs";
 import useIDOStatus from "../../pages/IDO/useIDOStatus";
 import { useAppSelector } from "../../app/hooks";
@@ -64,25 +64,31 @@ const HopeIcon = () => (
 
 const HopePriceDisplay: React.FC = () => {
 	const { idoStatus } = useIDOStatus(IDOIds.HOPERS);
-	const liquidities = useAppSelector((state) => state.liquidities);
-	const junoPrice = useAppSelector(
-		(state) => state.tokenPrices[TokenType.JUNO]
+	// const liquidities = useAppSelector((state) => state.liquidities);
+	const hopersPriceState = useAppSelector(
+		(state) => state.tokenPrices[TokenType.HOPERS]
 	);
 
-	const hopersJunoLiquidity = liquidities.find(
-		(liquidity) =>
-			liquidity.token1 === TokenType.HOPERS &&
-			liquidity.token2 === TokenType.JUNO
-	);
+	const hopersPrice = hopersPriceState?.market_data?.current_price?.usd || 0;
 
-	const hopersPrice = useMemo(() => {
-		if (!hopersJunoLiquidity) return 0;
-		const junoPriceInUsd =
-			Number(junoPrice?.market_data?.current_price?.usd) || 0;
-		const ratio = hopersJunoLiquidity.ratio || 0;
+	// const junoPrice = useAppSelector(
+	// 	(state) => state.tokenPrices[TokenType.JUNO]
+	// );
 
-		return junoPriceInUsd * ratio;
-	}, [hopersJunoLiquidity, junoPrice?.market_data?.current_price?.usd]);
+	// const hopersJunoLiquidity = liquidities.find(
+	// 	(liquidity) =>
+	// 		liquidity.token1 === TokenType.HOPERS &&
+	// 		liquidity.token2 === TokenType.JUNO
+	// );
+
+	// const hopersPrice = useMemo(() => {
+	// 	if (!hopersJunoLiquidity) return 0;
+	// 	const junoPriceInUsd =
+	// 		Number(junoPrice?.market_data?.current_price?.usd) || 0;
+	// 	const ratio = hopersJunoLiquidity.ratio || 0;
+
+	// 	return junoPriceInUsd * ratio;
+	// }, [hopersJunoLiquidity, junoPrice?.market_data?.current_price?.usd]);
 
 	// const hopePrice = useAppSelector(
 	//   (state) => state.tokenPrices[TokenType.HOPE]
