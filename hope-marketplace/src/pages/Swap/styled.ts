@@ -120,9 +120,10 @@ export const SwapItem = styled.div`
 	}
 `;
 
-export const AmountInputer = styled.div`
+export const AmountInputer = styled.div<{ hasError?: boolean }>`
 	position: relative;
 	margin: 10px 0;
+
 	& > input {
 		width: 100%;
 		height: 70px;
@@ -136,6 +137,12 @@ export const AmountInputer = styled.div`
 		font-size: 20px;
 		padding: 10px 20px 40px 20px;
 		box-sizing: border-box;
+		${({ hasError }) =>
+			hasError &&
+			css`
+				border-color: #e20202;
+				border-width: 2px;
+			`}
 	}
 `;
 

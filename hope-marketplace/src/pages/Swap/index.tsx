@@ -31,6 +31,7 @@ import { useValidPool } from "./hook";
 import useContract from "../../hook/useContract";
 import { toMicroAmount } from "../../util/coins";
 import { ChainConfigs } from "../../constants/ChainTypes";
+import { addSuffix } from "../../util/string";
 
 type TSwapInfo = {
 	from: {
@@ -107,9 +108,7 @@ const Swap: React.FC = () => {
 				amount: swapInfo.from.amount,
 				icon: `/coin-images/${fromToken.replace(/\//g, "")}.png`,
 				rawBalance: fromBalance,
-				balance: fromBalance.toLocaleString("en-US", {
-					maximumFractionDigits: 2,
-				}),
+				balance: addSuffix(fromBalance),
 				tokenPrice: fromTokenPrice,
 				price: fromPrice,
 			},
@@ -118,9 +117,7 @@ const Swap: React.FC = () => {
 				amount: swapInfo.to.amount,
 				icon: `/coin-images/${toToken.replace(/\//g, "")}.png`,
 				rawBalance: toBalance,
-				balance: toBalance.toLocaleString("en-US", {
-					maximumFractionDigits: 2,
-				}),
+				balance: addSuffix(toBalance),
 				tokenPrice: toTokenPrice,
 				price: toPrice,
 			},
@@ -261,6 +258,10 @@ const Swap: React.FC = () => {
 			toast.error("Invalid Pair!");
 			return;
 		}
+		if (Number(swapInfo.from.amount) > displaySwapInfo.from.rawBalance) {
+			toast.error("Invalid Amount");
+			return;
+		}
 		setIsPending(true);
 		let transactions = [],
 			funds: any[] = [];
@@ -383,7 +384,12 @@ const Swap: React.FC = () => {
 										onClick={() => handleClickTokenSelect("from")}
 									/>
 								</Text>
-								<AmountInputer>
+								<AmountInputer
+									hasError={
+										Number(swapInfo.from.amount) >
+										displaySwapInfo.from.rawBalance
+									}
+								>
 									<input
 										value={displaySwapInfo.from.amount}
 										onChange={handleChangeSwapAmount}

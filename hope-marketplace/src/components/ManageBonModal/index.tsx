@@ -118,6 +118,11 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 		})();
 	}, [account, liquidity, runQuery]);
 
+	useEffect(() => {
+		setBondAmount("");
+		setUnbondAmount("");
+	}, [selectedTab]);
+
 	const handleCloseModal = () => {
 		if (isPendingAction || isPendingRedeem) return;
 		setTimeout(() => {
@@ -139,6 +144,10 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 
 	const handleClickBond = async () => {
 		if (isPendingAction || !bondAmount) return;
+		if (Number(bondAmount) > (liquidity.balance || 0)) {
+			toast.error("Invalid Amount");
+			return;
+		}
 		setIsPendingAction(true);
 		try {
 			await runExecute(liquidity.lpAddress, {
@@ -164,6 +173,10 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 
 	const handleClickUnBond = async () => {
 		if (isPendingAction || !unbondAmount) return;
+		if (Number(unbondAmount) > (liquidity.bonded || 0)) {
+			toast.error("Invalid Amount");
+			return;
+		}
 		setIsPendingAction(true);
 		try {
 			await runExecute(liquidity.stakingAddress, {
@@ -271,6 +284,14 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 					))}
 				</Flex>
 				<BondAmountInputer
+					hasError={
+						Number(
+							(selectedTab === ModalTabs.BOND ? bondAmount : unbondAmount) || 0
+						) >
+						((selectedTab === ModalTabs.BOND
+							? liquidity.balance
+							: liquidity.bonded) || 0)
+					}
 					value={selectedTab === ModalTabs.BOND ? bondAmount : unbondAmount}
 					onChange={handleChangeBondAmount}
 				/>

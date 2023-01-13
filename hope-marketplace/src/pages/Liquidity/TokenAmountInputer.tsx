@@ -11,14 +11,7 @@ import {
 	TokenImage,
 } from "./styled";
 import { DropDownIcon } from "../../components/SvgIcons";
-
-interface TTokenAmountInputer {
-	token?: TokenType;
-	hasSelect?: boolean;
-	amount?: any;
-	onSelectToken?: (token: TokenType) => void;
-	onAmountChange?: (amount: string) => void;
-}
+import { TTokenAmountInputer } from "./type";
 
 const AutoInputers = [25, 50, 75, 100];
 
@@ -70,6 +63,13 @@ const TokenAmountInputer: React.FC<TTokenAmountInputer> = ({
 		if (onSelectToken) onSelectToken(item);
 	};
 
+	const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { value } = e.target;
+		if (onAmountChange) {
+			onAmountChange(value);
+		}
+	};
+
 	const CustomMenuList = (props: any) => {
 		const { options, selectOption } = props;
 		return options.map((option: any, index: number) => (
@@ -109,7 +109,7 @@ const TokenAmountInputer: React.FC<TTokenAmountInputer> = ({
 					>{`${inputer}%`}</Text>
 				))}
 			</Flex>
-			<TokenAmountInput>
+			<TokenAmountInput hasError={Number(amount) > (balanceRaw || 0)}>
 				{hasSelect ? (
 					<ReactSelect
 						value={token ? { value: token, title: token } : undefined}
@@ -158,7 +158,7 @@ const TokenAmountInputer: React.FC<TTokenAmountInputer> = ({
 							  })
 							: ""
 					}
-					onChange={(e) => onAmountChange && onAmountChange(e.target.value)}
+					onChange={handleChangeAmount}
 				/>
 			</TokenAmountInput>
 			<Flex alignItems="center" justifyContent="space-between" width="100%">

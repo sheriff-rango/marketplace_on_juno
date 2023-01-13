@@ -21,7 +21,7 @@ import {
 	SelectPoolContainer,
 } from "./styled";
 import TokenAmountInputer from "./TokenAmountInputer";
-import { IBasicModal, ModalType, TAddAmount } from "./type";
+import { IBasicModal, ModalType, TAddAmount, THasError } from "./type";
 import { TokenStatus } from "../../types/tokens";
 import useContract from "../../hook/useContract";
 import { toMicroAmount } from "../../util/coins";
@@ -35,9 +35,13 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 }) => {
 	const account = useAppSelector((state) => state.accounts.keplrAccount);
 	const liquidities = useAppSelector((state) => state.liquidities);
+	const balances = useAppSelector((state) => state.balances);
 	const [isPending, setIsPending] = useState(false);
 	const [pool, setPool] = useState<TPool>(liquidities[0]);
 	const [addAmount, setAddAmount] = useState<TAddAmount>({} as TAddAmount);
+	const [hasAmountError, setHasAmountError] = useState<THasError>(
+		{} as THasError
+	);
 	const { createExecuteMessage, getExecuteClient } = useContract();
 	const { search } = useLocation();
 	const poolId = new URLSearchParams(search).get("poolId");
@@ -70,13 +74,23 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 	const handleChangeAddAmount = (value: string, type: keyof TAddAmount) => {
 		const slippage = 0.99;
 		if (!isNaN(Number(value))) {
+			const oppositeType = type === "token1" ? "token2" : "token1";
+			const oppositeValue =
+				type === "token1"
+					? (Number(value) * pool.ratio) / slippage
+					: (Number(value) * slippage) / pool.ratio;
+
+			const balance = (balances[pool[type]]?.amount || 0) / 1e6;
+			const oppositeBalance = (balances[pool[oppositeType]]?.amount || 0) / 1e6;
+
 			setAddAmount({
 				[type]: value,
-				[type === "token1" ? "token2" : "token1"]:
-					type === "token1"
-						? (Number(value) * pool.ratio) / slippage
-						: (Number(value) * slippage) / pool.ratio,
+				[oppositeType]: oppositeValue,
 			} as TAddAmount);
+			setHasAmountError({
+				[type]: Number(value) > balance,
+				[oppositeType]: Number(oppositeValue) > oppositeBalance,
+			} as THasError);
 		}
 	};
 
@@ -89,6 +103,10 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 		token2Amount = isNaN(token2Amount) ? 0 : token2Amount;
 
 		if (!token1Amount || !token2Amount) return;
+		if (hasAmountError.token1 || hasAmountError.token2) {
+			toast.error("Invalid Amount");
+			return;
+		}
 		setIsPending(true);
 
 		let funds: any[] = [];

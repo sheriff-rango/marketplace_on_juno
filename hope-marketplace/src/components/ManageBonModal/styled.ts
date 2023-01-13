@@ -4,7 +4,7 @@ import Flex from "../Flex";
 import Modal from "../Modal";
 import Text from "../Text";
 
-export const BondAmountInputer = styled.input`
+export const BondAmountInputer = styled.input<{hasError: boolean}>`
 	width: 50%;
 	height: 25px;
 	background-color: white;
@@ -13,7 +13,13 @@ export const BondAmountInputer = styled.input`
 	border-radius: 10px;
 	margin: auto;
 	text-align: right;
-	padding: 0 10px;
+	padding: 10px;
+	${({ hasError }) =>
+		hasError &&
+		css`
+			border-color: #e20202;
+			border-width: 2px;
+		`}
 `;
 
 export const ManageBondModalWrapper = styled(Modal)`

@@ -234,7 +234,7 @@ export const TokenAmountInputerWrapper = styled.div`
 	padding: 10px;
 `;
 
-export const TokenAmountInput = styled(Flex)`
+export const TokenAmountInput = styled(Flex)<{ hasError: boolean }>`
 	width: 100%;
 	height: 70px;
 	align-items: center;
@@ -245,6 +245,12 @@ export const TokenAmountInput = styled(Flex)`
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 	border-radius: 15px;
 	box-sizing: border-box;
+	${({ hasError }) =>
+		hasError &&
+		css`
+			border-color: #e20202;
+			border-width: 2px;
+		`}
 
 	& > input {
 		width: 50%;
@@ -252,6 +258,8 @@ export const TokenAmountInput = styled(Flex)`
 		border: none;
 		background: transparent;
 		text-align: right;
+		/* padding-bottom: 15px;
+		box-sizing: border-box; */
 	}
 `;
 
