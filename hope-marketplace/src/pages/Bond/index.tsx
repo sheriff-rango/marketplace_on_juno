@@ -52,8 +52,8 @@ const Bond: React.FC = () => {
 			render: (value, data) => (value ? <VerifiedBadge /> : <CancelIcon />),
 		},
 		{
-			name: "totalEarned",
-			title: "Earned",
+			name: "bonded",
+			title: "Bonded",
 			type: ColumnTypes.NUMBER,
 			sort: true,
 			format: (value) => addSuffix(value || 0),
