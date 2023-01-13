@@ -45,7 +45,7 @@ const IDOItem: React.FC<IDOItemProps> = ({ idoInfo }) => {
 
 	const Logo = () => (
 		<TokenLogoContainer>
-			<TokenLogo src={`/token-logos/${idoInfo.id}.png`} alt="" />
+			<TokenLogo src={`/token-logos/${idoInfo.image}`} alt="" />
 			<Button
 				color="white"
 				onClick={() => history.push(`/ido/detail?id=${idoInfo.id}`)}
