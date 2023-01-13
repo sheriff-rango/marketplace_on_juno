@@ -54,7 +54,7 @@ const TokenAmountInputer: React.FC<TTokenAmountInputer> = ({
 	const balances = useAppSelector((state) => state.balances);
 	const tokenPrices = useAppSelector((state) => state.tokenPrices);
 
-	const { tokenPriceInUsd, balance } = useMemo(() => {
+	const { tokenPriceInUsd, balance, balanceRaw } = useMemo(() => {
 		const balanceInRaw = token ? (balances[token]?.amount || 0) / 1e6 : 0;
 		const tokenPriceInRaw = token
 			? tokenPrices[token]?.market_data?.current_price?.usd || 0
@@ -62,6 +62,7 @@ const TokenAmountInputer: React.FC<TTokenAmountInputer> = ({
 		return {
 			tokenPriceInUsd: addSuffix(balanceInRaw * tokenPriceInRaw),
 			balance: addSuffix(balanceInRaw),
+			balanceRaw: balanceInRaw,
 		};
 	}, [balances, token, tokenPrices]);
 
@@ -99,7 +100,8 @@ const TokenAmountInputer: React.FC<TTokenAmountInputer> = ({
 						color="#787878"
 						cursor="pointer"
 						onClick={() =>
-							onAmountChange && onAmountChange(`${(+balance * inputer) / 100}`)
+							onAmountChange &&
+							onAmountChange(`${(+balanceRaw * inputer) / 100}`)
 						}
 					>{`${inputer}%`}</Text>
 				))}
