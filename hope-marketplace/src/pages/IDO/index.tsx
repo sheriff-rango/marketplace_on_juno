@@ -60,7 +60,6 @@ const IDO: React.FC = () => {
 						: PresaleState.ENDED;
 				idoStatusesResult[IDOs[index].id] = crrState;
 			});
-			console.log("debug idoStatusResult: ", idoStatusesResult);
 			setIdoStatuses(idoStatusesResult);
 		});
 	}, [runQuery]);
