@@ -65,3 +65,11 @@ export const Liquidities: TLiquidity[] = [
 			"juno1wquw22g0spap7qvesxagwdjmt6trmafztz8yyaau4v5nqkpsrqqs3sqk02",
 	},
 ];
+
+export const getLiquiditiesByTokens = (
+	tokenA: TokenType,
+	tokenB: TokenType
+): TLiquidity | null =>
+	Liquidities.find(
+		(liquidity) => liquidity.tokenA === tokenA && liquidity.tokenB === tokenB
+	) || null;
