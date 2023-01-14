@@ -2,6 +2,7 @@ export enum ChainTypes {
 	JUNO = "juno-1",
 	COSMOS = "cosmoshub-4",
 	AXELAR = "axelar",
+	CHIHUAHUA = "chihuahua-1",
 }
 
 export type ConfigType = {
@@ -25,6 +26,7 @@ export const IBCConfig: {
 	[ChainTypes.JUNO]: { channel: "", juno_channel: "" },
 	[ChainTypes.COSMOS]: { channel: "channel-207", juno_channel: "channel-1" },
 	[ChainTypes.AXELAR]: { channel: "channel-4", juno_channel: "channel-71" },
+	[ChainTypes.CHIHUAHUA]: { channel: "", juno_channel: "" },
 };
 
 export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
@@ -59,6 +61,17 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 		faucetEndpoint: "",
 		addressPrefix: "axelar",
 		microDenom: "uaxl",
+		coinDecimals: "6",
+		gasPrice: "0.025",
+	},
+	[ChainTypes.CHIHUAHUA]: {
+		chainName: "Chihuahua",
+		chainId: "chihuahua-1",
+		rpcEndpoint: "https://rpc.cosmos.directory/chihuahua",
+		restEndpoint: "",
+		faucetEndpoint: "",
+		addressPrefix: "chihuahua",
+		microDenom: "uhuahua",
 		coinDecimals: "6",
 		gasPrice: "0.025",
 	},

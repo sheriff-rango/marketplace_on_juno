@@ -16,5 +16,6 @@ export const LineColors = {
 	[TokenType.ATOM]: "blue",
 	[TokenType.USDC]: "#bdcf32",
 	[TokenType.HOPERS]: "#87bc45",
-	[TokenType.PUNK]: "#27aeef", // "#b33dc6"
+	[TokenType.PUNK]: "#27aeef",
+	[TokenType.HUAHUA]: "#b33dc6",
 };

@@ -9,6 +9,7 @@ export enum TokenType {
 	USDC = "ibc/EAC38D55372F38F1AFD68DF7FE9EF762DCF69F26520643CF3F9D292A738D8034",
 	HOPERS = "hopers",
 	PUNK = "punk",
+	HUAHUA = "ibc/D836B191CDAE8EDACDEBE7B64B504C5E06CC17C6A072DAF278F9A96DF66F6241",
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
@@ -25,6 +26,7 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.USDC]: "USDC",
 	[TokenType.HOPERS]: "HOPERS",
 	[TokenType.PUNK]: "PUNK",
+	[TokenType.HUAHUA]: "HUAHUA",
 };
 
 export type TokenStatusType = {
@@ -89,6 +91,12 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		chain: ChainTypes.JUNO,
 		contractAddress:
 			"juno13926947pmrjly5p9hf5juey65c6rget0gqrnx3us3r6pvnpf4hwqm8mchy",
+	},
+	[TokenType.HUAHUA]: {
+		isNativeCoin: true,
+		isIBCCoin: true,
+		chain: ChainTypes.CHIHUAHUA,
+		originChain: ChainTypes.CHIHUAHUA,
 	},
 };
 
