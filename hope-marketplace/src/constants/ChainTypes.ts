@@ -26,7 +26,7 @@ export const IBCConfig: {
 	[ChainTypes.JUNO]: { channel: "", juno_channel: "" },
 	[ChainTypes.COSMOS]: { channel: "channel-207", juno_channel: "channel-1" },
 	[ChainTypes.AXELAR]: { channel: "channel-4", juno_channel: "channel-71" },
-	[ChainTypes.CHIHUAHUA]: { channel: "", juno_channel: "" },
+	[ChainTypes.CHIHUAHUA]: { channel: "channel-11", juno_channel: "channel-28" },
 };
 
 export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
