@@ -227,7 +227,7 @@ export const SelectItem = styled.div<{ checked?: boolean }>`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 5px;
+	padding: 10px;
 	cursor: pointer;
 	transition: 0.3s;
 	gap: 5px;
