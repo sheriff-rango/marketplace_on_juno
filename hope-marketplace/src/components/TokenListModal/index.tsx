@@ -44,6 +44,7 @@ const CommonTokens: TokenType[] = [
 	TokenType.JUNO,
 	TokenType.ATOM,
 	TokenType.HOPE,
+	TokenType.HOPERS,
 ];
 
 const TokenListModal: React.FC<ITokenListModal> = ({
@@ -101,8 +102,8 @@ const TokenListModal: React.FC<ITokenListModal> = ({
 		setAddedTokenAddress(value);
 	};
 
-	const handleClickToken = (tokenItem: TTokenListItem) => {
-		onSelectToken(tokenItem.token);
+	const handleClickToken = (token: TokenType) => {
+		onSelectToken(token);
 		handleOnClose();
 	};
 
@@ -164,7 +165,11 @@ const TokenListModal: React.FC<ITokenListModal> = ({
 						Object.keys(TokenType) as Array<keyof typeof TokenType>
 					).filter((key) => TokenType[key] === tokenType)[0];
 					return (
-						<CommonTokenItem key={index} title={TokenFullName[tokenType]}>
+						<CommonTokenItem
+							key={index}
+							title={TokenFullName[tokenType]}
+							onClick={() => handleClickToken(tokenType)}
+						>
 							<TokenImage
 								alt=""
 								src={`/coin-images/${tokenType.replace(/\//g, "")}.png`}
@@ -185,7 +190,7 @@ const TokenListModal: React.FC<ITokenListModal> = ({
 					tokenList.map((tokenItem) => (
 						<>
 							<TokensTableTokenNameContainer
-								onClick={() => handleClickToken(tokenItem)}
+								onClick={() => handleClickToken(tokenItem.token)}
 							>
 								<TokensTableTokenName imgUrl={tokenItem.imageUrl} bold>
 									{tokenItem.name}
