@@ -211,7 +211,13 @@ const Swap: React.FC = () => {
 				}));
 			}, 500);
 		}
-	}, [swapInfo, validPair, runQuery]);
+	}, [
+		validPair,
+		runQuery,
+		swapInfo.from.amount,
+		swapInfo.from.token,
+		swapInfo.to.token,
+	]);
 
 	const handleClickTokenSelect = (type: "from" | "to") => {
 		setSelectedTokenType(type);
