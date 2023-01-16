@@ -14,7 +14,7 @@ import getQuery from "../util/useAxios";
 import useContract from "./useContract";
 import { MintContracts } from "../constants/Collections";
 import { setCollectionTraitStates } from "../features/collectionTraits/collectionTraitsSlice";
-import { TokenType } from "../types/tokens";
+import { TokenStatus, TokenType } from "../types/tokens";
 import { setRarityRankState } from "../features/rarityRanks/rarityRanksSlice";
 import {
 	BalancesType,
@@ -572,14 +572,22 @@ const useFetch = () => {
 									},
 								})
 							);
+
+							const token1 = Liquidities[index].tokenA,
+								token2 = Liquidities[index].tokenB;
 							fetchConfigQueries.push(runQuery(stakingAddress, { config: {} }));
 
-							const ratio = token1Reserve ? token2Reserve / token1Reserve : 0;
+							const ratio = token1Reserve
+								? token2Reserve /
+								  Math.pow(10, TokenStatus[token2].decimal || 6) /
+								  (token1Reserve /
+										Math.pow(10, TokenStatus[token1].decimal || 6))
+								: 0;
 
 							return {
 								id: index + 1,
-								token1: Liquidities[index].tokenA,
-								token2: Liquidities[index].tokenB,
+								token1,
+								token2,
 								isVerified: true,
 								apr: "",
 								pool,
