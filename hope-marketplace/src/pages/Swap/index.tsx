@@ -85,7 +85,9 @@ const Swap: React.FC = () => {
 			Object.keys(TokenType) as Array<keyof typeof TokenType>
 		).filter((key) => TokenType[key] === toToken)[0];
 
-		const fromBalance = (balances[fromToken]?.amount || 0) / 1e6;
+		const fromBalance =
+			(balances[fromToken]?.amount || 0) /
+			Math.pow(10, TokenStatus[fromToken].decimal || 6);
 		const fromTokenPrice =
 			tokenPrices[fromToken]?.market_data?.current_price?.usd || 0;
 		const fromPrice = (Number(fromBalance) * fromTokenPrice).toLocaleString(
@@ -95,7 +97,9 @@ const Swap: React.FC = () => {
 			}
 		);
 
-		const toBalance = (balances[toToken]?.amount || 0) / 1e6;
+		const toBalance =
+			(balances[toToken]?.amount || 0) /
+			Math.pow(10, TokenStatus[toToken].decimal || 6);
 		const toTokenPrice =
 			tokenPrices[toToken]?.market_data?.current_price?.usd || 0;
 		const toPrice = (Number(toBalance) * toTokenPrice).toLocaleString("en-US", {
@@ -142,13 +146,19 @@ const Swap: React.FC = () => {
 						? "token2_for_token1_price"
 						: "token1_for_token2_price"]: {
 						[validPair.reverse ? "token2_amount" : "token1_amount"]:
-							"" + Math.ceil(Number(swapInfo.from.amount) * 1e6),
+							"" +
+							Math.ceil(
+								Number(swapInfo.from.amount) *
+									Math.pow(10, TokenStatus[swapInfo.from.token].decimal || 6)
+							),
 					},
 				});
 				let amount = Number(
 					queryResult[validPair.reverse ? "token1_amount" : "token2_amount"]
 				);
-				amount = isNaN(amount) ? 0 : amount / 1e6;
+				amount = isNaN(amount)
+					? 0
+					: amount / Math.pow(10, TokenStatus[swapInfo.to.token].decimal || 6);
 				setSwapInfo((prev) => ({
 					...prev,
 					to: {
@@ -167,7 +177,11 @@ const Swap: React.FC = () => {
 						? "token2_for_token1_price"
 						: "token1_for_token2_price"]: {
 						[firstPool.reverse ? "token2_amount" : "token1_amount"]:
-							"" + Math.ceil(Number(swapInfo.from.amount) * 1e6),
+							"" +
+							Math.ceil(
+								Number(swapInfo.from.amount) *
+									Math.pow(10, TokenStatus[swapInfo.from.token].decimal || 6)
+							),
 					},
 				});
 				const middleAmount = Number(
@@ -185,7 +199,9 @@ const Swap: React.FC = () => {
 				let amount = Number(
 					queryResult2[secondPool.reverse ? "token1_amount" : "token2_amount"]
 				);
-				amount = isNaN(amount) ? 0 : amount / 1e6;
+				amount = isNaN(amount)
+					? 0
+					: amount / Math.pow(10, TokenStatus[swapInfo.to.token].decimal || 6);
 				setSwapInfo((prev) => ({
 					...prev,
 					to: {
@@ -195,7 +211,7 @@ const Swap: React.FC = () => {
 				}));
 			}, 500);
 		}
-	}, [swapInfo.from, validPair, runQuery]);
+	}, [swapInfo, validPair, runQuery]);
 
 	const handleClickTokenSelect = (type: "from" | "to") => {
 		setSelectedTokenType(type);
@@ -274,7 +290,10 @@ const Swap: React.FC = () => {
 					message: {
 						increase_allowance: {
 							spender: validPair.pool.contractAddress,
-							amount: `${Math.ceil(Number(swapInfo.from.amount) * 1e6)}`,
+							amount: `${Math.ceil(
+								Number(swapInfo.from.amount) *
+									Math.pow(10, TokenStatus[swapInfo.from.token].decimal || 6)
+							)}`,
 						},
 					},
 				})
@@ -295,22 +314,37 @@ const Swap: React.FC = () => {
 						output_amm_address: secondPool?.pool.contractAddress,
 						input_token: firstPool?.reverse ? "Token2" : "Token1",
 						input_token_amount:
-							"" + Math.ceil(Number(swapInfo.from.amount) * 1e6),
+							"" +
+							Math.ceil(
+								Number(swapInfo.from.amount) *
+									Math.pow(10, TokenStatus[swapInfo.from.token].decimal || 6)
+							),
 						output_min_token:
 							"" +
 							Math.ceil(
-								(Number(swapInfo.to.amount) * 1e6 * (100 - slippage)) / 1e2
+								(Number(swapInfo.to.amount) *
+									Math.pow(10, TokenStatus[swapInfo.to.token].decimal || 6) *
+									(100 - slippage)) /
+									1e2
 							),
 					},
 			  }
 			: {
 					swap: {
 						input_token: validPair.reverse ? "Token2" : "Token1",
-						input_amount: "" + Math.ceil(Number(swapInfo.from.amount) * 1e6),
+						input_amount:
+							"" +
+							Math.ceil(
+								Number(swapInfo.from.amount) *
+									Math.pow(10, TokenStatus[swapInfo.from.token].decimal || 6)
+							),
 						min_output:
 							"" +
 							Math.ceil(
-								(Number(swapInfo.to.amount) * 1e6 * (100 - slippage)) / 1e2
+								(Number(swapInfo.to.amount) *
+									Math.pow(10, TokenStatus[swapInfo.to.token].decimal || 6) *
+									(100 - slippage)) /
+									1e2
 							),
 					},
 			  };

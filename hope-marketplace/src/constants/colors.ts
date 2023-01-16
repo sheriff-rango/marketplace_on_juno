@@ -18,4 +18,5 @@ export const LineColors = {
 	[TokenType.HOPERS]: "#87bc45",
 	[TokenType.PUNK]: "#27aeef",
 	[TokenType.HUAHUA]: "#b33dc6",
+	[TokenType.CANLAB]: "#ea5545",
 };

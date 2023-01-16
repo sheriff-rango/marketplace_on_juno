@@ -392,7 +392,9 @@ const MyNFT: React.FC = () => {
 			Object.keys(TokenType) as Array<keyof typeof TokenType>
 		).reduce((result, key) => {
 			const denom = TokenType[key];
-			const crrBalance = (balances?.[denom]?.amount || 0) / 1e6;
+			const crrBalance =
+				(balances?.[denom]?.amount || 0) /
+				Math.pow(10, TokenStatus[denom].decimal || 6);
 			const crrTokenPrice =
 				tokenPrices[denom]?.market_data.current_price?.usd || 0;
 			if (crrBalance * crrTokenPrice > 0)
@@ -525,7 +527,9 @@ const MyNFT: React.FC = () => {
 							const denom = TokenType[key];
 							const tokenStatus = TokenStatus[denom];
 							if (tokenStatus.isIBCCoin) return null;
-							const tokenBalance = (balances?.[denom]?.amount || 0) / 1e6;
+							const tokenBalance =
+								(balances?.[denom]?.amount || 0) /
+								Math.pow(10, TokenStatus[denom].decimal || 6);
 							const tokenPrice =
 								tokenPrices[denom]?.market_data.current_price?.usd || 0;
 							return (
@@ -565,7 +569,9 @@ const MyNFT: React.FC = () => {
 							const denom = TokenType[key];
 							const tokenStatus = TokenStatus[denom];
 							if (!tokenStatus.isIBCCoin) return null;
-							const tokenBalance = (balances?.[denom]?.amount || 0) / 1e6;
+							const tokenBalance =
+								(balances?.[denom]?.amount || 0) /
+								Math.pow(10, TokenStatus[denom].decimal || 6);
 							const tokenPrice =
 								tokenPrices[denom]?.market_data.current_price?.usd || 0;
 							const chain = tokenStatus.chain;
@@ -738,7 +744,10 @@ const MyNFT: React.FC = () => {
 											.current_price?.usd || 0;
 									const priceInUsd = (
 										(+listPrice.amount * tokenPrice) /
-										1e6
+										Math.pow(
+											10,
+											TokenStatus[listPrice?.denom as TokenType].decimal || 6
+										)
 									).toLocaleString("en-US", {
 										maximumFractionDigits: 2,
 									});
@@ -795,7 +804,14 @@ const MyNFT: React.FC = () => {
 															""
 														)}.png`}
 													/>
-													<Text>{Number(listPrice.amount) / 1e6}</Text>
+													<Text>
+														{Number(listPrice.amount) /
+															Math.pow(
+																10,
+																TokenStatus[listPrice?.denom as TokenType]
+																	.decimal || 6
+															)}
+													</Text>
 													<Text>{tokenName}</Text>
 													<Text>{`($${priceInUsd})`}</Text>
 												</CoinIconWrapper>

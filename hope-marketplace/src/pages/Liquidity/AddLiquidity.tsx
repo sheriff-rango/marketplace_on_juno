@@ -80,8 +80,12 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 					? (Number(value) * pool.ratio) / slippage
 					: (Number(value) * slippage) / pool.ratio;
 
-			const balance = (balances[pool[type]]?.amount || 0) / 1e6;
-			const oppositeBalance = (balances[pool[oppositeType]]?.amount || 0) / 1e6;
+			const balance =
+				(balances[pool[type]]?.amount || 0) /
+				Math.pow(10, TokenStatus[pool[type]].decimal || 6);
+			const oppositeBalance =
+				(balances[pool[oppositeType]]?.amount || 0) /
+				Math.pow(10, TokenStatus[pool[oppositeType]].decimal || 6);
 
 			setAddAmount({
 				[type]: value,
@@ -119,7 +123,10 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 					message: {
 						increase_allowance: {
 							spender: pool.contract,
-							amount: `${Math.ceil(token1Amount * 1e6)}`,
+							amount: `${Math.ceil(
+								token1Amount *
+									Math.pow(10, TokenStatus[pool.token1].decimal || 6)
+							)}`,
 						},
 					},
 				})
@@ -144,7 +151,10 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 					message: {
 						increase_allowance: {
 							spender: pool.contract,
-							amount: `${Math.ceil(token2Amount * 1e6)}`,
+							amount: `${Math.ceil(
+								token2Amount *
+									Math.pow(10, TokenStatus[pool.token2].decimal || 6)
+							)}`,
 						},
 					},
 				})
@@ -168,9 +178,19 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 				contractAddress: pool.contract,
 				message: {
 					add_liquidity: {
-						token1_amount: "" + Math.ceil(token1Amount * 1e6),
+						token1_amount:
+							"" +
+							Math.ceil(
+								token1Amount *
+									Math.pow(10, TokenStatus[pool.token1].decimal || 6)
+							),
 						min_liquidity: "0",
-						max_token2: "" + Math.ceil(token2Amount * 1e6),
+						max_token2:
+							"" +
+							Math.ceil(
+								token2Amount *
+									Math.pow(10, TokenStatus[pool.token2].decimal || 6)
+							),
 					},
 				},
 				funds,

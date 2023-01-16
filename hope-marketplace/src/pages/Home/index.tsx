@@ -14,7 +14,7 @@ import {
 } from "../../features/collections/collectionsSlice";
 import { getCustomTokenId, getTokenIdNumber } from "../../hook/useFetch";
 import useMatchBreakpoints from "../../hook/useMatchBreakpoints";
-import { TokenType } from "../../types/tokens";
+import { TokenStatus, TokenType } from "../../types/tokens";
 import { addSuffix } from "../../util/string";
 import Advertise, { Advertise1 } from "../../components/Advertise";
 import Text from "../../components/Text";
@@ -93,7 +93,8 @@ const Home: React.FC = () => {
 						?.usd || 0;
 				const crrValue = Number.isNaN(Number(history.amount))
 					? 0
-					: (Number(history.amount) * crrUsd) / 1e6;
+					: (Number(history.amount) * crrUsd) /
+					  (TokenStatus[history.denom as TokenType].decimal || 6);
 				// tradesVolumeResult += crrValue;
 				if (now - (history.time || now) <= 60 * 60 * 24 * 30) {
 					// if the sale is hold in the last 30 days

@@ -4,7 +4,7 @@ import { useAppSelector } from "../../app/hooks";
 import Flex from "../../components/Flex";
 import Text from "../../components/Text";
 import { addSuffix } from "../../util/string";
-import { getTokenName, TokenType } from "../../types/tokens";
+import { getTokenName, TokenStatus, TokenType } from "../../types/tokens";
 import {
 	TokenAmountInput,
 	TokenAmountInputerWrapper,
@@ -48,7 +48,10 @@ const TokenAmountInputer: React.FC<TTokenAmountInputer> = ({
 	const tokenPrices = useAppSelector((state) => state.tokenPrices);
 
 	const { tokenPriceInUsd, balance, balanceRaw } = useMemo(() => {
-		const balanceInRaw = token ? (balances[token]?.amount || 0) / 1e6 : 0;
+		const balanceInRaw = token
+			? (balances[token]?.amount || 0) /
+			  Math.pow(10, TokenStatus[token].decimal || 6)
+			: 0;
 		const tokenPriceInRaw = token
 			? tokenPrices[token]?.market_data?.current_price?.usd || 0
 			: 0;

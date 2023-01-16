@@ -70,7 +70,9 @@ const TokenListModal: React.FC<ITokenListModal> = ({
 				name: key as string,
 				token: TokenType[key],
 				imageUrl: `/coin-images/${tokenType.replace(/\//g, "")}.png`,
-				balance: +(balances?.[tokenType]?.amount || 0) / 1e6,
+				balance:
+					+(balances?.[tokenType]?.amount || 0) /
+					Math.pow(10, TokenStatus[tokenType].decimal || 6),
 				contract: TokenStatus[tokenType].contractAddress || "",
 			};
 		});

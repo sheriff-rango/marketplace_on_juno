@@ -227,7 +227,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		}
 		if (
 			swapInfo.swapType === SwapType.WITHDRAW &&
-			amount * 1e6 > balances[swapInfo.denom].amount
+			amount * Math.pow(10, TokenStatus[swapInfo.denom].decimal || 6) >
+				balances[swapInfo.denom].amount
 		) {
 			setErrMsg(
 				`Amount should be smaller than ${balances[swapInfo.denom].amount}`
@@ -284,7 +285,15 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 						swapInfo.swapType === SwapType.DEPOSIT
 							? foreignChainConfig.microDenom
 							: swapInfo.denom,
-					amount: String(Number(swapAmount) * 1e6),
+					amount: String(
+						Number(swapAmount) *
+							Math.pow(
+								10,
+								swapInfo.swapType === SwapType.DEPOSIT
+									? 6
+									: TokenStatus[swapInfo.denom].decimal || 6
+							)
+					),
 				},
 				timeoutHeight: undefined,
 				timeoutTimestamp: timeoutTimestampNanoseconds,
