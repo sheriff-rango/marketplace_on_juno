@@ -52,6 +52,7 @@ export const TokenBalanceItem = styled.div<{ marginBottom?: string }>`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	gap: 10px;
 	cursor: pointer;
 	margin: 10px;
 	border: 1px solid rgba(0, 0, 0, 0.6);

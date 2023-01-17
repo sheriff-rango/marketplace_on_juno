@@ -387,7 +387,8 @@ const MyNFT: React.FC = () => {
 	);
 
 	const { totalBalanceInUsd, chartData } = useMemo(() => {
-		const chartDataResult: any = [];
+		const chartDataMidResult: any = [];
+		let chartDataResult: any = [];
 		const totalBalance = (
 			Object.keys(TokenType) as Array<keyof typeof TokenType>
 		).reduce((result, key) => {
@@ -398,7 +399,7 @@ const MyNFT: React.FC = () => {
 			const crrTokenPrice =
 				tokenPrices[denom]?.market_data.current_price?.usd || 0;
 			if (crrBalance * crrTokenPrice > 0)
-				chartDataResult.push({
+				chartDataMidResult.push({
 					name: key,
 					tokenFullName: TokenFullName[denom],
 					token: denom,
@@ -406,6 +407,25 @@ const MyNFT: React.FC = () => {
 				});
 			return result + crrBalance * crrTokenPrice;
 		}, 0);
+
+		let chartOtherPrices = 0;
+		for (let chartDataMidItem of chartDataMidResult) {
+			if (chartDataMidItem.price > 0.05 * totalBalance) {
+				chartDataResult = [...chartDataResult, chartDataMidItem];
+			} else {
+				chartOtherPrices += chartDataMidItem.price;
+			}
+		}
+		chartDataResult = [
+			...chartDataResult,
+			{
+				name: "Others",
+				tokenFullName: "Others",
+				token: "Others",
+				price: chartOtherPrices,
+			},
+		];
+
 		return {
 			totalBalanceInUsd: totalBalance.toLocaleString("en-US", {
 				maximumFractionDigits: 2,
