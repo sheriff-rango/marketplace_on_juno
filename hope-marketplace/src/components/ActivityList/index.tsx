@@ -218,7 +218,10 @@ const ActivityList: React.FC<ActivityListProps> = ({
 									<HistoryItemText>
 										{(
 											+historyItem.amount /
-											(TokenStatus[historyItem.denom as TokenType].decimal || 6)
+											Math.pow(
+												10,
+												TokenStatus[historyItem.denom as TokenType].decimal || 6
+											)
 										).toLocaleString("en-Us", {
 											maximumFractionDigits: 2,
 										})}
@@ -228,8 +231,11 @@ const ActivityList: React.FC<ActivityListProps> = ({
 											Number(
 												(
 													(+(historyItem?.amount || 0) /
-														(TokenStatus[historyItem.denom as TokenType]
-															.decimal || 6)) *
+														Math.pow(
+															10,
+															TokenStatus[historyItem.denom as TokenType]
+																.decimal || 6
+														)) *
 													(tokenPrice || 0)
 												).toLocaleString("en-Us", { maximumFractionDigits: 2 })
 											),
