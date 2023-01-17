@@ -51,7 +51,8 @@ const BondTableDetailRow: React.FC<{ rowData: TPool }> = ({ rowData }) => {
 	};
 
 	const handleClickClaim = async () => {
-		if (isPendingClaim || !rowData.pendingReward) return;
+		if (isPendingClaim || !rowData.pendingReward || !rowData.stakingAddress)
+			return;
 		setIsPendingClaim(true);
 		try {
 			await runExecute(rowData.stakingAddress, {

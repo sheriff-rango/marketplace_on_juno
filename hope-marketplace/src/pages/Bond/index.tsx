@@ -102,7 +102,7 @@ const Bond: React.FC = () => {
 					</Text>
 				</Text>
 				<Table<TPool>
-					data={liquidities}
+					data={liquidities.filter((liquidity) => !!liquidity.stakingAddress)}
 					columns={Columns}
 					defaultExpanded={(rowData) => rowData.id === 1}
 					renderDetailRow={(rowData) => (

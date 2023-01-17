@@ -16,6 +16,8 @@ export const TokenCoingeckoIds: { [key in TokenType]: string } = {
 	[TokenType.PUNK]: "juno-punk",
 	[TokenType.HUAHUA]: "chihuahua-token",
 	[TokenType.CANLAB]: "",
+	[TokenType.RED]: "",
+	[TokenType.BLUE]: "",
 };
 
 const CoinGeckoAPIKey = "CG-CV5rXz5JpbGcc36wL76u5gnd";

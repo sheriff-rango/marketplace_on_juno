@@ -11,6 +11,8 @@ export enum TokenType {
 	PUNK = "punk",
 	HUAHUA = "ibc/D836B191CDAE8EDACDEBE7B64B504C5E06CC17C6A072DAF278F9A96DF66F6241",
 	CANLAB = "canlab",
+	RED = "red",
+	BLUE = "blue",
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
@@ -29,6 +31,8 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.PUNK]: "PUNK",
 	[TokenType.HUAHUA]: "HUAHUA",
 	[TokenType.CANLAB]: "CANLAB",
+	[TokenType.RED]: "RED",
+	[TokenType.BLUE]: "BLUE",
 };
 
 export type TokenStatusType = {
@@ -108,6 +112,20 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		contractAddress:
 			"juno1vn38rzq0wc7zczp4dhy0h5y5kxh2jjzeahwe30c9cc6dw3lkyk5qn5rmfa",
 		decimal: 3,
+	},
+	[TokenType.RED]: {
+		isNativeCoin: false,
+		isIBCCoin: false,
+		chain: ChainTypes.JUNO,
+		contractAddress:
+			"juno1g647t78y2ulqlm3lss8rs3d0spzd0teuwhdvnqn92tr79yltk9dq2h24za",
+	},
+	[TokenType.BLUE]: {
+		isNativeCoin: false,
+		isIBCCoin: false,
+		chain: ChainTypes.JUNO,
+		contractAddress:
+			"juno14q8kk464fafql2fwmlsgvgcdl6h2csqpzv4hr025fmcvgjahpess32k0j7",
 	},
 };
 

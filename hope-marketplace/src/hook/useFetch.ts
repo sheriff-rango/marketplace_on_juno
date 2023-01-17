@@ -544,6 +544,7 @@ const useFetch = () => {
 						stakedLPBalances: any[] = [],
 						rewards: any[] = [],
 						configs: any[] = [];
+					let stakingQueryIndice: number[] = [];
 					let liquidities: TPool[] = liquiditiesInfoResult.map(
 						(liquidityInfo, index) => {
 							let pool = Number(liquidityInfo.lp_token_supply);
@@ -560,22 +561,27 @@ const useFetch = () => {
 								})
 							);
 							const stakingAddress = Liquidities[index].stakingAddress;
-							fetchStakedLPBalanceQueries.push(
-								runQuery(lpAddress, {
-									balance: { address: stakingAddress },
-								})
-							);
-							fetchRewardQueries.push(
-								runQuery(stakingAddress, {
-									staker_info: {
-										staker: account?.address,
-									},
-								})
-							);
+							if (stakingAddress) {
+								stakingQueryIndice.push(index);
+								fetchStakedLPBalanceQueries.push(
+									runQuery(lpAddress, {
+										balance: { address: stakingAddress },
+									})
+								);
+								fetchRewardQueries.push(
+									runQuery(stakingAddress, {
+										staker_info: {
+											staker: account?.address,
+										},
+									})
+								);
+								fetchConfigQueries.push(
+									runQuery(stakingAddress, { config: {} })
+								);
+							}
 
 							const token1 = Liquidities[index].tokenA,
 								token2 = Liquidities[index].tokenB;
-							fetchConfigQueries.push(runQuery(stakingAddress, { config: {} }));
 
 							const ratio = token1Reserve
 								? token2Reserve /
@@ -612,7 +618,8 @@ const useFetch = () => {
 						.catch((err2) => console.log(err2));
 					for (let index = 0; index < configs.length; index++) {
 						let config = configs[index];
-						liquidities[index].config = {
+						const liquidityIndex = stakingQueryIndice[index];
+						liquidities[liquidityIndex].config = {
 							lockDuration: (config?.lock_duration || 0) * 1e3,
 						};
 
@@ -623,8 +630,8 @@ const useFetch = () => {
 							? 0
 							: totalSupplyInPresale;
 
-						const hopersReserve = liquidities[index].token1Reserve;
-						const totalLPBalance = liquidities[index].pool * 1e6;
+						const hopersReserve = liquidities[liquidityIndex].token1Reserve;
+						const totalLPBalance = liquidities[liquidityIndex].pool * 1e6;
 						let stakedLPBalance = Number(stakedLPBalances[index]?.balance || 0);
 						stakedLPBalance = isNaN(stakedLPBalance) ? 0 : stakedLPBalance;
 
@@ -632,9 +639,12 @@ const useFetch = () => {
 							const apr =
 								(100 * totalSupplyInPresale) /
 								((2 * hopersReserve * stakedLPBalance) / totalLPBalance);
-							liquidities[index].apr = `${apr.toLocaleString(undefined, {
-								maximumFractionDigits: 2,
-							})}%`;
+							liquidities[liquidityIndex].apr = `${apr.toLocaleString(
+								undefined,
+								{
+									maximumFractionDigits: 2,
+								}
+							)}%`;
 						}
 					}
 
@@ -656,20 +666,21 @@ const useFetch = () => {
 					}
 					if (rewards.length) {
 						for (let index = 0; index < rewards.length; index++) {
+							const liquidityIndex = stakingQueryIndice[index];
 							let reward = rewards[index]?.pending_reward;
 							reward = Number(reward);
 							reward = isNaN(reward) ? 0 : reward / 1e6;
-							liquidities[index].pendingReward = reward;
+							liquidities[liquidityIndex].pendingReward = reward;
 
 							let bonded = rewards[index]?.bond_amount;
 							bonded = Number(bonded);
 							bonded = isNaN(bonded) ? 0 : bonded / 1e6;
-							liquidities[index].bonded = bonded;
+							liquidities[liquidityIndex].bonded = bonded;
 
 							let totalEarned = rewards[index]?.bond_amount;
 							totalEarned = Number(totalEarned);
 							totalEarned = isNaN(totalEarned) ? 0 : totalEarned / 1e6;
-							liquidities[index].totalEarned = totalEarned;
+							liquidities[liquidityIndex].totalEarned = totalEarned;
 						}
 					}
 					setLiquiditiesInfo(liquidities);

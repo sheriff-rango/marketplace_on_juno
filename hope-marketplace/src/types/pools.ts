@@ -14,7 +14,7 @@ export type TPool = {
 	apr: string;
 	contract: string;
 	lpAddress: string;
-	stakingAddress: string;
+	stakingAddress?: string;
 	pool: number;
 	ratio: number;
 	volume?: number;

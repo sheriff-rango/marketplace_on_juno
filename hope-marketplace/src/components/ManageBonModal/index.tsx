@@ -64,13 +64,14 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 	const { refresh } = useRefresh();
 
 	useEffect(() => {
-		if (!account) return;
+		if (!account || !liquidity.stakingAddress) return;
 		const now = new Date();
 
 		(async () => {
 			let fetchedUnbondHistory: any[] = [],
 				redeemAvailability = false;
 			const fetchUnbondHistory = async (startAfter = 0) => {
+				if (!liquidity.stakingAddress) return;
 				const result = await runQuery(liquidity.stakingAddress, {
 					unbonding_info: {
 						staker: account?.address,
@@ -143,7 +144,7 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 	};
 
 	const handleClickBond = async () => {
-		if (isPendingAction || !bondAmount) return;
+		if (isPendingAction || !bondAmount || !liquidity.stakingAddress) return;
 		if (Number(bondAmount) > (liquidity.balance || 0)) {
 			toast.error("Invalid Amount");
 			return;
@@ -172,7 +173,7 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 	};
 
 	const handleClickUnBond = async () => {
-		if (isPendingAction || !unbondAmount) return;
+		if (isPendingAction || !unbondAmount || !liquidity.stakingAddress) return;
 		if (Number(unbondAmount) > (liquidity.bonded || 0)) {
 			toast.error("Invalid Amount");
 			return;
@@ -195,7 +196,8 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 	};
 
 	const handleClickRedeem = async () => {
-		if (isPendingRedeem || !isAvailableRedeem) return;
+		if (isPendingRedeem || !isAvailableRedeem || !liquidity.stakingAddress)
+			return;
 		setIsPendingRedeem(true);
 		try {
 			await runExecute(liquidity.stakingAddress, {

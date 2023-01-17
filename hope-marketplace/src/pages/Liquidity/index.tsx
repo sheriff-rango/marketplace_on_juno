@@ -48,6 +48,7 @@ const Liquidity: React.FC = () => {
 	const [addingPool, setAddingPool] = useState<TPool | undefined>();
 
 	const [modalType, setModalType] = useState<ModalType>(ModalType.ADD);
+	const [selectedTab, setSelectedTab] = useState<string>(PoolType.ALL);
 	const account = useAppSelector((state) => state.accounts.keplrAccount);
 	const liquidities = useAppSelector((state) => state.liquidities);
 	// const { connect: connectWithCosmodal } = useCosmodal();
@@ -221,14 +222,19 @@ const Liquidity: React.FC = () => {
 						All Pools
 					</Text>
 					<Table<TPool>
-						data={liquidities}
+						data={liquidities.filter(
+							(liquidity) =>
+								selectedTab === PoolType.ALL || !!liquidity.stakingAddress
+						)}
 						columns={Columns}
 						option={{
 							emptyString: "No Liquidities",
 							tab: {
+								defaultSelected: PoolType.ALL as string,
 								tabs: (
 									Object.keys(PoolType) as Array<keyof typeof PoolType>
 								).map((key) => PoolType[key]),
+								onClick: (tab) => setSelectedTab(tab),
 							},
 							search: {
 								onChange: (searchValue, liquidities) =>

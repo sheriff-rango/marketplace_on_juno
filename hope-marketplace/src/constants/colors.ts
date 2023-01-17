@@ -19,5 +19,7 @@ export const LineColors = {
 	[TokenType.PUNK]: "#27aeef",
 	[TokenType.HUAHUA]: "#b33dc6",
 	[TokenType.CANLAB]: "#ea5545",
+	[TokenType.RED]: "#f46a9b",
+	[TokenType.BLUE]: "#ef9b20",
 	Others: "#ede15b",
 };
