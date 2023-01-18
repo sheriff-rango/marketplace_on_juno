@@ -13,6 +13,7 @@ export enum TokenType {
 	CANLAB = "canlab",
 	RED = "red",
 	BLUE = "blue",
+	WYND = "wynd",
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
@@ -33,6 +34,7 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.CANLAB]: "CANLAB",
 	[TokenType.RED]: "RED",
 	[TokenType.BLUE]: "BLUE",
+	[TokenType.WYND]: "WYND",
 };
 
 export type TokenStatusType = {
@@ -126,6 +128,13 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		chain: ChainTypes.JUNO,
 		contractAddress:
 			"juno14q8kk464fafql2fwmlsgvgcdl6h2csqpzv4hr025fmcvgjahpess32k0j7",
+	},
+	[TokenType.WYND]: {
+		isNativeCoin: false,
+		isIBCCoin: false,
+		chain: ChainTypes.JUNO,
+		contractAddress:
+			"juno1mkw83sv6c7sjdvsaplrzc8yaes9l42p4mhy0ssuxjnyzl87c9eps7ce3m9",
 	},
 };
 

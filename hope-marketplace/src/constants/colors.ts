@@ -21,5 +21,6 @@ export const LineColors = {
 	[TokenType.CANLAB]: "#ea5545",
 	[TokenType.RED]: "#f46a9b",
 	[TokenType.BLUE]: "#ef9b20",
+	[TokenType.WYND]: "#edbf33",
 	Others: "#ede15b",
 };

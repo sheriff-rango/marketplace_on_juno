@@ -98,6 +98,12 @@ export const Liquidities: TLiquidity[] = [
 		contractAddress:
 			"juno1u75a3r5ysfmtucngmy0s5t3j0vdl0n0qu5vhtc9sj5vclfpf96qsecp6sd",
 	},
+	{
+		tokenA: TokenType.HOPERS,
+		tokenB: TokenType.WYND,
+		contractAddress:
+			"juno1hmt7nw863s2alr5efnnj8tmxprdlvzcepna4htaujq74zgmm25ksyl9u4h",
+	},
 ];
 
 export const getLiquiditiesByTokens = (
