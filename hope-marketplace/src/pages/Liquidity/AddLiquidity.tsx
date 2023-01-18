@@ -283,6 +283,7 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 								...provided,
 								margin: "5px 10px",
 								minWidth: 100,
+								width: "100%",
 								border: "1px solid black",
 								borderRadius: "15px",
 								background: "rgba(2, 226, 150, 0.15)",
@@ -298,7 +299,8 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 								border: "1px solid black",
 								borderRadius: "15px",
 								boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
-								overflow: "hidden",
+								overflow: "auto",
+								maxHeight: "40vh",
 								zIndex: 10,
 							}),
 						}}
