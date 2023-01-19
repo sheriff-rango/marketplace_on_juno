@@ -68,6 +68,11 @@ import {
 import { CosmostationWalletContext } from "../../context/Wallet";
 import Text from "../Text";
 import HeaderBanner from "../HeaderBanner";
+import {
+	DiscordLink,
+	MediumLink,
+	TwitterLink,
+} from "../../constants/SocialLinks";
 // import { useCosmodal } from "../../features/accounts/useCosmodal";
 
 const HeaderLinks = [
@@ -136,14 +141,14 @@ const HeaderLinks = [
 ];
 
 const SocialIcons = [
-	{ Icon: MediumIcon, link: "https://hopegalaxy.medium.com/" },
+	{ Icon: MediumIcon, link: MediumLink },
 	{
 		Icon: TwitterIcon,
-		link: "https://twitter.com/Hopers_io",
+		link: TwitterLink,
 	},
 	{
 		Icon: DiscordIcon,
-		link: "https://discord.com/invite/BfKPacc5jF",
+		link: DiscordLink,
 	},
 ];
 
