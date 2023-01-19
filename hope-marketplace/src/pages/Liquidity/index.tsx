@@ -39,6 +39,7 @@ import AddLiquidity from "./AddLiquidity";
 import { ModalType, PoolType } from "./type";
 import CreateLiquidity from "./CreateLiquidity";
 import RemoveLiquidity from "./RemoveLiquidity";
+import LiquidityTableDetailRow from "./LiquidityTableDetailRow";
 
 const Liquidity: React.FC = () => {
 	// const [showTokenListModal, setShowTokenListModal] = useState(false);
@@ -227,6 +228,13 @@ const Liquidity: React.FC = () => {
 								selectedTab === PoolType.ALL || !!liquidity.stakingAddress
 						)}
 						columns={Columns}
+						defaultExpanded={(rowData) => rowData.id === 1}
+						renderDetailRow={(rowData) => (
+							<LiquidityTableDetailRow
+								rowData={rowData}
+								onClickAddLiquidity={handleClickPlusButton}
+							/>
+						)}
 						option={{
 							emptyString: "No Liquidities",
 							tab: {

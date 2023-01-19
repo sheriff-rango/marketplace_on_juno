@@ -60,6 +60,8 @@ export const SwapAreaFooter = styled.div`
 	background-color: rgba(2, 226, 150, 0.12);
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 	font-weight: bold;
+	border-bottom-left-radius: 15px;
+	border-bottom-right-radius: 15px;
 `;
 
 const collapseAnimation = keyframes`

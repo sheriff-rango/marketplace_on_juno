@@ -329,3 +329,32 @@ export const RemoveAmountAutoInput = styled(Text)<{ checked: boolean }>`
 	background-color: ${({ checked }) =>
 		checked ? "#02e296" : "rgba(2, 226, 150, 0.15)"};
 `;
+
+export const DetailRowBlock = styled.div`
+	border: 1px solid #02e296;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	border-radius: 10px;
+	padding: 20px;
+	height: 100%;
+`;
+
+export const StyledButton = styled(Button)<{ order: number }>`
+	position: relative;
+	width: 165px;
+	height: 40px;
+	background-color: rgba(2, 226, 150, 0.12);
+	border: 1px solid #787878;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	border-radius: 10px;
+	color: black;
+	margin: auto;
+	font-size: 16px;
+	text-align: center;
+	&:before {
+		content: "${({ order }) => order})";
+		position: absolute;
+		left: 5px;
+		top: 50%:
+		transform: translateY(-50%);
+	}
+`;

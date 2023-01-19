@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
 import ExploreHeader from "../../components/ExploreHeader";
 import PageWrapper from "../../components/PageWrapper";
@@ -17,6 +18,9 @@ import BondTableDetailRow from "./BondTableDetailRow";
 
 const Bond: React.FC = () => {
 	const liquidities = useAppSelector((state) => state.liquidities);
+	const { search } = useLocation();
+	const poolId = new URLSearchParams(search).get("poolId");
+
 	const Columns: TColumns<TPool>[] = [
 		{
 			name: "",
@@ -104,9 +108,12 @@ const Bond: React.FC = () => {
 				<Table<TPool>
 					data={liquidities.filter((liquidity) => !!liquidity.stakingAddress)}
 					columns={Columns}
-					defaultExpanded={(rowData) => rowData.id === 1}
+					defaultExpanded={(rowData) => rowData.id === Number(poolId || 1)}
 					renderDetailRow={(rowData) => (
-						<BondTableDetailRow rowData={rowData} />
+						<BondTableDetailRow
+							rowData={rowData}
+							focus={rowData.id === Number(poolId)}
+						/>
 					)}
 					option={{
 						emptyString: "No Liquidities",

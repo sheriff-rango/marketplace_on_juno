@@ -619,8 +619,11 @@ const useFetch = () => {
 					for (let index = 0; index < configs.length; index++) {
 						let config = configs[index];
 						const liquidityIndex = stakingQueryIndice[index];
+						const distributionEnd =
+							config?.distribution_schedule?.[0]?.[1] || 0;
 						liquidities[liquidityIndex].config = {
 							lockDuration: (config?.lock_duration || 0) * 1e3,
+							distributionEnd: distributionEnd * 1e3,
 						};
 
 						let totalSupplyInPresale =
