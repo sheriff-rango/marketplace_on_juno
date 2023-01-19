@@ -35,7 +35,7 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 		chainId: "juno-1",
 		// rpcEndpoint: "https://rpc.juno.strange.love/",
 		// rpcEndpoint: "https://rpc-juno.itastakers.com/",
-		rpcEndpoint: "http://juno-rpc.reece.sh/",
+		rpcEndpoint: "https://juno-rpc.reece.sh/",
 		restEndpoint: "https://lcd-juno.strange.love/",
 		faucetEndpoint: "",
 		addressPrefix: "juno",
