@@ -95,6 +95,12 @@ const HeaderLinks = [
 		],
 	},
 	{
+		title: "Earn",
+		url: "/bond",
+		selectedUrl: ["/bond", "/stake", "/airdrop"],
+		icon: EarnIcon,
+	},
+	{
 		title: "NFT",
 		url: "/collections/explore",
 		icon: NFTMenuIcon,
@@ -116,12 +122,6 @@ const HeaderLinks = [
 				icon: ActivityMenuIcon,
 			},
 		],
-	},
-	{
-		title: "Earn",
-		url: "/bond",
-		selectedUrl: ["/bond", "/stake", "/airdrop"],
-		icon: EarnIcon,
 	},
 	{
 		isDivider: true,
