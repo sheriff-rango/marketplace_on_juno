@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import Advertise, { Advertise1 } from "../../components/Advertise";
 import Text from "../../components/Text";
@@ -28,7 +28,8 @@ import {
 	CollectionStateType,
 	TotalStateType,
 } from "../../features/collections/collectionsSlice";
-import { addSuffix, convertStringToNumber } from "../../util/string";
+import { addSuffix } from "../../util/string";
+import useDexStatus from "../../hook/useDexStatus";
 
 import {
 	Button,
@@ -44,16 +45,9 @@ import {
 	StyledImg,
 	Wrapper,
 } from "./styled";
-import { getDexStatus } from "../../util/useAxios";
 
 const Home: React.FC = () => {
-	const [dexStatus, setDexStatus] = useState<{
-		txNumber: number;
-		tradingVolume: number;
-	}>({
-		txNumber: 0,
-		tradingVolume: 0,
-	});
+	const dexStatus = useDexStatus();
 	const history = useHistory();
 	const breakpoints = useMatchBreakpoints();
 	const isMobile = breakpoints.isXs || breakpoints.isSm || breakpoints.isMd;
@@ -64,20 +58,6 @@ const Home: React.FC = () => {
 		(state) => state.collectionStates
 	);
 	const liquidities = useAppSelector((state) => state.liquidities);
-
-	useEffect(() => {
-		(async () => {
-			const data = await getDexStatus();
-			const fetchedDexStatus = data[0] || {};
-			const txNumber = convertStringToNumber(fetchedDexStatus.txNumber);
-			const tradingVolume =
-				convertStringToNumber(fetchedDexStatus.tradingVolume) / 1e6;
-			setDexStatus({
-				txNumber,
-				tradingVolume,
-			});
-		})();
-	}, []);
 
 	const totalLiquidity = useMemo(
 		() =>

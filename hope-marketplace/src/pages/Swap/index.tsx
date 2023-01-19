@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { coins } from "@cosmjs/proto-signing";
 import { useAppSelector } from "../../app/hooks";
 import ExploreHeader from "../../components/ExploreHeader";
@@ -6,6 +6,7 @@ import PageWrapper from "../../components/PageWrapper";
 import {
 	DropDownIcon,
 	GearIcon,
+	HopersIcon,
 	SwapTokenIcon,
 } from "../../components/SvgIcons";
 import Text from "../../components/Text";
@@ -21,6 +22,7 @@ import {
 	SlippageSelector,
 	SwapArea,
 	SwapAreaBody,
+	SwapAreaFooter,
 	SwapAreaHeader,
 	SwapButton,
 	SwapItem,
@@ -32,6 +34,9 @@ import useContract from "../../hook/useContract";
 import { toMicroAmount } from "../../util/coins";
 import { ChainConfigs } from "../../constants/ChainTypes";
 import { addSuffix } from "../../util/string";
+import useDexStatus from "../../hook/useDexStatus";
+import Flex from "../../components/Flex";
+import { ThemeContext } from "../../context/ThemeContext";
 
 type TSwapInfo = {
 	from: {
@@ -67,12 +72,19 @@ const Swap: React.FC = () => {
 	});
 	const [slippage, setSlippage] = useState<typeof AvailableSlippage[number]>(2);
 	const validPair = useValidPool(swapInfo.from.token, swapInfo.to.token);
+	const { isDark } = useContext(ThemeContext);
 
 	const balances = useAppSelector((state) => state.balances);
 	const tokenPrices = useAppSelector((state) => state.tokenPrices);
 	const account = useAppSelector((state) => state.accounts.keplrAccount);
+	const hopersPriceState = useAppSelector(
+		(state) => state.tokenPrices[TokenType.HOPERS]
+	);
+
+	const hopersPrice = hopersPriceState?.market_data?.current_price?.usd || 0;
 
 	const { runQuery, createExecuteMessage, getExecuteClient } = useContract();
+	const dexStatus = useDexStatus();
 
 	const displaySwapInfo = useMemo(() => {
 		const fromToken = swapInfo.from.token;
@@ -484,6 +496,24 @@ const Swap: React.FC = () => {
 								isPending ? "Swapping" : "Swap"
 							}`}</SwapButton>
 						</SwapAreaBody>
+						<SwapAreaFooter>
+							<Flex gap="10px" alignItems="center">
+								<HopersIcon />
+								<Text>HOPERS Burned</Text>
+							</Flex>
+							<Flex gap="5px" alignItems="center">
+								<Text flexDirection="column" alignItems="flex-end">
+									<Text>{addSuffix(dexStatus.burningVolume)}</Text>
+									<Text>{`(${addSuffix(
+										dexStatus.burningVolume * hopersPrice
+									)}$)`}</Text>
+								</Text>
+								<img
+									alt="flame_image"
+									src={`/others/flame_${isDark ? "black" : "white"}.png`}
+								/>
+							</Flex>
+						</SwapAreaFooter>
 					</SwapArea>
 				</MainPart>
 				{/* <ChartArea /> */}
