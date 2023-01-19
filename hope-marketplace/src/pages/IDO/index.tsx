@@ -27,8 +27,7 @@ const IDOStatusByFilterType = {
 
 const IDO: React.FC = () => {
 	const [selectedFilterType, setSelectedFilterType] = useState(
-		// FILTER_TYPE.LIVE
-		FILTER_TYPE.ALL
+		FILTER_TYPE.LIVE
 	);
 
 	const [idoStatuses, setIdoStatuses] = useState<IDOStatuses>(
