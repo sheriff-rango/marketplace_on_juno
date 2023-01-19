@@ -18,6 +18,8 @@ import useContract from "../../hook/useContract";
 import { toast } from "react-toastify";
 import useRefresh from "../../hook/useRefresh";
 import ManageBondModal from "../../components/ManageBonModal";
+import { useKeplr } from "../../features/accounts/useKeplr";
+import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
 
 const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 	rowData,
@@ -36,6 +38,7 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 	const { runExecute } = useContract();
 	const { refresh } = useRefresh();
 	const history = useHistory();
+	const { suggestToken } = useKeplr();
 
 	useEffect(() => {
 		if (wrapperElement && focus) {
@@ -133,6 +136,17 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 						}
 					>
 						See Pair Info <ExternalLinkIcon />
+					</Text>
+					<Text
+						color="black"
+						gap="5px 30px"
+						alignItems="center"
+						cursor="pointer"
+						onClick={() =>
+							suggestToken(ChainConfigs[ChainTypes.JUNO], rowData.lpAddress)
+						}
+					>
+						Add Token <img alt="" src="/others/keplr.png" />
 					</Text>
 				</Flex>
 				<DetailRowBlock>
