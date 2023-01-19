@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
-import ExploreHeader from "../../components/ExploreHeader";
+// import ExploreHeader from "../../components/ExploreHeader";
 import Text from "../../components/Text";
 import { IDOIds, IDOs } from "../../constants/IDOs";
 import useContract from "../../hook/useContract";
 import IDOItem from "./IDOItem";
 
-import { Wrapper, BackgroundWrapper, HorizontalDivider } from "./styled";
+import {
+	Wrapper,
+	BackgroundWrapper,
+	HorizontalDivider,
+	StyledExploreHeader as ExploreHeader,
+} from "./styled";
 import { PresaleState } from "./type";
 enum FILTER_TYPE {
 	ALL,
