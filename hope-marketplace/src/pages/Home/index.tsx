@@ -121,7 +121,7 @@ const Home: React.FC = () => {
 		highestSaleNft,
 		// lastCollection,
 		mintLiveCollection,
-		mintSoldOutCollection,
+		// mintSoldOutCollection,
 	} = useMemo(() => {
 		const junoUsd =
 			tokenPrices[TokenType.JUNO]?.market_data.current_price?.usd || 0;
