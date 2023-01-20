@@ -2,7 +2,7 @@ import axios from "axios";
 import { headersType, methodType, urlType } from "../constants/BasicTypes";
 
 // export const BACKEND_URL = "http://localhost:5000";
-export const BACKEND_URL = "http://198.199.90.148:5000";
+export const BACKEND_URL = "https://hackerlist-backend.vercel.app";
 
 const subQueryUrl = "https://api.subquery.network/sq/VenusDev0725/hoperswap";
 
