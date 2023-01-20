@@ -6,12 +6,16 @@ import { ExternalLinkIcon } from "../../components/SvgIcons";
 import { TPool } from "../../types/pools";
 
 import { DetailRowBlock, StyledButton as Button } from "./styled";
+import { useKeplr } from "../../features/accounts/useKeplr";
+import { TokenStatus } from "../../types/tokens";
+import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
 
 const LiquidityTableDetailRow: React.FC<{
 	rowData: TPool;
 	onClickAddLiquidity: (pool: TPool) => void;
 }> = ({ rowData, onClickAddLiquidity }) => {
 	const history = useHistory();
+	const { suggestToken } = useKeplr();
 
 	const distributionEnd = useMemo(() => {
 		const now = Number(new Date());
@@ -22,6 +26,8 @@ const LiquidityTableDetailRow: React.FC<{
 			)
 		);
 	}, [rowData.config?.distributionEnd]);
+
+	const token2Address = TokenStatus[rowData.token2].contractAddress;
 
 	return (
 		<>
@@ -47,6 +53,26 @@ const LiquidityTableDetailRow: React.FC<{
 						}
 					>
 						View Contract <ExternalLinkIcon />
+					</Text>
+					<Text
+						color="black"
+						gap="5px 30px"
+						alignItems="center"
+						cursor="pointer"
+						onClick={async () => {
+							if (token2Address)
+								await suggestToken(
+									ChainConfigs[ChainTypes.JUNO],
+									token2Address
+								);
+							if (rowData.lpAddress)
+								await suggestToken(
+									ChainConfigs[ChainTypes.JUNO],
+									rowData.lpAddress
+								);
+						}}
+					>
+						Add Token <img alt="" src="/others/keplr.png" />
 					</Text>
 				</Flex>
 				<DetailRowBlock>
