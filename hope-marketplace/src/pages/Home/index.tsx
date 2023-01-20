@@ -16,7 +16,7 @@ import {
 	TelegramLink,
 	TwitterLink,
 } from "../../constants/SocialLinks";
-import Flex from "../../components/Flex";
+// import Flex from "../../components/Flex";
 import { getCustomTokenId, getTokenIdNumber } from "../../hook/useFetch";
 import Collections, {
 	MarketplaceInfo,
@@ -29,13 +29,13 @@ import {
 	TotalStateType,
 } from "../../features/collections/collectionsSlice";
 import { addSuffix } from "../../util/string";
-import useDexStatus from "../../hook/useDexStatus";
+// import useDexStatus from "../../hook/useDexStatus";
 
 import {
 	Button,
 	ButtonContainer,
-	CoinIcon,
-	DexStatusItem,
+	// CoinIcon,
+	// DexStatusItem,
 	HorizontalDivider,
 	Panel,
 	PartnersContainer,
@@ -47,7 +47,7 @@ import {
 } from "./styled";
 
 const Home: React.FC = () => {
-	const dexStatus = useDexStatus();
+	// const dexStatus = useDexStatus();
 	const history = useHistory();
 	const breakpoints = useMatchBreakpoints();
 	const isMobile = breakpoints.isXs || breakpoints.isSm || breakpoints.isMd;
@@ -57,16 +57,16 @@ const Home: React.FC = () => {
 	const collectionStates: TotalStateType = useAppSelector(
 		(state) => state.collectionStates
 	);
-	const liquidities = useAppSelector((state) => state.liquidities);
+	// const liquidities = useAppSelector((state) => state.liquidities);
 
-	const totalLiquidity = useMemo(
-		() =>
-			liquidities.reduce(
-				(result: number, liquidity) => result + (liquidity.pool || 0),
-				0
-			),
-		[liquidities]
-	);
+	// const totalLiquidity = useMemo(
+	// 	() =>
+	// 		liquidities.reduce(
+	// 			(result: number, liquidity) => result + (liquidity.pool || 0),
+	// 			0
+	// 		),
+	// 	[liquidities]
+	// );
 
 	const fontSizes = useMemo(() => {
 		const { isXs, isSm } = breakpoints;
@@ -97,7 +97,7 @@ const Home: React.FC = () => {
 	const {
 		tradesVolume,
 		totalItemsOnSale,
-		highestTradesCollection,
+		// highestTradesCollection,
 		highestSaleNft,
 		// lastCollection,
 		mintLiveCollection,
@@ -288,7 +288,7 @@ const Home: React.FC = () => {
 					<TelegramIcon onClick={() => window.open(TelegramLink)} />
 				</ButtonContainer>
 			</Panel>
-			<Flex width="100%" justifyContent="space-evenly" gap="10px">
+			{/* <Flex width="100%" justifyContent="space-evenly" gap="10px">
 				<DexStatusItem>
 					<span>Executed transaction</span>
 					<span>{addSuffix(dexStatus.txNumber)}</span>
@@ -301,7 +301,7 @@ const Home: React.FC = () => {
 					<span>Total Liquidity</span>
 					<span>{addSuffix(totalLiquidity)}</span>
 				</DexStatusItem>
-			</Flex>
+			</Flex> */}
 			<Panel fill background="/others/home_background_01.png">
 				<StyledImg
 					src="/others/home_background_05.png"
@@ -406,7 +406,7 @@ const Home: React.FC = () => {
 			</Panel>
 			<HorizontalDivider />
 			<StatisticContainer>
-				<StatisticItem>
+				{/* <StatisticItem>
 					<StatisticContent>Top Volume 30D</StatisticContent>
 					<StatisticContent
 						bold
@@ -428,7 +428,7 @@ const Home: React.FC = () => {
 							</Text>
 						</Flex>
 					</StatisticContent>
-				</StatisticItem>
+				</StatisticItem> */}
 				<StatisticItem>
 					<StatisticContent>New Mint</StatisticContent>
 					<StatisticContent
