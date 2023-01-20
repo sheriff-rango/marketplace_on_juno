@@ -37,7 +37,6 @@ const useIDOStatus = (id: IDOIds) => {
 			const saleQueryResult = data?.idoSaleInfo?.find(
 				(item: any) => item.contractAddress === contractAddress
 			);
-			console.log("debug", stateQueryResult, saleQueryResult);
 			setFetchResult({
 				stateInfo: stateQueryResult || {},
 				// stateInfo: tempIdoContractInfo || {},

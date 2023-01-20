@@ -5,11 +5,7 @@ import NFTAdvertise from "../../components/NFTAdvertise";
 // import CollapseCard from "../../components/CollapseCard";
 import NFTContainer from "../../components/NFTContainer";
 import { NFTItemStatus } from "../../components/NFTItem";
-import {
-	getCollectionById,
-	CollectionIds,
-	MarketplaceContracts,
-} from "../../constants/Collections";
+import { getCollectionById, CollectionIds } from "../../constants/Collections";
 import { getCustomTokenId } from "../../hook/useFetch";
 import useMatchBreakpoints from "../../hook/useMatchBreakpoints";
 import ActivityList from "../../components/ActivityList";
@@ -30,15 +26,13 @@ import {
 	// NftListTitle,
 } from "./styled";
 import { FilterOptions, MarketplaceTabs } from "./types";
-import useContract from "../../hook/useContract";
 import moment from "moment";
 import { TokenStatus, TokenType } from "../../types/tokens";
 import Text from "../../components/Text";
 import AcceptCollectionBidTooltip from "../../components/AcceptCollectionBidTooltip";
 import useHandleNftItem from "../../hook/useHandleNftItem";
 import useRefresh from "../../hook/useRefresh";
-
-const MAX_ITEM = 30;
+import getQuery, { BACKEND_URL } from "../../util/useAxios";
 
 const Marketplace: React.FC = () => {
 	const [collectionOffers, setCollectionOffers] = useState([]);
@@ -50,7 +44,6 @@ const Marketplace: React.FC = () => {
 	);
 	const [filterOption, setFilterOption] = useState<FilterOptions>();
 	const { isXs, isSm, isMd } = useMatchBreakpoints();
-	const { runQuery } = useContract();
 	const { nftRefresh } = useRefresh();
 	const { withdrawBid } = useHandleNftItem();
 	const { search } = useLocation();
@@ -67,25 +60,13 @@ const Marketplace: React.FC = () => {
 
 	useEffect(() => {
 		(async () => {
-			let offers: any = [];
-			const fetchCollectionBids = async (startAfter?: any) => {
-				const fetchedBidsResult = await runQuery(MarketplaceContracts[0], {
-					collection_bid_by_collection: {
-						collection: targetCollection.nftContract,
-						start_after: startAfter,
-						limit: MAX_ITEM,
-					},
-				});
-				const fetchedBids = fetchedBidsResult?.bids || [];
-				offers = offers.concat(fetchedBids);
-				if (fetchedBids.length === MAX_ITEM) {
-					await fetchCollectionBids(fetchedBids[MAX_ITEM - 1].bidder);
-				}
-			};
-			await fetchCollectionBids();
-			setCollectionOffers(offers);
+			const collectionId = targetCollection.collectionId;
+			const data = await getQuery({
+				url: `${BACKEND_URL}/collection-bids?collectionIds=${collectionId}`,
+			});
+			setCollectionOffers(data[collectionId]);
 		})();
-	}, [runQuery, targetCollection, nftRefresh]);
+	}, [targetCollection, nftRefresh]);
 
 	const marketplaceNFTs = useAppSelector((state) => {
 		// console.log("debug nfts", state.nfts);
