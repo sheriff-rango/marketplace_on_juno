@@ -139,15 +139,24 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 					>
 						See Pair Info <ExternalLinkIcon />
 					</Text>
-					{token2Address && (
+					{(token2Address || rowData.lpAddress) && (
 						<Text
 							color="black"
 							gap="5px 30px"
 							alignItems="center"
 							cursor="pointer"
-							onClick={() =>
-								suggestToken(ChainConfigs[ChainTypes.JUNO], token2Address)
-							}
+							onClick={async () => {
+								if (token2Address)
+									await suggestToken(
+										ChainConfigs[ChainTypes.JUNO],
+										token2Address
+									);
+								if (rowData.lpAddress)
+									await suggestToken(
+										ChainConfigs[ChainTypes.JUNO],
+										rowData.lpAddress
+									);
+							}}
 						>
 							Add Token <img alt="" src="/others/keplr.png" />
 						</Text>
