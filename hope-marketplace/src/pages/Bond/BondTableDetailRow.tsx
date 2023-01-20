@@ -6,7 +6,7 @@ import Flex from "../../components/Flex";
 import { ExternalLinkIcon } from "../../components/SvgIcons";
 import Text from "../../components/Text";
 import { TPool } from "../../types/pools";
-import { getTokenName } from "../../types/tokens";
+import { TokenStatus, getTokenName } from "../../types/tokens";
 import { DetailRowBlock, StyledButton as Button } from "./styled";
 import { CosmostationWalletContext } from "../../context/Wallet";
 import {
@@ -88,6 +88,8 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 		}
 	};
 
+	const token2Address = TokenStatus[rowData.token2].contractAddress;
+
 	return (
 		<div ref={(node) => setWrapperElement(node)} key={rowData.id}>
 			<Flex
@@ -137,17 +139,19 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 					>
 						See Pair Info <ExternalLinkIcon />
 					</Text>
-					<Text
-						color="black"
-						gap="5px 30px"
-						alignItems="center"
-						cursor="pointer"
-						onClick={() =>
-							suggestToken(ChainConfigs[ChainTypes.JUNO], rowData.lpAddress)
-						}
-					>
-						Add Token <img alt="" src="/others/keplr.png" />
-					</Text>
+					{token2Address && (
+						<Text
+							color="black"
+							gap="5px 30px"
+							alignItems="center"
+							cursor="pointer"
+							onClick={() =>
+								suggestToken(ChainConfigs[ChainTypes.JUNO], token2Address)
+							}
+						>
+							Add Token <img alt="" src="/others/keplr.png" />
+						</Text>
+					)}
 				</Flex>
 				<DetailRowBlock>
 					<Flex
