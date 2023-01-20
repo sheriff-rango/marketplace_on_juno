@@ -2,6 +2,7 @@ import { TokenType } from "./tokens";
 
 type TPoolConfig = {
 	lockDuration: number;
+	distributionEnd?: number;
 };
 
 export type TPool = {

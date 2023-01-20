@@ -1,10 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import useRefresh from "../hook/useRefresh";
 import { useAppSelector } from "../app/hooks";
 import useFetch from "../hook/useFetch";
+import getQuery, { BACKEND_URL } from "../util/useAxios";
 
 export default function Updater(): null {
+	const [basicData, setBasicData] = useState<any>({});
 	const {
 		nftRefresh,
 		// priceRefresh,
@@ -14,20 +16,28 @@ export default function Updater(): null {
 		useFetch();
 
 	useEffect(() => {
+		(async () => {
+			const data = await getQuery({
+				url: `${BACKEND_URL}/cache?fields=collectionInfo,collectionTraits,marketplaceNFTs,liquiditiesInfo`,
+			});
+			setBasicData(data || {});
+		})();
+	}, [nftRefresh]);
+
+	useEffect(() => {
 		fetchOtherTokenPrice();
 	}, [fetchOtherTokenPrice, nftRefresh]);
 
 	useEffect(() => {
-		fetchLiquidities(account);
-	}, [account, fetchLiquidities, nftRefresh]);
+		fetchLiquidities(account, basicData.liquiditiesInfo);
+	}, [account, basicData.liquiditiesInfo, fetchLiquidities, nftRefresh]);
 
 	useEffect(() => {
-		fetchAllNFTs(account);
+		fetchAllNFTs(account, basicData);
 		if (!account) {
 			clearAllNFTs();
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [nftRefresh, account]);
+	}, [nftRefresh, account, basicData, fetchAllNFTs, clearAllNFTs]);
 
 	return null;
 }
