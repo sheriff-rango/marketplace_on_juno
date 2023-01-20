@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
-import ExploreHeader from "../../components/ExploreHeader";
+// import ExploreHeader from "../../components/ExploreHeader";
 import Text from "../../components/Text";
 import { IDOIds, IDOs } from "../../constants/IDOs";
 import IDOItem from "./IDOItem";
 
-import { Wrapper, BackgroundWrapper, HorizontalDivider } from "./styled";
+import {
+	Wrapper,
+	BackgroundWrapper,
+	HorizontalDivider,
+	StyledExploreHeader as ExploreHeader,
+} from "./styled";
 import { PresaleState } from "./type";
 import getQuery, { BACKEND_URL } from "../../util/useAxios";
 enum FILTER_TYPE {
@@ -27,8 +32,7 @@ const IDOStatusByFilterType = {
 
 const IDO: React.FC = () => {
 	const [selectedFilterType, setSelectedFilterType] = useState(
-		// FILTER_TYPE.LIVE
-		FILTER_TYPE.ALL
+		FILTER_TYPE.LIVE
 	);
 
 	const [idoStatuses, setIdoStatuses] = useState<IDOStatuses>(

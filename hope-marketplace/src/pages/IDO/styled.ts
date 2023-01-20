@@ -1,9 +1,15 @@
 import styled, { css } from "styled-components";
 import Text from "../../components/Text";
+import ExploreHeader from "../../components/ExploreHeader";
 
 export const Wrapper = styled.div`
 	height: 100%;
 `;
+
+export const StyledExploreHeader = styled(ExploreHeader)`
+	padding: 0 5%;
+`;
+
 export const BackgroundWrapper = styled.div`
 	padding: 10px 5%;
 

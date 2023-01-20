@@ -3,6 +3,8 @@ import { headersType, methodType, urlType } from "../constants/BasicTypes";
 
 export const BACKEND_URL = "http://localhost:5000";
 
+const subQueryUrl = "https://api.subquery.network/sq/VenusDev0725/hoperswap";
+
 const fetch = ({
 	method,
 	url,
@@ -45,3 +47,31 @@ const getQuery = async ({
 };
 
 export default getQuery;
+
+export const getDexStatus = async () => {
+	try {
+		// const { data } = await axios.get(
+		//     `${backendBaseUrl}/api/nfts/get_new_nft`
+		// );
+		const query = `query {
+      tradingVolumeEntities  {
+        nodes {
+          id
+          tradingVolume
+          burningVolume
+          txNumber
+        }
+      }
+    }`;
+		const {
+			data: {
+				data: {
+					tradingVolumeEntities: { nodes },
+				},
+			},
+		} = await axios.post(subQueryUrl, { query });
+		return nodes;
+	} catch (err) {
+		return [];
+	}
+};

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useWalletManager } from "@noahsaso/cosmodal";
 import { useAppSelector } from "../../app/hooks";
@@ -18,8 +18,16 @@ import useContract from "../../hook/useContract";
 import { toast } from "react-toastify";
 import useRefresh from "../../hook/useRefresh";
 import ManageBondModal from "../../components/ManageBonModal";
+import { useKeplr } from "../../features/accounts/useKeplr";
+import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
 
-const BondTableDetailRow: React.FC<{ rowData: TPool }> = ({ rowData }) => {
+const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
+	rowData,
+	focus,
+}) => {
+	const [wrapperElement, setWrapperElement] = useState<HTMLDivElement | null>(
+		null
+	);
 	const [isPendingClaim, setIsPendingClaim] = useState(false);
 	const [isOpenManageBondModal, setIsOpenManageBondModal] = useState(false);
 	const account = useAppSelector((state) => state.accounts.keplrAccount);
@@ -30,6 +38,18 @@ const BondTableDetailRow: React.FC<{ rowData: TPool }> = ({ rowData }) => {
 	const { runExecute } = useContract();
 	const { refresh } = useRefresh();
 	const history = useHistory();
+	const { suggestToken } = useKeplr();
+
+	useEffect(() => {
+		if (wrapperElement && focus) {
+			const headerElement = document.getElementById("header");
+			const headerHeight = headerElement?.clientHeight || 0;
+			// wrapperElement.style.scrollMargin = `${headerHeight}px`;
+			wrapperElement.style.cssText = `scroll-margin-top: ${headerHeight}px`;
+			wrapperElement.scrollIntoView({ behavior: "smooth" });
+			// window.scrollTo(0, 0);
+		}
+	}, [focus, wrapperElement]);
 
 	const handleClickConnectWalletButton = () => {
 		const ConnectedWalletType = localStorage.getItem(
@@ -69,9 +89,8 @@ const BondTableDetailRow: React.FC<{ rowData: TPool }> = ({ rowData }) => {
 	};
 
 	return (
-		<>
+		<div ref={(node) => setWrapperElement(node)} key={rowData.id}>
 			<Flex
-				key={rowData.id}
 				alignItems="center"
 				justifyContent="space-between"
 				gap="10px"
@@ -117,6 +136,17 @@ const BondTableDetailRow: React.FC<{ rowData: TPool }> = ({ rowData }) => {
 						}
 					>
 						See Pair Info <ExternalLinkIcon />
+					</Text>
+					<Text
+						color="black"
+						gap="5px 30px"
+						alignItems="center"
+						cursor="pointer"
+						onClick={() =>
+							suggestToken(ChainConfigs[ChainTypes.JUNO], rowData.lpAddress)
+						}
+					>
+						Add Token <img alt="" src="/others/keplr.png" />
 					</Text>
 				</Flex>
 				<DetailRowBlock>
@@ -200,7 +230,7 @@ const BondTableDetailRow: React.FC<{ rowData: TPool }> = ({ rowData }) => {
 				onClose={() => setIsOpenManageBondModal(false)}
 				liquidity={rowData}
 			/>
-		</>
+		</div>
 	);
 };
 
