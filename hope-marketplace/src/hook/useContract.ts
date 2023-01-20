@@ -1,5 +1,4 @@
 import {
-	CosmWasmClient,
 	SigningCosmWasmClient,
 	MsgExecuteContractEncodeObject,
 } from "@cosmjs/cosmwasm-stargate";
@@ -30,28 +29,13 @@ import { useSelector } from "react-redux";
 import { toMicroAmount } from "../util/coins";
 import { TokenStatus, TokenType } from "../types/tokens";
 import { ChainConfigs, ChainTypes } from "../constants/ChainTypes";
-import { CosmostationWalletContext } from "../context/Wallet";
+import { CosmostationWalletContext, getQueryClient } from "../context/Wallet";
 
 type CreateExecuteMessageArgs = {
 	senderAddress: string;
 	message: Record<string, Record<string, string>>;
 	contractAddress: string;
 	funds?: Array<Coin>;
-};
-
-const getQueryClient = async (
-	config: {
-		[key: string]: string;
-	},
-	forceRefresh = false
-): Promise<CosmWasmClient> => {
-	const rpcEndpoint: string = config["rpcEndpoint"];
-	const queryingClientConnection = {
-		client: await CosmWasmClient.connect(rpcEndpoint),
-		rpcEndpoint,
-	};
-
-	return queryingClientConnection.client;
 };
 
 export const getOfflineSigner = async (chainId: string) => {

@@ -6,7 +6,10 @@ import {
 	getChainInfo,
 } from "@noahsaso/cosmodal";
 import { cosmos } from "@cosmostation/extension-client";
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
+import {
+	CosmWasmClient,
+	SigningCosmWasmClient,
+} from "@cosmjs/cosmwasm-stargate";
 import { coin, OfflineSigner } from "@cosmjs/proto-signing";
 import { ChainConfigs, ChainTypes } from "../constants/ChainTypes";
 import {
@@ -135,7 +138,6 @@ export const WalletProvider = ({ children }: { children: any }) => {
 						rpc: config.rpcEndpoint,
 						rest: config.restEndpoint,
 					};
-					console.log("debug get chain info", result);
 					return [result];
 				}}
 				// chainInfoOverrides={[
@@ -150,4 +152,20 @@ export const WalletProvider = ({ children }: { children: any }) => {
 			</WalletManagerProvider>
 		</CosmostationWalletContext.Provider>
 	);
+};
+
+let queryClient: CosmWasmClient | null = null;
+
+export const getQueryClient = async (
+	config: {
+		[key: string]: string;
+	},
+	forceRefresh = false
+): Promise<CosmWasmClient> => {
+	if (queryClient) return queryClient
+	const rpcEndpoint: string = config["rpcEndpoint"];
+	const client = await CosmWasmClient.connect(rpcEndpoint);
+	queryClient = client;
+
+	return client;
 };
