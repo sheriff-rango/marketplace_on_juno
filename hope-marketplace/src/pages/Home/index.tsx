@@ -17,18 +17,18 @@ import {
 	TwitterLink,
 } from "../../constants/SocialLinks";
 // import Flex from "../../components/Flex";
-import { getCustomTokenId, getTokenIdNumber } from "../../hook/useFetch";
-import Collections, {
-	MarketplaceInfo,
-	getCollectionById,
-} from "../../constants/Collections";
-import { useAppSelector } from "../../app/hooks";
-import { TokenStatus, TokenType } from "../../types/tokens";
-import {
-	CollectionStateType,
-	TotalStateType,
-} from "../../features/collections/collectionsSlice";
-import { addSuffix } from "../../util/string";
+// import { getCustomTokenId, getTokenIdNumber } from "../../hook/useFetch";
+// import Collections, {
+// 	MarketplaceInfo,
+// 	getCollectionById,
+// } from "../../constants/Collections";
+// import { useAppSelector } from "../../app/hooks";
+// import { TokenStatus, TokenType } from "../../types/tokens";
+// import {
+// 	CollectionStateType,
+// 	TotalStateType,
+// } from "../../features/collections/collectionsSlice";
+// import { addSuffix } from "../../util/string";
 // import useDexStatus from "../../hook/useDexStatus";
 
 import {
@@ -39,9 +39,9 @@ import {
 	HorizontalDivider,
 	Panel,
 	PartnersContainer,
-	StatisticContainer,
-	StatisticContent,
-	StatisticItem,
+	// StatisticContainer,
+	// StatisticContent,
+	// StatisticItem,
 	StyledImg,
 	Wrapper,
 } from "./styled";
@@ -52,11 +52,11 @@ const Home: React.FC = () => {
 	const breakpoints = useMatchBreakpoints();
 	const isMobile = breakpoints.isXs || breakpoints.isSm || breakpoints.isMd;
 
-	const tokenPrices = useAppSelector((state) => state.tokenPrices);
-	const totalMarketplaceNFTs: any = useAppSelector((state) => state.nfts);
-	const collectionStates: TotalStateType = useAppSelector(
-		(state) => state.collectionStates
-	);
+	// const tokenPrices = useAppSelector((state) => state.tokenPrices);
+	// const totalMarketplaceNFTs: any = useAppSelector((state) => state.nfts);
+	// const collectionStates: TotalStateType = useAppSelector(
+	// 	(state) => state.collectionStates
+	// );
 	// const liquidities = useAppSelector((state) => state.liquidities);
 
 	// const totalLiquidity = useMemo(
@@ -94,148 +94,148 @@ const Home: React.FC = () => {
 		};
 	}, [breakpoints]);
 
-	const {
-		tradesVolume,
-		totalItemsOnSale,
-		// highestTradesCollection,
-		highestSaleNft,
-		// lastCollection,
-		mintLiveCollection,
-		// mintSoldOutCollection,
-	} = useMemo(() => {
-		const junoUsd =
-			tokenPrices[TokenType.JUNO]?.market_data.current_price?.usd || 0;
-		let tradesVolumeResult = 0,
-			highestTradeCollectionResult: {
-				collection: MarketplaceInfo;
-				volume: number;
-			} = {} as { collection: MarketplaceInfo; volume: number },
-			totalItemsOnSaleResult = 0,
-			tradesByNftResult: any = {},
-			mintSoldOutResult: any[] = [],
-			mintLiveResult: any[] = [];
-		Collections.forEach((collection: MarketplaceInfo) => {
-			const crrMarketplaceItems =
-				totalMarketplaceNFTs[`${collection.collectionId}_marketplace`] || [];
-			totalItemsOnSaleResult += crrMarketplaceItems.length;
+	// const {
+	// 	tradesVolume,
+	// 	totalItemsOnSale,
+	// 	// highestTradesCollection,
+	// 	highestSaleNft,
+	// 	// lastCollection,
+	// 	mintLiveCollection,
+	// 	// mintSoldOutCollection,
+	// } = useMemo(() => {
+	// 	const junoUsd =
+	// 		tokenPrices[TokenType.JUNO]?.market_data.current_price?.usd || 0;
+	// 	let tradesVolumeResult = 0,
+	// 		highestTradeCollectionResult: {
+	// 			collection: MarketplaceInfo;
+	// 			volume: number;
+	// 		} = {} as { collection: MarketplaceInfo; volume: number },
+	// 		totalItemsOnSaleResult = 0,
+	// 		tradesByNftResult: any = {},
+	// 		mintSoldOutResult: any[] = [],
+	// 		mintLiveResult: any[] = [];
+	// 	Collections.forEach((collection: MarketplaceInfo) => {
+	// 		const crrMarketplaceItems =
+	// 			totalMarketplaceNFTs[`${collection.collectionId}_marketplace`] || [];
+	// 		totalItemsOnSaleResult += crrMarketplaceItems.length;
 
-			const crrCollectionState: CollectionStateType =
-				collectionStates[collection.collectionId];
-			const saleHistory = crrCollectionState?.saleHistory || [];
-			let crrCollectionTradesVolume = 0;
-			const now = Number(new Date()) / 1000;
+	// 		const crrCollectionState: CollectionStateType =
+	// 			collectionStates[collection.collectionId];
+	// 		const saleHistory = crrCollectionState?.saleHistory || [];
+	// 		let crrCollectionTradesVolume = 0;
+	// 		const now = Number(new Date()) / 1000;
 
-			saleHistory.forEach((history) => {
-				const crrUsd =
-					tokenPrices[history.denom as TokenType]?.market_data.current_price
-						?.usd || 0;
-				const crrValue = Number.isNaN(Number(history.amount))
-					? 0
-					: (Number(history.amount) * crrUsd) /
-					  (TokenStatus[history.denom as TokenType].decimal || 6);
-				// tradesVolumeResult += crrValue;
-				if (now - (history.time || now) <= 60 * 60 * 24 * 30) {
-					// if the sale is hold in the last 30 days
-					crrCollectionTradesVolume += crrValue; // calculate collection trades in the last 30 days
-					tradesByNftResult[history.token_id] = {
-						trades:
-							(tradesByNftResult[history.token_id]?.trades || 0) + crrValue,
-						imageUrl: crrCollectionState?.imageUrl,
-						collectionId: collection.collectionId,
-					}; // calculate the trades of nft in the last 30 days
-				}
-			});
+	// 		saleHistory.forEach((history) => {
+	// 			const crrUsd =
+	// 				tokenPrices[history.denom as TokenType]?.market_data.current_price
+	// 					?.usd || 0;
+	// 			const crrValue = Number.isNaN(Number(history.amount))
+	// 				? 0
+	// 				: (Number(history.amount) * crrUsd) /
+	// 				  (TokenStatus[history.denom as TokenType].decimal || 6);
+	// 			// tradesVolumeResult += crrValue;
+	// 			if (now - (history.time || now) <= 60 * 60 * 24 * 30) {
+	// 				// if the sale is hold in the last 30 days
+	// 				crrCollectionTradesVolume += crrValue; // calculate collection trades in the last 30 days
+	// 				tradesByNftResult[history.token_id] = {
+	// 					trades:
+	// 						(tradesByNftResult[history.token_id]?.trades || 0) + crrValue,
+	// 					imageUrl: crrCollectionState?.imageUrl,
+	// 					collectionId: collection.collectionId,
+	// 				}; // calculate the trades of nft in the last 30 days
+	// 			}
+	// 		});
 
-			(Object.keys(TokenType) as Array<keyof typeof TokenType>).forEach(
-				(key) => {
-					const crrVolume =
-						(crrCollectionState?.tradingInfo as any)?.[
-							`${TokenType[key]}Total`
-						] || 0;
-					const crrUsd =
-						tokenPrices[TokenType[key]]?.market_data.current_price?.usd || 0;
-					const crrValue = crrUsd ? crrVolume * (junoUsd / crrUsd) : 0;
-					tradesVolumeResult += crrValue;
-				}
-			);
-			if (
-				crrCollectionTradesVolume >= (highestTradeCollectionResult.volume || 0)
-			) {
-				highestTradeCollectionResult = {
-					collection: collection,
-					volume: crrCollectionTradesVolume,
-				};
-			}
+	// 		(Object.keys(TokenType) as Array<keyof typeof TokenType>).forEach(
+	// 			(key) => {
+	// 				const crrVolume =
+	// 					(crrCollectionState?.tradingInfo as any)?.[
+	// 						`${TokenType[key]}Total`
+	// 					] || 0;
+	// 				const crrUsd =
+	// 					tokenPrices[TokenType[key]]?.market_data.current_price?.usd || 0;
+	// 				const crrValue = crrUsd ? crrVolume * (junoUsd / crrUsd) : 0;
+	// 				tradesVolumeResult += crrValue;
+	// 			}
+	// 		);
+	// 		if (
+	// 			crrCollectionTradesVolume >= (highestTradeCollectionResult.volume || 0)
+	// 		) {
+	// 			highestTradeCollectionResult = {
+	// 				collection: collection,
+	// 				volume: crrCollectionTradesVolume,
+	// 			};
+	// 		}
 
-			// determine the mint sold out collection
-			const mintInfo = collection.mintInfo;
-			if (
-				!mintInfo ||
-				(crrCollectionState?.totalNfts !== 0 &&
-					crrCollectionState?.mintedNfts >= crrCollectionState?.totalNfts)
-			) {
-				mintSoldOutResult.push(collection);
-			} else if (
-				crrCollectionState?.mintedNfts < crrCollectionState?.totalNfts &&
-				crrCollectionState?.mintedNfts > 0
-			) {
-				mintLiveResult.push(collection);
-			}
-		});
+	// 		// determine the mint sold out collection
+	// 		const mintInfo = collection.mintInfo;
+	// 		if (
+	// 			!mintInfo ||
+	// 			(crrCollectionState?.totalNfts !== 0 &&
+	// 				crrCollectionState?.mintedNfts >= crrCollectionState?.totalNfts)
+	// 		) {
+	// 			mintSoldOutResult.push(collection);
+	// 		} else if (
+	// 			crrCollectionState?.mintedNfts < crrCollectionState?.totalNfts &&
+	// 			crrCollectionState?.mintedNfts > 0
+	// 		) {
+	// 			mintLiveResult.push(collection);
+	// 		}
+	// 	});
 
-		const highestSaleNftResult = Object.keys(tradesByNftResult).reduce(
-			(result, tokenId) => {
-				const crrTrade = tradesByNftResult[tokenId];
-				if (crrTrade.trades > result.trades) {
-					return { tokenId, ...crrTrade };
-				} else {
-					return result;
-				}
-			},
-			{ tokenId: "", trades: 0, collectionId: "", imageUrl: "" }
-		);
-		let imageUrl = "";
-		if (highestSaleNftResult.collectionId === "mintpass1") {
-			imageUrl = "/others/mint_pass.png";
-		} else if (highestSaleNftResult.collectionId === "mintpass2") {
-			imageUrl = "/others/mint_pass2.png";
-		} else if (highestSaleNftResult.collectionId === "hopegalaxy1") {
-			imageUrl = `https://hopegalaxy.mypinata.cloud/ipfs/QmP7jDG2k92Y7cmpa7iz2vhFG1xp7DNss7vuwUpNaDd7xf/${getTokenIdNumber(
-				highestSaleNftResult.tokenId
-			)}.png`;
-		} else if (highestSaleNftResult.imageUrl) {
-			imageUrl = `${highestSaleNftResult.imageUrl}${getTokenIdNumber(
-				highestSaleNftResult.tokenId
-			)}.png`;
-		}
-		const targetCollection = getCollectionById(
-			highestSaleNftResult.collectionId
-		);
-		const tokenId = targetCollection.customTokenId
-			? getCustomTokenId(
-					highestSaleNftResult.tokenId,
-					targetCollection.customTokenId
-			  )
-			: highestSaleNftResult.tokenId;
-		const randMintResult =
-			mintLiveResult[Math.floor(Math.random() * mintLiveResult.length)];
-		const randSoldOutResult =
-			mintSoldOutResult[Math.floor(Math.random() * mintSoldOutResult.length)];
-		return {
-			tradesVolume: tradesVolumeResult,
-			highestTradesCollection: highestTradeCollectionResult,
-			totalItemsOnSale: totalItemsOnSaleResult,
-			// lastCollection: mintSoldOutResult[mintSoldOutResult.length - 1],
-			mintSoldOutCollection: randSoldOutResult,
-			mintLiveCollection: randMintResult,
-			highestSaleNft: {
-				imageUrl,
-				tokenId,
-				trades: highestSaleNftResult.trades,
-			},
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	// 	const highestSaleNftResult = Object.keys(tradesByNftResult).reduce(
+	// 		(result, tokenId) => {
+	// 			const crrTrade = tradesByNftResult[tokenId];
+	// 			if (crrTrade.trades > result.trades) {
+	// 				return { tokenId, ...crrTrade };
+	// 			} else {
+	// 				return result;
+	// 			}
+	// 		},
+	// 		{ tokenId: "", trades: 0, collectionId: "", imageUrl: "" }
+	// 	);
+	// 	let imageUrl = "";
+	// 	if (highestSaleNftResult.collectionId === "mintpass1") {
+	// 		imageUrl = "/others/mint_pass.png";
+	// 	} else if (highestSaleNftResult.collectionId === "mintpass2") {
+	// 		imageUrl = "/others/mint_pass2.png";
+	// 	} else if (highestSaleNftResult.collectionId === "hopegalaxy1") {
+	// 		imageUrl = `https://hopegalaxy.mypinata.cloud/ipfs/QmP7jDG2k92Y7cmpa7iz2vhFG1xp7DNss7vuwUpNaDd7xf/${getTokenIdNumber(
+	// 			highestSaleNftResult.tokenId
+	// 		)}.png`;
+	// 	} else if (highestSaleNftResult.imageUrl) {
+	// 		imageUrl = `${highestSaleNftResult.imageUrl}${getTokenIdNumber(
+	// 			highestSaleNftResult.tokenId
+	// 		)}.png`;
+	// 	}
+	// 	const targetCollection = getCollectionById(
+	// 		highestSaleNftResult.collectionId
+	// 	);
+	// 	const tokenId = targetCollection.customTokenId
+	// 		? getCustomTokenId(
+	// 				highestSaleNftResult.tokenId,
+	// 				targetCollection.customTokenId
+	// 		  )
+	// 		: highestSaleNftResult.tokenId;
+	// 	const randMintResult =
+	// 		mintLiveResult[Math.floor(Math.random() * mintLiveResult.length)];
+	// 	const randSoldOutResult =
+	// 		mintSoldOutResult[Math.floor(Math.random() * mintSoldOutResult.length)];
+	// 	return {
+	// 		tradesVolume: tradesVolumeResult,
+	// 		highestTradesCollection: highestTradeCollectionResult,
+	// 		totalItemsOnSale: totalItemsOnSaleResult,
+	// 		// lastCollection: mintSoldOutResult[mintSoldOutResult.length - 1],
+	// 		mintSoldOutCollection: randSoldOutResult,
+	// 		mintLiveCollection: randMintResult,
+	// 		highestSaleNft: {
+	// 			imageUrl,
+	// 			tokenId,
+	// 			trades: highestSaleNftResult.trades,
+	// 		},
+	// 	};
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, []);
 
 	return (
 		<Wrapper>
@@ -405,8 +405,8 @@ const Home: React.FC = () => {
 				</ButtonContainer>
 			</Panel>
 			<HorizontalDivider />
-			<StatisticContainer>
-				{/* <StatisticItem>
+			{/* <StatisticContainer>
+				<StatisticItem>
 					<StatisticContent>Top Volume 30D</StatisticContent>
 					<StatisticContent
 						bold
@@ -428,7 +428,7 @@ const Home: React.FC = () => {
 							</Text>
 						</Flex>
 					</StatisticContent>
-				</StatisticItem> */}
+				</StatisticItem>
 				<StatisticItem>
 					<StatisticContent>New Mint</StatisticContent>
 					<StatisticContent
@@ -464,7 +464,7 @@ const Home: React.FC = () => {
 						{addSuffix(totalItemsOnSale)}
 					</StatisticContent>
 				</StatisticItem>
-			</StatisticContainer>
+			</StatisticContainer> */}
 			<Panel fill>
 				<StyledImg
 					src="/characters/character_006.png"
