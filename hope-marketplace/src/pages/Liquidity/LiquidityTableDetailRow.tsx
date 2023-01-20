@@ -60,7 +60,7 @@ const LiquidityTableDetailRow: React.FC<{
 							Bonding Rewards
 						</Text>
 						<Flex flexDirection="column" alignItems="center" gap="10px">
-							{[rowData.token1, rowData.token2].map((token, index) => (
+							{[rowData.token1].map((token, index) => (
 								<Flex key={index} gap="10px" alignItems="center">
 									<Text bold color="#02e296">
 										Reward Asset
