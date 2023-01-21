@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import ReactSelect, { ControlProps, components } from "react-select";
 import { coins } from "@cosmjs/proto-signing";
 import { useAppSelector } from "../../app/hooks";
@@ -43,8 +43,13 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 		{} as THasError
 	);
 	const { createExecuteMessage, getExecuteClient } = useContract();
+	const history = useHistory();
 	const { search } = useLocation();
 	const poolId = new URLSearchParams(search).get("poolId");
+
+	useEffect(() => {
+		if (!pool) history.push("/");
+	}, [history, pool]);
 
 	useEffect(() => {
 		const targetPool = liquidities.find((pool) => pool.id === Number(poolId));

@@ -22,5 +22,9 @@ export const LineColors = {
 	[TokenType.RED]: "#f46a9b",
 	[TokenType.BLUE]: "#ef9b20",
 	[TokenType.WYND]: "#edbf33",
+	[TokenType.SGNL]: "red",
+	[TokenType.RACCOON]: "pink",
+	[TokenType.GLTO]: "brown",
+	[TokenType.AQUA]: "yellow",
 	Others: "#ede15b",
 };

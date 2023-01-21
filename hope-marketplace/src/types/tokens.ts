@@ -14,6 +14,10 @@ export enum TokenType {
 	RED = "red",
 	BLUE = "blue",
 	WYND = "wynd",
+	SGNL = "sgnl",
+	RACCOON = "raccoon",
+	GLTO = "glto",
+	AQUA = "aqua",
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
@@ -35,6 +39,10 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.RED]: "RED",
 	[TokenType.BLUE]: "BLUE",
 	[TokenType.WYND]: "WYND",
+	[TokenType.SGNL]: "SGNL",
+	[TokenType.RACCOON]: "RACCOON",
+	[TokenType.GLTO]: "GLTO",
+	[TokenType.AQUA]: "AQUA",
 };
 
 export type TokenStatusType = {
@@ -135,6 +143,34 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		chain: ChainTypes.JUNO,
 		contractAddress:
 			"juno1mkw83sv6c7sjdvsaplrzc8yaes9l42p4mhy0ssuxjnyzl87c9eps7ce3m9",
+	},
+	[TokenType.SGNL]: {
+		isNativeCoin: false,
+		isIBCCoin: false,
+		chain: ChainTypes.JUNO,
+		contractAddress:
+			"juno14lycavan8gvpjn97aapzvwmsj8kyrvf644p05r0hu79namyj3ens87650k",
+	},
+	[TokenType.RACCOON]: {
+		isNativeCoin: false,
+		isIBCCoin: false,
+		chain: ChainTypes.JUNO,
+		contractAddress:
+			"juno1r4pzw8f9z0sypct5l9j906d47z998ulwvhvqe5xdwgy8wf84583sxwh0pa",
+	},
+	[TokenType.GLTO]: {
+		isNativeCoin: false,
+		isIBCCoin: false,
+		chain: ChainTypes.JUNO,
+		contractAddress:
+			"juno1j0a9ymgngasfn3l5me8qpd53l5zlm9wurfdk7r65s5mg6tkxal3qpgf5se",
+	},
+	[TokenType.AQUA]: {
+		isNativeCoin: false,
+		isIBCCoin: false,
+		chain: ChainTypes.JUNO,
+		contractAddress:
+			"juno1hnftys64ectjfynm6qjk9my8jd3f6l9dq9utcd3dy8ehwrsx9q4q7n9uxt",
 	},
 };
 

@@ -19,6 +19,10 @@ export const TokenCoingeckoIds: { [key in TokenType]: string } = {
 	[TokenType.RED]: "",
 	[TokenType.BLUE]: "",
 	[TokenType.WYND]: "wynd",
+	[TokenType.SGNL]: "signal",
+	[TokenType.RACCOON]: "",
+	[TokenType.GLTO]: "",
+	[TokenType.AQUA]: "",
 };
 
 const CoinGeckoAPIKey = "CG-CV5rXz5JpbGcc36wL76u5gnd";
