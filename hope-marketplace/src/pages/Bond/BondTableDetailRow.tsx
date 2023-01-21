@@ -172,24 +172,42 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 						<Text color="black" justifyContent="flex-start" bold>
 							TOKEN REWARDS
 						</Text>
-						<Flex alignItems="flex-start" gap="10px">
-							<Text color="black" flexDirection="column">
-								{account ? (
-									<>
-										<Text color="black" bold>
-											{addSuffix(rowData.pendingReward || 0)}
-										</Text>
-										<Text color="black">365 USD</Text>
-									</>
-								) : (
-									"0.0000"
-								)}
+						{rowData.config?.rewardToken ? (
+							<Flex alignItems="flex-start" gap="10px">
+								<Text color="black" flexDirection="column">
+									{account ? (
+										<>
+											<Text color="black" bold>
+												{addSuffix(rowData.pendingReward || 0)}
+											</Text>
+											<Text color="black">365 USD</Text>
+										</>
+									) : (
+										"0.0000"
+									)}
+								</Text>
+								<Flex gap="10px" alignItems="center">
+									<img
+										width={25}
+										alt=""
+										src={`/coin-images/${rowData.config.rewardToken.replace(
+											/\//g,
+											""
+										)}.png`}
+									/>
+									<Text color="black">
+										{getTokenName(rowData.config.rewardToken)}
+									</Text>
+								</Flex>
+								<Button onClick={handleClickClaim}>
+									{isPendingClaim ? "Claiming" : "Claim"}
+								</Button>
+							</Flex>
+						) : (
+							<Text color="black" justifyContent="flex-start">
+								No Reward
 							</Text>
-							<Text color="black">HOPERS</Text>
-							<Button onClick={handleClickClaim}>
-								{isPendingClaim ? "Claiming" : "Claim"}
-							</Button>
-						</Flex>
+						)}
 					</Flex>
 				</DetailRowBlock>
 				<DetailRowBlock>

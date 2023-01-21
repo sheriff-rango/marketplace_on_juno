@@ -3,6 +3,7 @@ import { TokenType } from "./tokens";
 type TPoolConfig = {
 	lockDuration: number;
 	distributionEnd?: number;
+	rewardToken?: TokenType;
 };
 
 export type TPool = {

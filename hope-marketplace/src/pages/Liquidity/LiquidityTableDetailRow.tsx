@@ -86,20 +86,26 @@ const LiquidityTableDetailRow: React.FC<{
 							Bonding Rewards
 						</Text>
 						<Flex flexDirection="column" alignItems="center" gap="10px">
-							{[rowData.token1].map((token, index) => (
-								<Flex key={index} gap="10px" alignItems="center">
-									<Text bold color="#02e296">
-										Reward Asset
-									</Text>
-									<img
-										width={25}
-										alt=""
-										src={`/coin-images/${token.replace(/\//g, "")}.png`}
-									/>
-									<Text color="black">{rowData.apr}</Text>
-									<Text color="black">{`end in ${distributionEnd} Days`}</Text>
-								</Flex>
-							))}
+							{rowData.config?.rewardToken ? (
+								[rowData.config?.rewardToken].map((token, index) => (
+									<Flex key={index} gap="10px" alignItems="center">
+										<Text bold color="#02e296">
+											Reward Asset
+										</Text>
+										<img
+											width={25}
+											alt=""
+											src={`/coin-images/${token.replace(/\//g, "")}.png`}
+										/>
+										<Text color="black">{rowData.apr}</Text>
+										<Text color="black">{`end in ${distributionEnd} Days`}</Text>
+									</Flex>
+								))
+							) : (
+								<Text color="black" bold>
+									No Reward
+								</Text>
+							)}
 						</Flex>
 					</Flex>
 				</DetailRowBlock>

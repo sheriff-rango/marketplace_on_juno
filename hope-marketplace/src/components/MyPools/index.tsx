@@ -20,8 +20,7 @@ const MyPools: React.FC = () => {
 	const myLiquidities = useMemo(
 		() =>
 			liquidities.filter((liquidity) => {
-				// console.log("debug liquidity", liquidity);
-				return !!liquidity.bonded;
+				return (liquidity.bonded || 0) > 0;
 			}),
 		[liquidities]
 	);

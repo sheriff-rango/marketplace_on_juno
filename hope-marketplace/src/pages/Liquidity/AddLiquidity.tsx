@@ -322,14 +322,14 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 					/>
 					<Flex alignItems="center" gap="10px">
 						<TokenAmountInputer
-							token={pool.token1}
+							token={pool?.token1}
 							amount={addAmount.token1}
 							onAmountChange={(amount) =>
 								handleChangeAddAmount(amount, "token1")
 							}
 						/>
 						<TokenAmountInputer
-							token={pool.token2}
+							token={pool?.token2}
 							amount={addAmount.token2}
 							onAmountChange={(amount) =>
 								handleChangeAddAmount(amount, "token2")
