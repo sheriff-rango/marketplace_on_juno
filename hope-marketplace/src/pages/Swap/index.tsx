@@ -337,14 +337,14 @@ const Swap: React.FC = () => {
 								Number(swapInfo.from.amount) *
 									Math.pow(10, TokenStatus[swapInfo.from.token].decimal || 6)
 							),
-						output_min_token:
-							"" +
-							Math.ceil(
-								(Number(swapInfo.to.amount) *
-									Math.pow(10, TokenStatus[swapInfo.to.token].decimal || 6) *
-									(100 - slippage)) /
-									1e2
-							),
+						output_min_token: "0",
+						// "" +
+						// Math.ceil(
+						// 	(Number(swapInfo.to.amount) *
+						// 		Math.pow(10, TokenStatus[swapInfo.to.token].decimal || 6) *
+						// 		(100 - slippage)) /
+						// 		1e2
+						// ),
 					},
 			  }
 			: {
@@ -356,14 +356,14 @@ const Swap: React.FC = () => {
 								Number(swapInfo.from.amount) *
 									Math.pow(10, TokenStatus[swapInfo.from.token].decimal || 6)
 							),
-						min_output:
-							"" +
-							Math.ceil(
-								(Number(swapInfo.to.amount) *
-									Math.pow(10, TokenStatus[swapInfo.to.token].decimal || 6) *
-									(100 - slippage)) /
-									1e2
-							),
+						min_output: "0",
+						// "" +
+						// Math.ceil(
+						// 	(Number(swapInfo.to.amount) *
+						// 		Math.pow(10, TokenStatus[swapInfo.to.token].decimal || 6) *
+						// 		(100 - slippage)) /
+						// 		1e2
+						// ),
 					},
 			  };
 
