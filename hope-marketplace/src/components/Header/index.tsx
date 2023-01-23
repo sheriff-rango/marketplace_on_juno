@@ -12,7 +12,13 @@ import {
 // import useContract from "../../hook/useContract";
 import useOnClickOutside from "../../hook/useOnClickOutside";
 import useWindowSize from "../../hook/useWindowSize";
-import { DiscordIcon, ListIcon, MediumIcon, TwitterIcon } from "../Icons";
+import {
+	DiscordIcon,
+	ListIcon,
+	MediumIcon,
+	TelegramIcon,
+	TwitterIcon,
+} from "../Icons";
 import { MarketplaceInfo } from "../../constants/Collections";
 import {
 	HeaderWrapper,
@@ -71,6 +77,7 @@ import HeaderBanner from "../HeaderBanner";
 import {
 	DiscordLink,
 	MediumLink,
+	TelegramLink,
 	TwitterLink,
 } from "../../constants/SocialLinks";
 // import { useCosmodal } from "../../features/accounts/useCosmodal";
@@ -145,6 +152,11 @@ const SocialIcons = [
 	{
 		Icon: TwitterIcon,
 		link: TwitterLink,
+	},
+	{
+		Icon: TelegramIcon,
+		link: TelegramLink,
+		style: { backgroundColor: "white" },
 	},
 	{
 		Icon: DiscordIcon,
@@ -360,6 +372,7 @@ const Header: React.FC = () => {
 									<ConnectButton />
 									<ToggleThemeButton />
 								</MenuHeader>
+								<HopePriceDisplay />
 								<MenuItem onClick={() => handleClickLink("/")}>
 									<HomeIcon width={20} height={20} />
 									Home
@@ -409,6 +422,7 @@ const Header: React.FC = () => {
 								<MenuFooter>
 									{SocialIcons.map((icon, index) => (
 										<MenuFooterLinkItem
+											style={icon.style ?? {}}
 											key={index}
 											onClick={() => openNewUrl(icon.link)}
 										>
