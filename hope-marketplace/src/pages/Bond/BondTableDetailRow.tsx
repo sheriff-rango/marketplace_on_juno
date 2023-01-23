@@ -173,8 +173,12 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 							TOKEN REWARDS
 						</Text>
 						{rowData.config?.rewardToken ? (
-							<Flex alignItems="flex-start" gap="10px">
-								<Text color="black" flexDirection="column">
+							<Flex
+								alignItems="center"
+								//  alignItems="flex-start"
+								gap="10px"
+							>
+								{/* <Text color="black" flexDirection="column">
 									{account ? (
 										<>
 											<Text color="black" bold>
@@ -185,6 +189,9 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 									) : (
 										"0.0000"
 									)}
+								</Text> */}
+								<Text color="black" bold>
+									{addSuffix(rowData.pendingReward || 0)}
 								</Text>
 								<Flex gap="10px" alignItems="center">
 									<img
@@ -222,7 +229,7 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 								Bond
 							</Text>
 							<Flex gap="30px">
-								<Text flexDirection="column">
+								{/* <Text flexDirection="column">
 									<Text color="black">{`${addSuffix(
 										rowData.balance || 0
 									)} LP Available`}</Text>
@@ -233,7 +240,13 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 										rowData.bonded || 0
 									)} LP Bonded`}</Text>
 									<Text color="black">30065 USD</Text>
-								</Text>
+								</Text> */}
+								<Text color="black">{`${addSuffix(
+									rowData.balance || 0
+								)} LP Available`}</Text>
+								<Text color="black">{`${addSuffix(
+									rowData.bonded || 0
+								)} LP Bonded`}</Text>
 							</Flex>
 							<Button onClick={handleClickBondManageModal}>
 								Manage Bonding
