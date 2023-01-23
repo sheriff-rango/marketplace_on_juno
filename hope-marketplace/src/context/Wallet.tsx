@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { getOfflineSigner } from "@cosmostation/cosmos-client";
 import {
 	WalletManagerProvider,
@@ -25,6 +25,7 @@ import {
 interface CosmostationWalletContextInterface {
 	connect: () => void;
 	disconnect: () => void;
+	getJunoQueryClient: () => Promise<CosmWasmClient>;
 	provider: any;
 	offlineSigner: OfflineSigner | null;
 	client: SigningCosmWasmClient | null;
@@ -34,6 +35,8 @@ export const CosmostationWalletContext =
 	React.createContext<CosmostationWalletContextInterface>({
 		connect: () => {},
 		disconnect: () => {},
+		getJunoQueryClient: () =>
+			new Promise((resolve) => resolve({} as CosmWasmClient)),
 		provider: null,
 		offlineSigner: null,
 		client: null,
@@ -47,6 +50,9 @@ export const WalletProvider = ({ children }: { children: any }) => {
 	);
 	const [client, setClient] = useState<SigningCosmWasmClient | null>(null);
 	const [provider, setProvider] = useState<any>(null);
+	const [junoQueryClient, setJunoQueryClient] = useState<CosmWasmClient | null>(
+		null
+	);
 	const dispatch = useAppDispatch();
 
 	const config = ChainConfigs[ChainTypes.JUNO];
@@ -60,6 +66,14 @@ export const WalletProvider = ({ children }: { children: any }) => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const getJunoQueryClient = useCallback(async () => {
+		if (junoQueryClient) return junoQueryClient;
+		const rpcEndpoint: string = config["rpcEndpoint"];
+		const client = await CosmWasmClient.connect(rpcEndpoint);
+		setJunoQueryClient(client);
+		return client;
+	}, [config, junoQueryClient]);
 
 	const connect = async () => {
 		const provider = await cosmos();
@@ -118,7 +132,14 @@ export const WalletProvider = ({ children }: { children: any }) => {
 
 	return (
 		<CosmostationWalletContext.Provider
-			value={{ connect, disconnect, client, provider, offlineSigner }}
+			value={{
+				connect,
+				disconnect,
+				client,
+				provider,
+				offlineSigner,
+				getJunoQueryClient,
+			}}
 		>
 			<WalletManagerProvider
 				defaultChainId={config.chainId}
@@ -152,20 +173,4 @@ export const WalletProvider = ({ children }: { children: any }) => {
 			</WalletManagerProvider>
 		</CosmostationWalletContext.Provider>
 	);
-};
-
-let queryClient: CosmWasmClient | null = null;
-
-export const getQueryClient = async (
-	config: {
-		[key: string]: string;
-	},
-	forceRefresh = false
-): Promise<CosmWasmClient> => {
-	if (queryClient) return queryClient
-	const rpcEndpoint: string = config["rpcEndpoint"];
-	const client = await CosmWasmClient.connect(rpcEndpoint);
-	queryClient = client;
-
-	return client;
 };

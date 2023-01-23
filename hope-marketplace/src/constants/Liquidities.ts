@@ -119,6 +119,8 @@ export const Liquidities: TLiquidity[] = [
 		tokenB: TokenType.RACCOON,
 		contractAddress:
 			"juno1x4eck8gaphsk97cm78glc5jqarqe7492l4wwegqavlmzf5e3n4qqmjvtvq",
+		stakingAddress:
+			"juno15myaq4rxwlg7pvm5e2fr598puj26945k3rpek6rj6ve5276fndxs7ctjg9",
 	},
 	{
 		tokenA: TokenType.HOPERS,

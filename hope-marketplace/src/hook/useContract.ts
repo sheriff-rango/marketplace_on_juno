@@ -29,7 +29,7 @@ import { useSelector } from "react-redux";
 import { toMicroAmount } from "../util/coins";
 import { TokenStatus, TokenType } from "../types/tokens";
 import { ChainConfigs, ChainTypes } from "../constants/ChainTypes";
-import { CosmostationWalletContext, getQueryClient } from "../context/Wallet";
+import { CosmostationWalletContext } from "../context/Wallet";
 
 type CreateExecuteMessageArgs = {
 	senderAddress: string;
@@ -41,10 +41,10 @@ type CreateExecuteMessageArgs = {
 export const getOfflineSigner = async (chainId: string) => {
 	if (window.keplr) {
 		await window.keplr.enable(chainId);
-		const signer: any = await window.keplr.getOfflineSignerAuto(chainId);
-		const signer1 = await window.keplr.getOfflineSignerOnlyAmino(chainId);
-		const signer2 = await window.keplr.getOfflineSignerAuto(chainId);
-		return signer || signer1 || signer2;
+		let signer: any = await window.keplr.getOfflineSignerAuto(chainId);
+		if (!signer) signer = await window.keplr.getOfflineSignerOnlyAmino(chainId);
+		if (!signer) signer = await window.keplr.getOfflineSignerAuto(chainId);
+		return signer;
 	}
 };
 
@@ -56,17 +56,16 @@ const useContract = () => {
 	const { offlineSigner: keplrOfflineSigner } = useWallet(
 		ChainConfigs[ChainTypes.JUNO].chainId
 	);
-	const { offlineSigner: cosmostationOfflineSigner } = useContext(
-		CosmostationWalletContext
-	);
+	const { offlineSigner: cosmostationOfflineSigner, getJunoQueryClient } =
+		useContext(CosmostationWalletContext);
 
 	const runQuery = useCallback(
 		async (contractAddress: string, queryMsg: any) => {
-			const client = await getQueryClient(ChainConfigs[ChainTypes.JUNO]);
+			const client = await getJunoQueryClient();
 			const result = await client.queryContractSmart(contractAddress, queryMsg);
 			return result;
 		},
-		[]
+		[getJunoQueryClient]
 	);
 
 	const getExecuteClient = useCallback(async () => {
@@ -103,6 +102,7 @@ const useContract = () => {
 			const config = ChainConfigs[ChainTypes.JUNO];
 			let signer = keplrOfflineSigner || cosmostationOfflineSigner;
 			if (!signer) {
+				console.log("debug run execute don't have signer");
 				signer = await getOfflineSigner(config.chainId);
 			}
 			if (!signer) {
