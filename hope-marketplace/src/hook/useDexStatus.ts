@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { getDexStatus } from "../util/useAxios";
 import { convertStringToNumber } from "../util/string";
+import useContract from "./useContract";
+import { TokenStatus, TokenType } from "../types/tokens";
 
 const useDexStatus = () => {
 	const [dexStatus, setDexStatus] = useState<{
@@ -12,6 +14,7 @@ const useDexStatus = () => {
 		tradingVolume: 0,
 		burningVolume: 0,
 	});
+	const { runQuery } = useContract();
 
 	useEffect(() => {
 		(async () => {
@@ -29,6 +32,23 @@ const useDexStatus = () => {
 			});
 		})();
 	}, []);
+
+	useEffect(() => {
+		(async () => {
+			const hopersTokenAddress = TokenStatus[TokenType.HOPERS].contractAddress;
+			if (!hopersTokenAddress) return;
+			const hopersTokenInfo = await runQuery(hopersTokenAddress, {
+				token_info: {},
+			});
+			const totalSupply = convertStringToNumber(hopersTokenInfo?.total_supply);
+			if (totalSupply) {
+				setDexStatus((prev) => ({
+					...prev,
+					burningVolume: 2 * 1e9 - totalSupply / 1e6,
+				}));
+			}
+		})();
+	}, [runQuery]);
 
 	return dexStatus;
 };
