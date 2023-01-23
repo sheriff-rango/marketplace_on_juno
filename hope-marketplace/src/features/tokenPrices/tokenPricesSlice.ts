@@ -18,7 +18,7 @@ export const TokenCoingeckoIds: { [key in TokenType]: string } = {
 	[TokenType.CANLAB]: "",
 	[TokenType.RED]: "",
 	[TokenType.BLUE]: "",
-	[TokenType.WYND]: "wynd",
+	[TokenType.WYND]: "",
 	[TokenType.SGNL]: "signal",
 	[TokenType.RACCOON]: "",
 	[TokenType.GLTO]: "",
