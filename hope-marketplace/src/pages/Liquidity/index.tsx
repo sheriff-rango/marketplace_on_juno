@@ -108,7 +108,7 @@ const Liquidity: React.FC = () => {
 				if (typeof apr === "string") {
 					const rewardToken = (data.config as TPoolConfig)?.rewardToken;
 					return (
-						<Text gap="10px" color="black">
+						<Text gap="10px" color="black" alignItems="center">
 							{rewardToken && (
 								<img
 									width={25}
@@ -126,7 +126,12 @@ const Liquidity: React.FC = () => {
 								const rewardToken = (data.config as TPoolConfig[])?.[index]
 									?.rewardToken;
 								return (
-									<Text key={index} gap="10px" color="black">
+									<Text
+										key={index}
+										gap="10px"
+										color="black"
+										alignItems="center"
+									>
 										{rewardToken && (
 											<img
 												width={25}
