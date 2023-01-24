@@ -66,7 +66,12 @@ const Bond: React.FC = () => {
 				if (typeof bonded === "number") {
 					const rewardToken = (data.config as TPoolConfig)?.rewardToken;
 					return (
-						<Text gap="10px" color="black" alignItems="center" title={bonded}>
+						<Text
+							gap="10px"
+							color="black"
+							alignItems="center"
+							title={"" + bonded}
+						>
 							{rewardToken && (
 								<img
 									width={25}
