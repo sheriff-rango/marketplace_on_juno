@@ -64,26 +64,32 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 		const config = rowData.config;
 		let result: TRowDataDetailInfo[] = [];
 		if (Array.isArray(config)) {
-			result = config.map((item, index) => ({
-				rewardToken: item.rewardToken,
-				pendingReward: ((rowData.pendingReward || []) as number[])[index],
-				bonded: ((rowData.bonded || []) as number[])[index],
-				stakingAddress: ((rowData.stakingAddress || []) as string[])[index],
-				priceInUsd: item.rewardToken
+			result = config.map((item, index) => {
+				const pendingReward =
+					((rowData.pendingReward || []) as number[])[index] || 0;
+				const tokenPriceInUsd = item.rewardToken
 					? tokenPrices[item.rewardToken]?.market_data.current_price?.usd || 0
-					: 0,
-			}));
+					: 0;
+				return {
+					rewardToken: item.rewardToken,
+					pendingReward,
+					bonded: ((rowData.bonded || []) as number[])[index],
+					stakingAddress: ((rowData.stakingAddress || []) as string[])[index],
+					priceInUsd: pendingReward * tokenPriceInUsd,
+				};
+			});
 		} else {
+			const pendingReward = (rowData.pendingReward || 0) as number;
+			const tokenPriceInUsd = config?.rewardToken
+				? tokenPrices[config.rewardToken]?.market_data.current_price?.usd || 0
+				: 0;
 			result = [
 				{
 					rewardToken: config?.rewardToken,
-					pendingReward: (rowData.pendingReward || 0) as number,
+					pendingReward,
 					bonded: (rowData.bonded || 0) as number,
 					stakingAddress: (rowData.stakingAddress || "") as string,
-					priceInUsd: config?.rewardToken
-						? tokenPrices[config.rewardToken]?.market_data.current_price?.usd ||
-						  0
-						: 0,
+					priceInUsd: pendingReward * tokenPriceInUsd,
 				},
 			];
 		}
@@ -233,11 +239,19 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 													alignItems="flex-end"
 													gap="2px"
 												>
-													<Text color="black" bold>
+													<Text
+														color="black"
+														bold
+														title={"" + (detailInfo.pendingReward || 0)}
+													>
 														{addSuffix(detailInfo.pendingReward || 0)}
 													</Text>
-													<SmallText color="black" letterSpacing="-1px">
-														{`(${detailInfo.priceInUsd} USD)`}
+													<SmallText
+														color="black"
+														letterSpacing="-1px"
+														title={"" + detailInfo.priceInUsd}
+													>
+														{`(${addSuffix(detailInfo.priceInUsd)} USD)`}
 													</SmallText>
 												</Text>
 												<Flex gap="5px" alignItems="center">
