@@ -60,7 +60,7 @@ const LiquidityTableDetailRow: React.FC<{
 		return result;
 	}, [rowData.apr, rowData.config]);
 
-	const token2Address = TokenStatus[rowData.token2].contractAddress;
+	const token2Address = TokenStatus[rowData.token2]?.contractAddress;
 
 	return (
 		<>
