@@ -7,7 +7,7 @@ import { ExternalLinkIcon } from "../../components/SvgIcons";
 import Text from "../../components/Text";
 import { TPool } from "../../types/pools";
 import { TokenStatus, TokenType, getTokenName } from "../../types/tokens";
-import { DetailRowBlock, StyledButton as Button } from "./styled";
+import { DetailRowBlock, StyledButton as Button, SmallText } from "./styled";
 import { CosmostationWalletContext } from "../../context/Wallet";
 import {
 	ConnectedWalletTypeLocalStorageKey,
@@ -26,6 +26,7 @@ type TRowDataDetailInfo = {
 	pendingReward: number;
 	bonded: number;
 	stakingAddress: string;
+	priceInUsd: number;
 };
 
 const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
@@ -38,6 +39,7 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 	const [isPendingClaim, setIsPendingClaim] = useState(false);
 	const [isOpenManageBondModal, setIsOpenManageBondModal] = useState(false);
 	const account = useAppSelector((state) => state.accounts.keplrAccount);
+	const tokenPrices = useAppSelector((state) => state.tokenPrices);
 	const { connect: connectKeplr } = useWalletManager();
 	const { connect: connectCosmostation } = useContext(
 		CosmostationWalletContext
@@ -67,6 +69,9 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 				pendingReward: ((rowData.pendingReward || []) as number[])[index],
 				bonded: ((rowData.bonded || []) as number[])[index],
 				stakingAddress: ((rowData.stakingAddress || []) as string[])[index],
+				priceInUsd: item.rewardToken
+					? tokenPrices[item.rewardToken]?.market_data.current_price?.usd || 0
+					: 0,
 			}));
 		} else {
 			result = [
@@ -75,6 +80,10 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 					pendingReward: (rowData.pendingReward || 0) as number,
 					bonded: (rowData.bonded || 0) as number,
 					stakingAddress: (rowData.stakingAddress || "") as string,
+					priceInUsd: config?.rewardToken
+						? tokenPrices[config.rewardToken]?.market_data.current_price?.usd ||
+						  0
+						: 0,
 				},
 			];
 		}
@@ -84,6 +93,7 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 		rowData.config,
 		rowData.pendingReward,
 		rowData.stakingAddress,
+		tokenPrices,
 	]);
 
 	const handleClickConnectWalletButton = () => {
@@ -218,10 +228,19 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 												gap="10px"
 												width="100%"
 											>
-												<Text color="black" bold>
-													{addSuffix(detailInfo.pendingReward || 0)}
+												<Text
+													flexDirection="column"
+													alignItems="flex-end"
+													gap="2px"
+												>
+													<Text color="black" bold>
+														{addSuffix(detailInfo.pendingReward || 0)}
+													</Text>
+													<SmallText color="black" letterSpacing="-1px">
+														{`(${detailInfo.priceInUsd} USD)`}
+													</SmallText>
 												</Text>
-												<Flex gap="10px" alignItems="center">
+												<Flex gap="5px" alignItems="center">
 													<img
 														width={25}
 														alt=""
@@ -230,9 +249,9 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 															""
 														)}.png`}
 													/>
-													<Text color="black">
+													<SmallText color="black" bold letterSpacing="-2px">
 														{getTokenName(detailInfo.rewardToken)}
-													</Text>
+													</SmallText>
 												</Flex>
 												<Button onClick={() => handleClickClaim(detailInfo)}>
 													{isPendingClaim ? "Claiming" : "Claim"}

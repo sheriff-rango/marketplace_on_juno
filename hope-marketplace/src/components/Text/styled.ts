@@ -41,4 +41,9 @@ export const Wrapper = styled.div<TextProps>`
 		css`
 			text-align: ${textAlign};
 		`}
+  ${({ letterSpacing }) =>
+		letterSpacing &&
+		css`
+			letter-spacing: ${letterSpacing};
+		`}
 `;

@@ -15,4 +15,5 @@ export interface TextProps extends BasicProps {
 	flexDirection?: string;
 	gap?: string;
 	id?: string;
+	letterSpacing?: string;
 }
