@@ -2,7 +2,7 @@ export interface BasicProps {
 	onClick?: any;
 	className?: string;
 	children?: any;
-	title?: string;
+	title?: string | number;
 }
 
 export enum WalletType {

@@ -66,7 +66,7 @@ const Bond: React.FC = () => {
 				if (typeof bonded === "number") {
 					const rewardToken = (data.config as TPoolConfig)?.rewardToken;
 					return (
-						<Text gap="10px" color="black" alignItems="center">
+						<Text gap="10px" color="black" alignItems="center" title={bonded}>
 							{rewardToken && (
 								<img
 									width={25}
@@ -74,7 +74,7 @@ const Bond: React.FC = () => {
 									src={`/coin-images/${rewardToken.replace(/\//g, "")}.png`}
 								/>
 							)}
-							{bonded}
+							{addSuffix(bonded)}
 						</Text>
 					);
 				} else {
