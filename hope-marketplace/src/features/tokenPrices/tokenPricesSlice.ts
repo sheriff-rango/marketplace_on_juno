@@ -20,7 +20,7 @@ export const TokenCoingeckoIds: { [key in TokenType]: string } = {
 	[TokenType.BLUE]: "",
 	[TokenType.WYND]: "",
 	[TokenType.SGNL]: "signal",
-	[TokenType.RACCOON]: "",
+	[TokenType.RACOON]: "",
 	[TokenType.GLTO]: "",
 	[TokenType.AQUA]: "",
 };

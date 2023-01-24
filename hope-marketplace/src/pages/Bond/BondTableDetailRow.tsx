@@ -122,7 +122,7 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 		}
 	};
 
-	const token2Address = TokenStatus[rowData.token2].contractAddress;
+	const token2Address = TokenStatus[rowData.token2]?.contractAddress;
 
 	return (
 		<div ref={(node) => setWrapperElement(node)} key={rowData.id}>

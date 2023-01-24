@@ -15,7 +15,7 @@ export enum TokenType {
 	BLUE = "blue",
 	WYND = "wynd",
 	SGNL = "sgnl",
-	RACCOON = "raccoon",
+	RACOON = "racoon",
 	GLTO = "glto",
 	AQUA = "aqua",
 }
@@ -40,7 +40,7 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.BLUE]: "BLUE",
 	[TokenType.WYND]: "WYND",
 	[TokenType.SGNL]: "SGNL",
-	[TokenType.RACCOON]: "RACCOON",
+	[TokenType.RACOON]: "RACOON",
 	[TokenType.GLTO]: "GLTO",
 	[TokenType.AQUA]: "AQUA",
 };
@@ -151,7 +151,7 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		contractAddress:
 			"juno14lycavan8gvpjn97aapzvwmsj8kyrvf644p05r0hu79namyj3ens87650k",
 	},
-	[TokenType.RACCOON]: {
+	[TokenType.RACOON]: {
 		isNativeCoin: false,
 		isIBCCoin: false,
 		chain: ChainTypes.JUNO,
