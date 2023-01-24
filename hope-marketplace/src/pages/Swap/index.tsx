@@ -66,7 +66,7 @@ const Swap: React.FC = () => {
 			amount: 0,
 		},
 		to: {
-			token: TokenType.HOPE,
+			token: TokenType.HOPERS,
 			amount: 0,
 		},
 	});
