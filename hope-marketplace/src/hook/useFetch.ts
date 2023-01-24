@@ -22,6 +22,7 @@ import {
 	TokenCoingeckoIds,
 	setTokenPrice,
 } from "../features/tokenPrices/tokenPricesSlice";
+import { convertStringToNumber } from "../util/string";
 
 export const getCustomTokenId = (origin: string, target: string): string =>
 	`${target}.${origin.split(".").pop()}`;
@@ -207,14 +208,20 @@ const useFetch = () => {
 					);
 					const stakingAddress = liquidityInfo.stakingAddress;
 					if (stakingAddress) {
-						stakingQueryIndices.push(index);
-						fetchRewardQueries.push(
-							runQuery(stakingAddress, {
-								staker_info: {
-									staker: account?.address,
-								},
-							})
-						);
+						const stakingAddressArray =
+							typeof stakingAddress === "string"
+								? [stakingAddress]
+								: stakingAddress;
+						stakingAddressArray.forEach((address) => {
+							stakingQueryIndices.push(index);
+							fetchRewardQueries.push(
+								runQuery(address, {
+									staker_info: {
+										staker: account?.address,
+									},
+								})
+							);
+						});
 					}
 					return liquidityInfo;
 				}
@@ -238,20 +245,37 @@ const useFetch = () => {
 			if (rewards.length) {
 				for (let index = 0; index < rewards.length; index++) {
 					const liquidityIndex = stakingQueryIndices[index];
-					let reward = rewards[index]?.pending_reward;
-					reward = Number(reward);
-					reward = isNaN(reward) ? 0 : reward / 1e6;
-					liquidities[liquidityIndex].pendingReward = reward;
+					const hasSeveralStakingContract =
+						typeof liquidities[liquidityIndex].stakingAddress !== "string";
 
-					let bonded = rewards[index]?.bond_amount;
-					bonded = Number(bonded);
-					bonded = isNaN(bonded) ? 0 : bonded / 1e6;
-					liquidities[liquidityIndex].bonded = bonded;
+					const reward =
+						convertStringToNumber(rewards[index]?.pending_reward) / 1e6;
+					liquidities[liquidityIndex].pendingReward = hasSeveralStakingContract
+						? [
+								...((liquidities[liquidityIndex].pendingReward ||
+									[]) as number[]),
+								reward,
+						  ]
+						: reward;
 
-					let totalEarned = rewards[index]?.bond_amount;
-					totalEarned = Number(totalEarned);
-					totalEarned = isNaN(totalEarned) ? 0 : totalEarned / 1e6;
-					liquidities[liquidityIndex].totalEarned = totalEarned;
+					const bonded =
+						convertStringToNumber(rewards[index]?.bond_amount) / 1e6;
+					liquidities[liquidityIndex].bonded = hasSeveralStakingContract
+						? [
+								...((liquidities[liquidityIndex].bonded || []) as number[]),
+								bonded,
+						  ]
+						: bonded;
+
+					const totalEarned =
+						convertStringToNumber(rewards[index]?.total_earned) / 1e6;
+					liquidities[liquidityIndex].totalEarned = hasSeveralStakingContract
+						? [
+								...((liquidities[liquidityIndex].totalEarned ||
+									[]) as number[]),
+								totalEarned,
+						  ]
+						: totalEarned;
 				}
 			}
 			setLiquiditiesInfo(liquidities);

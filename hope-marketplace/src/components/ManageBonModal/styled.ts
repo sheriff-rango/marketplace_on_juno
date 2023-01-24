@@ -4,7 +4,7 @@ import Flex from "../Flex";
 import Modal from "../Modal";
 import Text from "../Text";
 
-export const BondAmountInputer = styled.input<{hasError: boolean}>`
+export const BondAmountInputer = styled.input<{ hasError: boolean }>`
 	width: 50%;
 	height: 25px;
 	background-color: white;
@@ -160,7 +160,7 @@ export const StyledButton = styled(Button)<{
 	border-radius: 10px;
 	color: ${({ colored }) => (colored ? "white" : "black")};
 	margin: auto;
-	margin-top: 30px;
+	/* margin-top: 30px; */
 	${({ margin }) =>
 		margin &&
 		css`

@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import Flex from "../../components/Flex";
 import Text from "../../components/Text";
 import { ExternalLinkIcon } from "../../components/SvgIcons";
-import { TPool } from "../../types/pools";
+import { TPool, TPoolConfig } from "../../types/pools";
 
 import { DetailRowBlock, StyledButton as Button } from "./styled";
 import { useKeplr } from "../../features/accounts/useKeplr";
@@ -17,15 +17,48 @@ const LiquidityTableDetailRow: React.FC<{
 	const history = useHistory();
 	const { suggestToken } = useKeplr();
 
-	const distributionEnd = useMemo(() => {
+	const rowDataDetailInfo = useMemo(() => {
+		let result: {
+			apr: string;
+			distributionEnd: number;
+			rewardToken?: string;
+		}[] = [];
 		const now = Number(new Date());
-		return Math.max(
-			0,
-			Math.floor(
-				((rowData.config?.distributionEnd || 0) - now) / (1000 * 60 * 60 * 24)
-			)
-		);
-	}, [rowData.config?.distributionEnd]);
+		const config = rowData.config;
+		const apr = rowData.apr;
+		if (typeof apr === "string") {
+			const distributionEnd = Math.max(
+				0,
+				Math.floor(
+					(((config as TPoolConfig)?.distributionEnd || 0) - now) /
+						(1000 * 60 * 60 * 24)
+				)
+			);
+			result = [
+				{
+					apr,
+					distributionEnd,
+					rewardToken: (config as TPoolConfig)?.rewardToken,
+				},
+			];
+		} else {
+			apr.forEach((item, index) => {
+				const crrConfig = (config as TPoolConfig[])[index];
+				const distributionEnd = Math.max(
+					0,
+					Math.floor(
+						((crrConfig.distributionEnd || 0) - now) / (1000 * 60 * 60 * 24)
+					)
+				);
+				result.push({
+					apr: item,
+					distributionEnd,
+					rewardToken: crrConfig.rewardToken,
+				});
+			});
+		}
+		return result;
+	}, [rowData.apr, rowData.config]);
 
 	const token2Address = TokenStatus[rowData.token2].contractAddress;
 
@@ -86,21 +119,27 @@ const LiquidityTableDetailRow: React.FC<{
 							Bonding Rewards
 						</Text>
 						<Flex flexDirection="column" alignItems="center" gap="10px">
-							{rowData.config?.rewardToken ? (
-								[rowData.config?.rewardToken].map((token, index) => (
-									<Flex key={index} gap="10px" alignItems="center">
-										<Text bold color="#02e296">
-											Reward Asset
-										</Text>
-										<img
-											width={25}
-											alt=""
-											src={`/coin-images/${token.replace(/\//g, "")}.png`}
-										/>
-										<Text color="black">{rowData.apr}</Text>
-										<Text color="black">{`end in ${distributionEnd} Days`}</Text>
-									</Flex>
-								))
+							{rowDataDetailInfo.length > 0 ? (
+								rowDataDetailInfo.map(
+									(detailInfo, index) =>
+										detailInfo.rewardToken && (
+											<Flex key={index} gap="10px" alignItems="center">
+												<Text bold color="#02e296">
+													Reward Asset
+												</Text>
+												<img
+													width={25}
+													alt=""
+													src={`/coin-images/${detailInfo.rewardToken.replace(
+														/\//g,
+														""
+													)}.png`}
+												/>
+												<Text color="black">{detailInfo.apr}</Text>
+												<Text color="black">{`end in ${detailInfo.distributionEnd} Days`}</Text>
+											</Flex>
+										)
+								)
 							) : (
 								<Text color="black" bold>
 									No Reward

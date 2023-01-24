@@ -32,7 +32,7 @@ import {
 } from "../../components/SvgIcons";
 import { addSuffix } from "../../util/string";
 import PoolImage from "../../components/PoolImage";
-import { TPool } from "../../types/pools";
+import { TPool, TPoolConfig } from "../../types/pools";
 import Table, { ColumnTypes, TColumns } from "../../components/Table";
 import PoolName from "../../components/PoolName";
 import AddLiquidity from "./AddLiquidity";
@@ -40,6 +40,7 @@ import { ModalType, PoolType } from "./type";
 import CreateLiquidity from "./CreateLiquidity";
 import RemoveLiquidity from "./RemoveLiquidity";
 import LiquidityTableDetailRow from "./LiquidityTableDetailRow";
+import Flex from "../../components/Flex";
 
 const Liquidity: React.FC = () => {
 	// const [showTokenListModal, setShowTokenListModal] = useState(false);
@@ -99,7 +100,52 @@ const Liquidity: React.FC = () => {
 			render: (value, data) => (value ? <VerifiedBadge /> : <CancelIcon />),
 		},
 		{ name: "volume", title: "Volume", type: ColumnTypes.NUMBER, sort: true },
-		{ name: "apr", title: "APR Rewards", sort: true },
+		{
+			name: "apr",
+			title: "APR Rewards",
+			render: (value, data) => {
+				const apr = data.apr;
+				if (typeof apr === "string") {
+					const rewardToken = (data.config as TPoolConfig)?.rewardToken;
+					return (
+						<Text gap="10px" color="black">
+							{rewardToken && (
+								<img
+									width={25}
+									alt=""
+									src={`/coin-images/${rewardToken.replace(/\//g, "")}.png`}
+								/>
+							)}
+							{apr}
+						</Text>
+					);
+				} else {
+					return (
+						<Flex alignItems="center" gap="20px">
+							{apr.map((item, index) => {
+								const rewardToken = (data.config as TPoolConfig[])?.[index]
+									?.rewardToken;
+								return (
+									<Text key={index} gap="10px" color="black">
+										{rewardToken && (
+											<img
+												width={25}
+												alt=""
+												src={`/coin-images/${rewardToken.replace(
+													/\//g,
+													""
+												)}.png`}
+											/>
+										)}
+										{item}
+									</Text>
+								);
+							})}
+						</Flex>
+					);
+				}
+			},
+		},
 		{
 			name: "pool",
 			title: "Liquidity Pool",

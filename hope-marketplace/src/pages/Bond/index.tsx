@@ -8,13 +8,14 @@ import PoolName from "../../components/PoolName";
 import { CancelIcon, VerifiedBadge } from "../../components/SvgIcons";
 import Table, { ColumnTypes, TColumns } from "../../components/Table";
 import Text from "../../components/Text";
-import { TPool } from "../../types/pools";
+import { TPool, TPoolConfig } from "../../types/pools";
 import { getTokenName } from "../../types/tokens";
 import { Wrapper } from "./styled";
 
 import { addSuffix } from "../../util/string";
 import { PoolType } from "../Liquidity/type";
 import BondTableDetailRow from "./BondTableDetailRow";
+import Flex from "../../components/Flex";
 
 const Bond: React.FC = () => {
 	const liquidities = useAppSelector((state) => state.liquidities);
@@ -59,10 +60,106 @@ const Bond: React.FC = () => {
 			name: "bonded",
 			title: "Bonded",
 			type: ColumnTypes.NUMBER,
-			sort: true,
-			format: (value) => addSuffix(value || 0),
+			render: (value, data) => {
+				const bonded = data.bonded;
+				if (!bonded) return null;
+				if (typeof bonded === "number") {
+					const rewardToken = (data.config as TPoolConfig)?.rewardToken;
+					return (
+						<Text gap="10px" color="black">
+							{rewardToken && (
+								<img
+									width={25}
+									alt=""
+									src={`/coin-images/${rewardToken.replace(/\//g, "")}.png`}
+								/>
+							)}
+							{bonded}
+						</Text>
+					);
+				} else {
+					return (
+						<Flex alignItems="center" gap="20px">
+							{bonded.map((item, index) => {
+								const rewardToken = (data.config as TPoolConfig[])?.[index]
+									?.rewardToken;
+								return (
+									<Text
+										key={index}
+										gap="10px"
+										color="black"
+										alignItems="center"
+									>
+										{rewardToken && (
+											<img
+												width={25}
+												alt=""
+												src={`/coin-images/${rewardToken.replace(
+													/\//g,
+													""
+												)}.png`}
+											/>
+										)}
+										{item}
+									</Text>
+								);
+							})}
+						</Flex>
+					);
+				}
+			},
 		},
-		{ name: "apr", title: "APR Rewards", sort: true },
+		{
+			name: "apr",
+			title: "APR Rewards",
+			render: (value, data) => {
+				const apr = data.apr;
+				if (typeof apr === "string") {
+					const rewardToken = (data.config as TPoolConfig)?.rewardToken;
+					return (
+						<Text gap="10px" color="black">
+							{rewardToken && (
+								<img
+									width={25}
+									alt=""
+									src={`/coin-images/${rewardToken.replace(/\//g, "")}.png`}
+								/>
+							)}
+							{apr}
+						</Text>
+					);
+				} else {
+					return (
+						<Flex alignItems="center" gap="20px">
+							{apr.map((item, index) => {
+								const rewardToken = (data.config as TPoolConfig[])?.[index]
+									?.rewardToken;
+								return (
+									<Text
+										key={index}
+										gap="10px"
+										color="black"
+										alignItems="center"
+									>
+										{rewardToken && (
+											<img
+												width={25}
+												alt=""
+												src={`/coin-images/${rewardToken.replace(
+													/\//g,
+													""
+												)}.png`}
+											/>
+										)}
+										{item}
+									</Text>
+								);
+							})}
+						</Flex>
+					);
+				}
+			},
+		},
 		{
 			name: "pool",
 			title: "Liquidity Pool",

@@ -13,7 +13,7 @@ import {
 	MyPoolsContainer,
 	// Title,
 } from "./styled";
-import { TPool } from "../../types/pools";
+import { TPool, TPoolConfig } from "../../types/pools";
 
 const MyPools: React.FC = () => {
 	const liquidities = useAppSelector((state) => state.liquidities);
@@ -33,11 +33,83 @@ const MyPools: React.FC = () => {
 		},
 		{
 			title: "Bonded",
-			value: (liquidity: TPool) => addSuffix(liquidity.bonded || 0),
+			value: (liquidity: TPool) => {
+				const bonded = liquidity.bonded;
+				if (!bonded) return null;
+				let renderInfo = [];
+				if (typeof bonded === "number") {
+					const config = liquidity.config as TPoolConfig;
+					renderInfo = [
+						{
+							bonded: addSuffix(bonded),
+							rewardToken: config.rewardToken || "",
+						},
+					];
+				} else {
+					const config = liquidity.config as TPoolConfig[];
+					renderInfo = config.map((item, index) => ({
+						bonded: addSuffix(bonded[index]),
+						rewardToken: item.rewardToken || "",
+					}));
+				}
+				return (
+					<>
+						{renderInfo.map((info, index) => (
+							<Text key={index} alignItems="center" bold>
+								<img
+									width={25}
+									alt=""
+									src={`/coin-images/${info.rewardToken.replace(
+										/\//g,
+										""
+									)}.png`}
+								/>
+								{info.bonded}
+							</Text>
+						))}
+					</>
+				);
+			},
 		},
 		{
 			title: "Pending Rewards",
-			value: (liquidity: TPool) => addSuffix(liquidity.pendingReward || 0),
+			value: (liquidity: TPool) => {
+				const pendingReward = liquidity.pendingReward;
+				if (!pendingReward) return null;
+				let renderInfo = [];
+				if (typeof pendingReward === "number") {
+					const config = liquidity.config as TPoolConfig;
+					renderInfo = [
+						{
+							pendingReward: addSuffix(pendingReward),
+							rewardToken: config.rewardToken || "",
+						},
+					];
+				} else {
+					const config = liquidity.config as TPoolConfig[];
+					renderInfo = config.map((item, index) => ({
+						pendingReward: addSuffix(pendingReward[index]),
+						rewardToken: item.rewardToken || "",
+					}));
+				}
+				return (
+					<>
+						{renderInfo.map((info, index) => (
+							<Text key={index} alignItems="center" bold>
+								<img
+									width={25}
+									alt=""
+									src={`/coin-images/${info.rewardToken.replace(
+										/\//g,
+										""
+									)}.png`}
+								/>
+								{info.pendingReward}
+							</Text>
+						))}
+					</>
+				);
+			},
 		},
 	];
 
@@ -57,7 +129,7 @@ const MyPools: React.FC = () => {
 									<Text bold color="#c5c5c5">
 										{content.title}
 									</Text>
-									<Text bold color="black">
+									<Text bold color="black" alignItems="center">
 										{content.value(liquidity)}
 									</Text>
 								</MyPoolContentItem>
