@@ -14,6 +14,7 @@ import TokenListModal from "../../components/TokenListModal";
 import { TokenStatus, TokenType } from "../../types/tokens";
 import {
 	AmountInputer,
+	AutoInputButtonContainer,
 	// ChartArea,
 	MainPart,
 	SelectMaxButton,
@@ -446,13 +447,24 @@ const Swap: React.FC = () => {
 										value={displaySwapInfo.from.amount}
 										onChange={handleChangeSwapAmount}
 									/>
-									<SelectMaxButton
-										onClick={() =>
-											changeSwapAmountLogic(displaySwapInfo.from.rawBalance)
-										}
-									>
-										Select Max
-									</SelectMaxButton>
+									<AutoInputButtonContainer>
+										<SelectMaxButton
+											onClick={() =>
+												changeSwapAmountLogic(displaySwapInfo.from.rawBalance)
+											}
+										>
+											MAX
+										</SelectMaxButton>
+										<SelectMaxButton
+											onClick={() =>
+												changeSwapAmountLogic(
+													displaySwapInfo.from.rawBalance / 2
+												)
+											}
+										>
+											HALF
+										</SelectMaxButton>
+									</AutoInputButtonContainer>
 								</AmountInputer>
 								<Text
 									color="#787878"

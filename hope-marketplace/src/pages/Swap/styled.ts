@@ -1,6 +1,7 @@
 import styled, { css, keyframes } from "styled-components";
 import Button from "../../components/Button";
 import Text from "../../components/Text";
+import Flex from "../../components/Flex";
 
 export const Wrapper = styled.div`
 	display: flex;
@@ -160,13 +161,18 @@ export const AmountInputer = styled.div<{ hasError?: boolean }>`
 	}
 `;
 
-export const SelectMaxButton = styled(Text)`
+export const AutoInputButtonContainer = styled(Flex)`
+	gap: 10px;
+	align-items: center;
 	position: absolute;
-	color: #787878;
+	right: 20px;
+	top: -25px;
+`;
+
+export const SelectMaxButton = styled(Text)`
 	text-decoration: underline;
 	cursor: pointer;
-	bottom: 10px;
-	right: 20px;
+	font-weight: bold;
 `;
 
 export const SwapButton = styled(Button)`
