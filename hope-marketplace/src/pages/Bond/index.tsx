@@ -84,7 +84,7 @@ const Bond: React.FC = () => {
 					);
 				} else {
 					return (
-						<Flex alignItems="center" gap="20px">
+						<Flex flexDirection="column" alignItems="flex-start" gap="5px">
 							{bonded.map((item, index) => {
 								const rewardToken = (data.config as TPoolConfig[])?.[index]
 									?.rewardToken;
@@ -135,7 +135,7 @@ const Bond: React.FC = () => {
 					);
 				} else {
 					return (
-						<Flex alignItems="center" gap="20px">
+						<Flex flexDirection="column" alignItems="flex-start" gap="5px">
 							{apr.map((item, index) => {
 								const rewardToken = (data.config as TPoolConfig[])?.[index]
 									?.rewardToken;
