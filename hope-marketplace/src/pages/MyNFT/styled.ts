@@ -44,6 +44,7 @@ export const TokenBalancesWrapper = styled.div`
 	justify-content: flex-start;
 	align-items: center;
 	flex-wrap: wrap;
+	margin-top: 20px;
 	margin-bottom: 20px;
 	margin-left: 20px;
 	min-height: 30px;
