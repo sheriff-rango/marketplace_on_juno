@@ -41,27 +41,36 @@ const IDO: React.FC = () => {
 
 	useEffect(() => {
 		(async () => {
-			const data = await getQuery({
-				url: `${BACKEND_URL}/cache?fields=idoStateInfo`,
-			});
-			let idoStatusesResult: IDOStatuses = {} as IDOStatuses;
-			(data.idoStateInfo || []).forEach((queryResult: any, index: number) => {
-				const startTime = queryResult?.presale_start
-					? new Date(queryResult.presale_start * 1000)
-					: new Date();
-				const endTime = new Date(
-					Number(startTime) + (queryResult.presale_period || 0) * 1000
+			try {
+				const data = await getQuery({
+					url: `${BACKEND_URL}/cache?fields=idoStateInfo`,
+				});
+				let idoStatusesResult: IDOStatuses = {} as IDOStatuses;
+				(data?.idoStateInfo || []).forEach(
+					(queryResult: any, index: number) => {
+						const idoId = IDOs[index]?.id;
+						if (idoId) {
+							const startTime = queryResult?.presale_start
+								? new Date(queryResult.presale_start * 1000)
+								: new Date();
+							const endTime = new Date(
+								Number(startTime) + (queryResult.presale_period || 0) * 1000
+							);
+							const now = new Date();
+							const crrState =
+								Number(now) < Number(startTime)
+									? PresaleState.BEFORE
+									: Number(now) < Number(endTime)
+									? PresaleState.PRESALE
+									: PresaleState.ENDED;
+							idoStatusesResult[idoId] = crrState;
+						}
+					}
 				);
-				const now = new Date();
-				const crrState =
-					Number(now) < Number(startTime)
-						? PresaleState.BEFORE
-						: Number(now) < Number(endTime)
-						? PresaleState.PRESALE
-						: PresaleState.ENDED;
-				idoStatusesResult[IDOs[index].id] = crrState;
-			});
-			setIdoStatuses(idoStatusesResult);
+				setIdoStatuses(idoStatusesResult);
+			} catch (err) {
+				console.log("debug", err);
+			}
 		})();
 	}, []);
 
