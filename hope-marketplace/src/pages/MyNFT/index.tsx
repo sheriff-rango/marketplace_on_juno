@@ -33,6 +33,8 @@ import {
 	TokenNameContainer,
 	AcceptWithdrawBidButton,
 	MyOfferButton,
+	StyledToggleButton as ToggleButton,
+	Balances,
 } from "./styled";
 
 import { useAppSelector } from "../../app/hooks";
@@ -119,6 +121,7 @@ const MyNFT: React.FC = () => {
 	);
 	const [isReceivedOffer, setIsReceivedOffer] = useState(false);
 	const [myOffers, setMyOffers] = useState([]);
+	const [hideZeroAssets, setHideZeroAssets] = useState<boolean>(true);
 	const [selectedNftTab, setSelectedNftTab] = useState<NFT_TYPE>(NFT_TYPE.ALL);
 	const [searchValue, setSearchValue] = useState<string>("");
 	const [searchActivityValue, setSearchActivityValue] = useState("");
@@ -542,87 +545,105 @@ const MyNFT: React.FC = () => {
 				</ChartArea>
 				<TokenTypeString>JUNO Chain Assets</TokenTypeString>
 				<TokenBalancesWrapper>
-					{(Object.keys(TokenType) as Array<keyof typeof TokenType>).map(
-						(key) => {
-							const denom = TokenType[key];
-							const tokenStatus = TokenStatus[denom];
-							if (tokenStatus.isIBCCoin) return null;
-							const tokenBalance =
-								(balances?.[denom]?.amount || 0) /
-								Math.pow(10, TokenStatus[denom].decimal || 6);
-							const tokenPrice =
-								tokenPrices[denom]?.market_data.current_price?.usd || 0;
-							return (
-								<TokenBalanceItem
-									key={denom}
-									onClick={() => handleClickBalanceItem(denom)}
-								>
-									<CoinIconWrapper>
-										<CoinIcon
-											alt=""
-											src={`/coin-images/${denom.replace(/\//g, "")}.png`}
-										/>
-										<TokenBalance>{key}</TokenBalance>
-									</CoinIconWrapper>
-									<TokenBalance>
-										{tokenBalance.toLocaleString("en-US", {
-											maximumFractionDigits: 3,
-										})}
-										<Text style={{ fontSize: "0.8em" }}>
-											{`${(tokenBalance * tokenPrice).toLocaleString("en-US", {
+					<ToggleButton
+						defaultChecked
+						label={{ title: "Hide 0 Balances:" }}
+						onChange={(checked) => setHideZeroAssets(checked)}
+					/>
+					<Balances>
+						{(Object.keys(TokenType) as Array<keyof typeof TokenType>).map(
+							(key) => {
+								const denom = TokenType[key];
+								const tokenStatus = TokenStatus[denom];
+								if (tokenStatus.isIBCCoin) return null;
+								const tokenBalance =
+									(balances?.[denom]?.amount || 0) /
+									Math.pow(10, TokenStatus[denom].decimal || 6);
+								if (hideZeroAssets && tokenBalance === 0) return null;
+								const tokenPrice =
+									tokenPrices[denom]?.market_data.current_price?.usd || 0;
+								return (
+									<TokenBalanceItem
+										key={denom}
+										onClick={() => handleClickBalanceItem(denom)}
+									>
+										<CoinIconWrapper>
+											<CoinIcon
+												alt=""
+												src={`/coin-images/${denom.replace(/\//g, "")}.png`}
+											/>
+											<TokenBalance>{key}</TokenBalance>
+										</CoinIconWrapper>
+										<TokenBalance>
+											{tokenBalance.toLocaleString("en-US", {
 												maximumFractionDigits: 3,
-											})}$`}
-										</Text>
-									</TokenBalance>
-								</TokenBalanceItem>
-							);
-						}
-					)}
+											})}
+											<Text style={{ fontSize: "0.8em" }}>
+												{`${(tokenBalance * tokenPrice).toLocaleString(
+													"en-US",
+													{
+														maximumFractionDigits: 3,
+													}
+												)}$`}
+											</Text>
+										</TokenBalance>
+									</TokenBalanceItem>
+								);
+							}
+						)}
+					</Balances>
 				</TokenBalancesWrapper>
 				<TokenTypeString>
 					IBC Assets
 					{/* <span>(Click Asset to Withdraw)</span> */}
 				</TokenTypeString>
 				<TokenBalancesWrapper>
-					{(Object.keys(TokenType) as Array<keyof typeof TokenType>).map(
-						(key) => {
-							const denom = TokenType[key];
-							const tokenStatus = TokenStatus[denom];
-							if (!tokenStatus.isIBCCoin) return null;
-							const tokenBalance =
-								(balances?.[denom]?.amount || 0) /
-								Math.pow(10, TokenStatus[denom].decimal || 6);
-							const tokenPrice =
-								tokenPrices[denom]?.market_data.current_price?.usd || 0;
-							const chain = tokenStatus.chain;
-							return (
-								<TokenBalanceItem key={denom} marginBottom="20px">
-									<CoinIconWrapper>
-										<CoinIcon
-											alt=""
-											src={`/coin-images/${denom.replace(/\//g, "")}.png`}
-										/>
-										<TokenBalance chainName={ChainConfigs[chain].chainName}>
-											{key}
-										</TokenBalance>
-									</CoinIconWrapper>
-									<TokenBalance>
-										{tokenBalance.toLocaleString("en-US", {
-											maximumFractionDigits: 3,
-										})}
-										<Text style={{ fontSize: "0.9em" }}>
-											{`${(tokenBalance * tokenPrice).toLocaleString("en-US", {
+					<Balances>
+						{(Object.keys(TokenType) as Array<keyof typeof TokenType>).map(
+							(key) => {
+								const denom = TokenType[key];
+								const tokenStatus = TokenStatus[denom];
+								if (!tokenStatus.isIBCCoin) return null;
+								const tokenBalance =
+									(balances?.[denom]?.amount || 0) /
+									Math.pow(10, TokenStatus[denom].decimal || 6);
+								const tokenPrice =
+									tokenPrices[denom]?.market_data.current_price?.usd || 0;
+								const chain = tokenStatus.chain;
+								return (
+									<TokenBalanceItem key={denom} marginBottom="20px">
+										<CoinIconWrapper>
+											<CoinIcon
+												alt=""
+												src={`/coin-images/${denom.replace(/\//g, "")}.png`}
+											/>
+											<TokenBalance chainName={ChainConfigs[chain].chainName}>
+												{key}
+											</TokenBalance>
+										</CoinIconWrapper>
+										<TokenBalance>
+											{tokenBalance.toLocaleString("en-US", {
 												maximumFractionDigits: 3,
-											})}$`}
-										</Text>
-									</TokenBalance>
-									<WithdrawButton onClick={() => handleClickBalanceItem(denom)}>
-										Withdraw / Deposit
-									</WithdrawButton>
-								</TokenBalanceItem>
-							);
-						}
-					)}
+											})}
+											<Text style={{ fontSize: "0.9em" }}>
+												{`${(tokenBalance * tokenPrice).toLocaleString(
+													"en-US",
+													{
+														maximumFractionDigits: 3,
+													}
+												)}$`}
+											</Text>
+										</TokenBalance>
+										<WithdrawButton
+											onClick={() => handleClickBalanceItem(denom)}
+										>
+											Withdraw / Deposit
+										</WithdrawButton>
+									</TokenBalanceItem>
+								);
+							}
+						)}
+					</Balances>
 				</TokenBalancesWrapper>
 			</MyAssetsArea>
 			<StyledExploreHeader title="My Pools" />

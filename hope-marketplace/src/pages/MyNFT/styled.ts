@@ -2,6 +2,7 @@ import styled, { css } from "styled-components";
 import ExploreHeader from "../../components/ExploreHeader";
 
 import { Tabs as OriginTabs, Tab as OriginTab } from "../../components/Tab";
+import ToggleButton from "../../components/ToggleButton";
 
 export const Wrapper = styled.div<{ isMobile?: boolean }>`
 	height: 100%;
@@ -38,12 +39,28 @@ export const HorizontalDivider = styled.div`
 `;
 
 export const TokenBalancesWrapper = styled.div`
+	position: relative;
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
 	flex-wrap: wrap;
 	margin-bottom: 20px;
 	margin-left: 20px;
+	min-height: 30px;
+`;
+
+export const Balances = styled.div`
+	display: contents;
+	&:empty {
+		&:before {
+			content: "No Assets";
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			font-size: 18px;
+		}
+	}
 `;
 
 export const TokenBalanceItem = styled.div<{ marginBottom?: string }>`
@@ -302,4 +319,11 @@ export const AcceptWithdrawBidButton = styled.div`
 		box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
 			0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
 	}
+`;
+
+export const StyledToggleButton = styled(ToggleButton)`
+	position: absolute;
+	right: 0;
+	top: 0;
+	transform: translateY(-100%);
 `;
