@@ -6,6 +6,7 @@ export interface TextProps extends BasicProps {
 	color?: string;
 	margin?: string;
 	overflowWrap?: string;
+	flexWrap?: string;
 	cursor?: string;
 	width?: string;
 	justifyContent?: string;

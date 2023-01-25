@@ -94,6 +94,7 @@ const Bond: React.FC = () => {
 										gap="10px"
 										color="black"
 										alignItems="center"
+										flexWrap="no-wrap"
 									>
 										{rewardToken && (
 											<img
@@ -145,6 +146,7 @@ const Bond: React.FC = () => {
 										gap="10px"
 										color="black"
 										alignItems="center"
+										flexWrap="no-wrap"
 									>
 										{rewardToken && (
 											<img
