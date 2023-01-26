@@ -21,6 +21,7 @@ import {
 	TokensTableTokenNameContainer,
 	Wrapper,
 } from "./styled";
+import ToggleButton from "../ToggleButton";
 
 interface ITokenListModal extends IModal {
 	onSelectToken: (token: TokenType) => void;
@@ -57,25 +58,26 @@ const TokenListModal: React.FC<ITokenListModal> = ({
 	const [addedTokenStatus, setAddedTokenStatus] = useState<TAddedTokenStatus>(
 		{}
 	);
+	const [hideZeroAssets, setHideZeroAssets] = useState(true);
 	const [showSecond, setShowSecond] = useState(false);
 	const balances = useAppSelector((state) => state.balances);
 	const { runQuery } = useContract();
 
 	const tokenList: TTokenListItem[] = useMemo(() => {
-		const result = (
-			Object.keys(TokenType) as Array<keyof typeof TokenType>
-		).map((key) => {
-			const tokenType = TokenType[key];
-			return {
-				name: key as string,
-				token: TokenType[key],
-				imageUrl: `/coin-images/${tokenType.replace(/\//g, "")}.png`,
-				balance:
-					+(balances?.[tokenType]?.amount || 0) /
-					Math.pow(10, TokenStatus[tokenType].decimal || 6),
-				contract: TokenStatus[tokenType].contractAddress || "",
-			};
-		});
+		const result = (Object.keys(TokenType) as Array<keyof typeof TokenType>)
+			.map((key) => {
+				const tokenType = TokenType[key];
+				return {
+					name: key as string,
+					token: TokenType[key],
+					imageUrl: `/coin-images/${tokenType.replace(/\//g, "")}.png`,
+					balance:
+						+(balances?.[tokenType]?.amount || 0) /
+						Math.pow(10, TokenStatus[tokenType].decimal || 6),
+					contract: TokenStatus[tokenType].contractAddress || "",
+				};
+			})
+			.filter((item) => !hideZeroAssets || item.balance > 0);
 		return searchValue
 			? result.filter(
 					(item) =>
@@ -83,7 +85,7 @@ const TokenListModal: React.FC<ITokenListModal> = ({
 						item.contract === searchValue
 			  )
 			: result;
-	}, [balances, searchValue]);
+	}, [balances, hideZeroAssets, searchValue]);
 
 	const handleOnClose = () => {
 		setTimeout(() => {
@@ -160,7 +162,14 @@ const TokenListModal: React.FC<ITokenListModal> = ({
 				value={searchValue}
 				onChange={handleChangeSearchValue}
 			/>
-			<Text margin="20px 0">Common tokens</Text>
+			<Text margin="20px 0" alignItems="center" justifyContent="space-between">
+				Common tokens
+				<ToggleButton
+					defaultChecked
+					label={{ title: "Hide 0 Balances:" }}
+					onChange={(checked) => setHideZeroAssets(checked)}
+				/>
+			</Text>
 			<CommonTokensContainer>
 				{CommonTokens.map((tokenType: TokenType, index: number) => {
 					const tokenName = (

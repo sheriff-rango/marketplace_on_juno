@@ -33,6 +33,7 @@ export const Slider = styled.span`
 		content: "";
 		width: 50%;
 		height: 100%;
+		right: 0;
 		background-color: #777;
 		border-radius: 30px;
 		transform: translateX(-30px); /*translateX(-(w-h))*/
