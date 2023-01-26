@@ -133,9 +133,11 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		SelectOptions[0].value
 	);
 	const [errMsg, setErrorMsg] = useState("");
-	const [hasErrorOnMobileConnection, setHasErrorOnMobileConnection] =
-		useState(false);
-	const [ibcNativeTokenBalance, setIBCNativeTokenBalance] = useState<any>();
+	// const [hasErrorOnMobileConnection, setHasErrorOnMobileConnection] =
+	// 	useState(false);
+	const [ibcNativeTokenBalance, setIBCNativeTokenBalance] = useState<{
+		[key in TokenType]: any;
+	}>({} as { [key in TokenType]: any });
 	const { isDark } = useContext(ThemeContext);
 	const balances = useAppSelector((state) => state.balances);
 	const tokenPrices = useAppSelector((state) => state.tokenPrices);
@@ -200,25 +202,36 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		setSwapInfo(swapInfoProps);
 	}, [swapInfoProps]);
 
-	useEffect(() => {
-		(async () => {
-			const tokenStatus = TokenStatus[swapInfo.denom];
+	const getTokenBalanceOnIBCChain = useCallback(
+		async (token: TokenType) => {
+			const tokenStatus = TokenStatus[token];
 			const chainConfig = ChainConfigs[tokenStatus.chain];
 			if (connectedWallet) {
 				const { client, account } = await getClient(tokenStatus.chain);
 				if (client && account) {
-					setHasErrorOnMobileConnection(false);
+					// setHasErrorOnMobileConnection(false);
 					const balance = await client.getBalance(
 						account.address,
 						chainConfig.microDenom
 					);
-					setIBCNativeTokenBalance(balance);
-				} else {
-					setHasErrorOnMobileConnection(true);
+					setIBCNativeTokenBalance((prev) => ({
+						...prev,
+						[token]: balance,
+					}));
 				}
+				// else {
+				// 	setHasErrorOnMobileConnection(true);
+				// }
 			}
-		})();
-	}, [connectedWallet, getClient, swapInfo.denom]);
+		},
+		[connectedWallet, getClient]
+	);
+
+	useEffect(() => {
+		for (const option of SelectOptions) {
+			getTokenBalanceOnIBCChain(option.value);
+		}
+	}, [SelectOptions, getTokenBalanceOnIBCChain]);
 
 	const { direction } = useMemo(() => {
 		return {
@@ -282,8 +295,10 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 
 		const client = wallets.foreign.client;
 		if (swapInfo.swapType === SwapType.DEPOSIT && senderAddress && client) {
-			let balanceWithoutFee = Number(ibcNativeTokenBalance.amount);
-			if (isNaN(Number(ibcNativeTokenBalance?.amount))) {
+			let balanceWithoutFee = Number(
+				ibcNativeTokenBalance[swapInfo.denom].amount
+			);
+			if (isNaN(Number(ibcNativeTokenBalance[swapInfo.denom]?.amount))) {
 				setErrMsg("Can't fetch balance.");
 				setSendingTx(false);
 				return;
@@ -361,7 +376,11 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		if (swapInfo.swapType === SwapType.DEPOSIT) {
 			setSwapAmount(
 				"" +
-					(convertStringToNumber(ibcNativeTokenBalance?.amount) * ratio) / 1e6
+					(convertStringToNumber(
+						ibcNativeTokenBalance[swapInfo.denom]?.amount
+					) *
+						ratio) /
+						1e6
 			);
 		} else {
 			const tokenBalance =
@@ -391,9 +410,9 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		}));
 	};
 
-	const foreignTokenSymbol = (
-		Object.keys(TokenType) as Array<keyof typeof TokenType>
-	).filter((key) => TokenType[key] === swapInfo.denom)[0];
+	// const foreignTokenSymbol = (
+	// 	Object.keys(TokenType) as Array<keyof typeof TokenType>
+	// ).filter((key) => TokenType[key] === swapInfo.denom)[0];
 
 	const CustomMenuItem = ({ ...props }) => {
 		const { selectOption, option } = props;
@@ -405,6 +424,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		const tokenBalance =
 			(balances?.[token]?.amount || 0) /
 			Math.pow(10, TokenStatus[token].decimal || 6);
+		const ibcTokenBalance =
+			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) / 1e6;
 		const tokenPrice = tokenPrices[token]?.market_data.current_price?.usd || 0;
 		return (
 			<div
@@ -430,8 +451,16 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 					</div>
 				</div>
 				<div className="token-balance">
-					<span>{addSuffix(tokenBalance)}</span>
-					<span>{`$${addSuffix(tokenBalance * tokenPrice)}`}</span>
+					{swapInfo.swapType === SwapType.DEPOSIT ? (
+						<span style={isDark ? {} : { color: "black" }}>
+							{addSuffix(ibcTokenBalance)}
+						</span>
+					) : (
+						<>
+							<span>{addSuffix(tokenBalance)}</span>
+							<span>{`$${addSuffix(tokenBalance * tokenPrice)}`}</span>
+						</>
+					)}
 				</div>
 			</div>
 		);
@@ -450,6 +479,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		const tokenBalance =
 			(balances?.[token]?.amount || 0) /
 			Math.pow(10, TokenStatus[token].decimal || 6);
+		const ibcTokenBalance =
+			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) / 1e6;
 		const tokenPrice = tokenPrices[token]?.market_data.current_price?.usd || 0;
 		return (
 			<div className="custom-control">
@@ -470,10 +501,18 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 					</div>
 				</div>
 				<div className="token-balance">
-					<span style={isDark ? {} : { color: "black" }}>
-						{addSuffix(tokenBalance)}
-					</span>
-					<span>{`$${addSuffix(tokenBalance * tokenPrice)}`}</span>
+					{swapInfo.swapType === SwapType.DEPOSIT ? (
+						<span style={isDark ? {} : { color: "black" }}>
+							{addSuffix(ibcTokenBalance)}
+						</span>
+					) : (
+						<>
+							<span style={isDark ? {} : { color: "black" }}>
+								{addSuffix(tokenBalance)}
+							</span>
+							<span>{`$${addSuffix(tokenBalance * tokenPrice)}`}</span>
+						</>
+					)}
 				</div>
 			</div>
 		);
@@ -560,20 +599,17 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 							/>
 						</div>
 					)}
-					{swapInfo.swapType === SwapType.DEPOSIT &&
-						(!connectedWallet ? (
-							<span>Please connect the wallet.</span>
-						) : hasErrorOnMobileConnection ? (
-							<span>
-								Please switch to your Keplr Wallet App and approve the action.
-							</span>
-						) : (
-							<span>{`Balance: ${(
-								Number(ibcNativeTokenBalance?.amount || 0) / 1e6
-							).toLocaleString("en-Us", {
-								maximumFractionDigits: 2,
-							})} ${foreignTokenSymbol}`}</span>
-						))}
+					{
+						swapInfo.swapType === SwapType.DEPOSIT &&
+							(!connectedWallet ? (
+								<span>Please connect the wallet.</span>
+							) : null)
+						// hasErrorOnMobileConnection ? (
+						// 	<span>
+						// 		Please switch to your Keplr Wallet App and approve the action.
+						// 	</span>
+						// ) : null
+					}
 					<div className="amount-inputer-wrapper">
 						<div className="auto-amount-container">
 							<span>SELECT AMOUNT</span>

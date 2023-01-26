@@ -39,6 +39,18 @@ const NewWindowOnMobile = styled.div`
 	top: 0;
 	width: 100vw;
 	height: 100vh;
+	overflow: auto;
+	z-index: 1000;
+`;
+
+const CloseButton = styled.span`
+	font-size: 20px;
+	font-weight: bold;
+	position: absolute;
+	right: 30px;
+	top: 30px;
+	color: ${({ theme }) => theme.colors.fontColor};
+	cursor: pointer;
 `;
 
 const RenderInWindow = ({ option, onClose, children }: RenderInWindowProps) => {
@@ -141,7 +153,10 @@ const PopoutContextProvider = ({ children }: { children: any }) => {
 				</RenderInWindow>
 			)}
 			{isMobile && showWindow && (
-				<NewWindowOnMobile>{windowChildren}</NewWindowOnMobile>
+				<NewWindowOnMobile>
+					<CloseButton onClick={() => closeNewWindow()}>X</CloseButton>
+					{windowChildren}
+				</NewWindowOnMobile>
 			)}
 		</PopoutContext.Provider>
 	);
