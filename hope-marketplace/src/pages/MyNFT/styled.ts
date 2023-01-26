@@ -3,6 +3,7 @@ import ExploreHeader from "../../components/ExploreHeader";
 
 import { Tabs as OriginTabs, Tab as OriginTab } from "../../components/Tab";
 import ToggleButton from "../../components/ToggleButton";
+import Button from "../../components/Button";
 
 export const Wrapper = styled.div<{ isMobile?: boolean }>`
 	height: 100%;
@@ -16,13 +17,37 @@ export const MyAssetsArea = styled.div`
 `;
 
 export const TokenTypeString = styled.div`
+	position: relative;
 	font-size: 20px;
 	padding: 20px;
 	text-align: left;
+
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 20px;
 	& > span {
 		font-size: 16px;
 		margin-left: 20px;
 	}
+`;
+
+export const IBCDepositWithdrawButtons = styled.div`
+	display: flex;
+	align-items: center;
+	gap: 10px;
+`;
+
+export const IBCDepositWithdrawButton = styled(Button)`
+	margin: 0;
+	padding: 0;
+	width: 110px;
+	height: max-content;
+	font-size: 18px;
+	background: rgba(2, 226, 150, 0.2);
+	border: 2px solid #02e296;
+	border-radius: 10px;
+	color: ${({ theme }) => theme.colors.fontColor};
 `;
 
 export const ProfileImage = styled.div`

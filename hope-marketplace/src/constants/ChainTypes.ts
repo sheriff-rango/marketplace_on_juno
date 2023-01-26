@@ -49,7 +49,8 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 	[ChainTypes.COSMOS]: {
 		chainName: "Cosmos Hub",
 		chainId: "cosmoshub-4",
-		rpcEndpoint: "https://rpc-cosmoshub-ia.notional.ventures/",
+		// rpcEndpoint: "https://rpc-cosmoshub-ia.notional.ventures/",
+		rpcEndpoint: "https://rpc.cosmos.directory/cosmoshub",
 		restEndpoint: "",
 		faucetEndpoint: "",
 		addressPrefix: "cosmos",

@@ -18,7 +18,7 @@ import {
 	TokenBalance,
 	TokenTypeString,
 	CoinIconWrapper,
-	WithdrawButton,
+	// WithdrawButton,
 	MyNftsHeader,
 	Tab,
 	SearchWrapper,
@@ -35,6 +35,8 @@ import {
 	MyOfferButton,
 	StyledToggleButton as ToggleButton,
 	Balances,
+	IBCDepositWithdrawButtons,
+	IBCDepositWithdrawButton,
 } from "./styled";
 
 import { useAppSelector } from "../../app/hooks";
@@ -277,12 +279,15 @@ const MyNFT: React.FC = () => {
 		};
 	}, [nfts, searchValue]);
 
-	const handleClickBalanceItem = (tokenType: TokenType) => {
+	const handleClickBalanceItem = (
+		tokenType: TokenType,
+		swapType = SwapType.WITHDRAW
+	) => {
 		const tokenStatus = TokenStatus[tokenType];
 		if (!tokenStatus.isIBCCoin) return;
 		popoutQuickSwap(
 			{
-				swapType: SwapType.WITHDRAW,
+				swapType,
 				denom: tokenType,
 				swapChains: {
 					origin: tokenStatus.chain,
@@ -596,6 +601,22 @@ const MyNFT: React.FC = () => {
 				<TokenTypeString>
 					IBC Assets
 					{/* <span>(Click Asset to Withdraw)</span> */}
+					<IBCDepositWithdrawButtons>
+						<IBCDepositWithdrawButton
+							onClick={() =>
+								handleClickBalanceItem(TokenType.ATOM, SwapType.DEPOSIT)
+							}
+						>
+							Deposit
+						</IBCDepositWithdrawButton>
+						<IBCDepositWithdrawButton
+							onClick={() =>
+								handleClickBalanceItem(TokenType.ATOM, SwapType.WITHDRAW)
+							}
+						>
+							Withdraw
+						</IBCDepositWithdrawButton>
+					</IBCDepositWithdrawButtons>
 				</TokenTypeString>
 				<TokenBalancesWrapper>
 					<Balances>
@@ -611,7 +632,11 @@ const MyNFT: React.FC = () => {
 									tokenPrices[denom]?.market_data.current_price?.usd || 0;
 								const chain = tokenStatus.chain;
 								return (
-									<TokenBalanceItem key={denom} marginBottom="20px">
+									<TokenBalanceItem
+										key={denom}
+										marginBottom="20px"
+										onClick={() => handleClickBalanceItem(denom)}
+									>
 										<CoinIconWrapper>
 											<CoinIcon
 												alt=""
@@ -634,11 +659,11 @@ const MyNFT: React.FC = () => {
 												)}$`}
 											</Text>
 										</TokenBalance>
-										<WithdrawButton
+										{/* <WithdrawButton
 											onClick={() => handleClickBalanceItem(denom)}
 										>
 											Withdraw / Deposit
-										</WithdrawButton>
+										</WithdrawButton> */}
 									</TokenBalanceItem>
 								);
 							}
