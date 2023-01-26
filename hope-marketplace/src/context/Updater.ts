@@ -4,8 +4,8 @@ import useRefresh from "../hook/useRefresh";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import useFetch from "../hook/useFetch";
 import getQuery, { BACKEND_URL } from "../util/useAxios";
-import { setTokenPrice } from "../features/tokenPrices/tokenPricesSlice";
-import { TokenType } from "../types/tokens";
+// import { setTokenPrice } from "../features/tokenPrices/tokenPricesSlice";
+// import { TokenType } from "../types/tokens";
 
 export default function Updater(): null {
 	const [basicData, setBasicData] = useState<any>({});
@@ -14,8 +14,13 @@ export default function Updater(): null {
 		// priceRefresh,
 	} = useRefresh();
 	const account = useAppSelector((state) => state?.accounts?.keplrAccount);
-	const { fetchAllNFTs, clearAllNFTs, fetchLiquidities, fetchOtherTokenPrice } =
-		useFetch();
+	const {
+		fetchAllNFTs,
+		clearAllNFTs,
+		fetchLiquidities,
+		//  fetchOtherTokenPrice,
+		fetchTokenPricesUsingPools,
+	} = useFetch();
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
@@ -23,19 +28,23 @@ export default function Updater(): null {
 			const data = await getQuery({
 				url: `${BACKEND_URL}/cache?fields=collectionInfo,collectionTraits,marketplaceNFTs,liquiditiesInfo,tokenPriceInfo`,
 			});
-			const { tokenPriceInfo } = data;
-			if (tokenPriceInfo) {
-				Object.keys(tokenPriceInfo).forEach((key) => {
-					dispatch(setTokenPrice([key as TokenType, tokenPriceInfo[key]]));
-				});
-			}
+			// const { tokenPriceInfo } = data;
+			// if (tokenPriceInfo) {
+			// 	Object.keys(tokenPriceInfo).forEach((key) => {
+			// 		dispatch(setTokenPrice([key as TokenType, tokenPriceInfo[key]]));
+			// 	});
+			// }
 			setBasicData(data || {});
 		})();
 	}, [dispatch, nftRefresh]);
 
+	// useEffect(() => {
+	// 	fetchOtherTokenPrice();
+	// }, [fetchOtherTokenPrice, nftRefresh]);
+
 	useEffect(() => {
-		fetchOtherTokenPrice();
-	}, [fetchOtherTokenPrice, nftRefresh]);
+		fetchTokenPricesUsingPools();
+	}, [fetchTokenPricesUsingPools, nftRefresh]);
 
 	useEffect(() => {
 		fetchLiquidities(account, basicData.liquiditiesInfo);

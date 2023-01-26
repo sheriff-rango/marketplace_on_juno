@@ -336,6 +336,42 @@ const useFetch = () => {
 		});
 	}, [dispatch, junoPrice?.market_data?.current_price?.usd, liquiditiesInfo]);
 
+	const fetchTokenPricesUsingPools = useCallback(() => {
+		// First, calculate HOPERS price
+		const hopersUsdcLiquidity = liquiditiesInfo.find(
+			(liquidity) =>
+				liquidity.token1 === TokenType.HOPERS &&
+				liquidity.token2 === TokenType.USDC
+		);
+		const ratio = hopersUsdcLiquidity?.ratio || 0;
+		const hopersPrice = ratio;
+		dispatch(
+			setTokenPrice([
+				TokenType.HOPERS,
+				{ market_data: { current_price: { usd: hopersPrice } } },
+			])
+		);
+		// Second calculates price of tokens which can't be fetched from coingecko
+		Object.keys(TokenCoingeckoIds).forEach((key: string) => {
+			const tokenType = key as TokenType;
+			if (tokenType !== TokenType.HOPERS) {
+				const targetPool = liquiditiesInfo.find(
+					(liquidity) =>
+						liquidity.token1 === TokenType.HOPERS &&
+						liquidity.token2 === tokenType
+				);
+				const ratio = targetPool?.ratio || 0;
+				const targetPrice = ratio ? hopersPrice / ratio : 0;
+				dispatch(
+					setTokenPrice([
+						tokenType,
+						{ market_data: { current_price: { usd: targetPrice } } },
+					])
+				);
+			}
+		});
+	}, [dispatch, liquiditiesInfo]);
+
 	return {
 		fetchAllNFTs,
 		fetchCollectionInfo,
@@ -345,6 +381,7 @@ const useFetch = () => {
 		clearAllNFTs,
 		fetchLiquidities,
 		fetchOtherTokenPrice,
+		fetchTokenPricesUsingPools,
 	};
 };
 
