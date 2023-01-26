@@ -147,33 +147,37 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 	const getClient = useCallback(
 		async (chainType: ChainTypes) => {
 			if (connectedWallet) {
-				const chainConfig = ChainConfigs[chainType];
-				// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
-				const { wallet, walletClient } = connectedWallet;
-				const offlineSigner = await wallet.getOfflineSignerFunction(
-					walletClient
-				)(chainConfig.chainId);
-				const account = await offlineSigner?.getAccounts();
-				let wasmChainClient = null;
-				if (offlineSigner) {
-					try {
-						wasmChainClient = await SigningCosmWasmClient.connectWithSigner(
-							chainConfig.rpcEndpoint,
-							offlineSigner,
-							{
-								gasPrice: GasPrice.fromString(
-									`${chainConfig.gasPrice}${chainConfig.microDenom}`
-								),
-							}
-						);
-						return {
-							account: account?.[0],
-							client: wasmChainClient,
-						};
-					} catch (e) {
-						console.error("wallets", e);
-						return { account: account?.[0], client: null };
+				try {
+					const chainConfig = ChainConfigs[chainType];
+					// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
+					const { wallet, walletClient } = connectedWallet;
+					const offlineSigner = await wallet.getOfflineSignerFunction(
+						walletClient
+					)(chainConfig.chainId);
+					const account = await offlineSigner?.getAccounts();
+					let wasmChainClient = null;
+					if (offlineSigner) {
+						try {
+							wasmChainClient = await SigningCosmWasmClient.connectWithSigner(
+								chainConfig.rpcEndpoint,
+								offlineSigner,
+								{
+									gasPrice: GasPrice.fromString(
+										`${chainConfig.gasPrice}${chainConfig.microDenom}`
+									),
+								}
+							);
+							return {
+								account: account?.[0],
+								client: wasmChainClient,
+							};
+						} catch (e) {
+							console.error("wallets", chainConfig, e);
+							return { account: account?.[0], client: null };
+						}
 					}
+				} catch (e) {
+					console.log("debug", e);
 				}
 			}
 			return { account: null, client: null };
@@ -272,6 +276,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			setErrMsg(
 				`Amount should be smaller than ${balances[swapInfo.denom].amount}`
 			);
+			return;
 		}
 		setSendingTx(true);
 		const wallets = await getWallets(swapInfo.swapChains);

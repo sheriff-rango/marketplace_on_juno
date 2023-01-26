@@ -18,6 +18,7 @@ export enum TokenType {
 	RACOON = "racoon",
 	GLTO = "glto",
 	AQUA = "aqua",
+	OSMO = "ibc/ED07A3391A112B175915CD8FAF43A2DA8E4790EDE12566649D0C2F97716B8518",
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
@@ -43,6 +44,7 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.RACOON]: "RACOON",
 	[TokenType.GLTO]: "GLTO",
 	[TokenType.AQUA]: "AQUA",
+	[TokenType.OSMO]: "OSMO",
 };
 
 export type TokenStatusType = {
@@ -171,6 +173,12 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		chain: ChainTypes.JUNO,
 		contractAddress:
 			"juno1hnftys64ectjfynm6qjk9my8jd3f6l9dq9utcd3dy8ehwrsx9q4q7n9uxt",
+	},
+	[TokenType.OSMO]: {
+		isNativeCoin: true,
+		isIBCCoin: true,
+		chain: ChainTypes.OSMOSIS,
+		originChain: ChainTypes.OSMOSIS,
 	},
 };
 

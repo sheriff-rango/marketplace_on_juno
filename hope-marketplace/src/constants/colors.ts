@@ -26,5 +26,6 @@ export const LineColors = {
 	[TokenType.RACOON]: "pink",
 	[TokenType.GLTO]: "brown",
 	[TokenType.AQUA]: "yellow",
+	[TokenType.OSMO]: 'blue',
 	Others: "#ede15b",
 };
