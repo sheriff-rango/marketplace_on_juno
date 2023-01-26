@@ -23,6 +23,7 @@ import {
 	setTokenPrice,
 } from "../features/tokenPrices/tokenPricesSlice";
 import { convertStringToNumber } from "../util/string";
+import { Liquidities } from "../constants/Liquidities";
 
 export const getCustomTokenId = (origin: string, target: string): string =>
 	`${target}.${origin.split(".").pop()}`;
@@ -198,33 +199,42 @@ const useFetch = () => {
 			let balances: any[] = [],
 				rewards: any[] = [];
 			let stakingQueryIndices: number[] = [];
-			let liquidities: TPool[] = (basicData || []).map(
-				(liquidityInfo: TPool, index: number) => {
-					const lpAddress = liquidityInfo.lpAddress;
-					fetchLPBalanceQueries.push(
-						runQuery(lpAddress, {
-							balance: { address: account?.address },
-						})
+			let liquidities: TPool[] = Liquidities.reduce(
+				(result: TPool[], liquidity, index: number) => {
+					const liquidityInfo = (basicData as TPool[]).find(
+						(item) =>
+							item.token1 === liquidity.tokenA &&
+							item.token2 === liquidity.tokenB
 					);
-					const stakingAddress = liquidityInfo.stakingAddress;
-					if (stakingAddress) {
-						const stakingAddressArray =
-							typeof stakingAddress === "string"
-								? [stakingAddress]
-								: stakingAddress;
-						stakingAddressArray.forEach((address) => {
-							stakingQueryIndices.push(index);
-							fetchRewardQueries.push(
-								runQuery(address, {
-									staker_info: {
-										staker: account?.address,
-									},
-								})
-							);
-						});
+					if (liquidityInfo) {
+						const lpAddress = liquidityInfo.lpAddress;
+						fetchLPBalanceQueries.push(
+							runQuery(lpAddress, {
+								balance: { address: account?.address },
+							})
+						);
+						const stakingAddress = liquidityInfo.stakingAddress;
+						if (stakingAddress) {
+							const stakingAddressArray =
+								typeof stakingAddress === "string"
+									? [stakingAddress]
+									: stakingAddress;
+							stakingAddressArray.forEach((address) => {
+								stakingQueryIndices.push(index);
+								fetchRewardQueries.push(
+									runQuery(address, {
+										staker_info: {
+											staker: account?.address,
+										},
+									})
+								);
+							});
+						}
+						return [...result, liquidityInfo];
 					}
-					return liquidityInfo;
-				}
+					return result;
+				},
+				[]
 			);
 			if (account) {
 				await Promise.all(fetchLPBalanceQueries)
