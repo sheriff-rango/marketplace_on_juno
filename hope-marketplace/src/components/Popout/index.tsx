@@ -355,13 +355,13 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 							? foreignChainConfig.microDenom
 							: swapInfo.denom,
 					amount: String(
-						Number(swapAmount) *
+						Math.floor(Number(swapAmount) *
 							Math.pow(
 								10,
 								swapInfo.swapType === SwapType.DEPOSIT
 									? 6
 									: TokenStatus[swapInfo.denom].decimal || 6
-							)
+							))
 					),
 				},
 				timeoutHeight: undefined,
@@ -369,32 +369,31 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			}),
 		};
     console.log("debug transfer message", {
-				sourcePort: "transfer",
-				sourceChannel:
-					swapInfo.swapType === SwapType.DEPOSIT
-						? IBCConfig[tokenStatus.chain].channel
-						: IBCConfig[tokenStatus.chain].juno_channel,
-				sender: senderAddress,
-				receiver: receiverAddress,
-				token: {
-					denom:
-						swapInfo.swapType === SwapType.DEPOSIT
-							? foreignChainConfig.microDenom
-							: swapInfo.denom,
-					amount: String(
-						Number(swapAmount) *
-							Math.pow(
-								10,
-								swapInfo.swapType === SwapType.DEPOSIT
-									? 6
-									: TokenStatus[swapInfo.denom].decimal || 6
-							)
-					),
-				},
-				timeoutHeight: undefined,
-				timeoutTimestamp: timeoutTimestampNanoseconds,
-			})
-
+      sourcePort: "transfer",
+      sourceChannel:
+        swapInfo.swapType === SwapType.DEPOSIT
+          ? IBCConfig[tokenStatus.chain].channel
+          : IBCConfig[tokenStatus.chain].juno_channel,
+      sender: senderAddress,
+      receiver: receiverAddress,
+      token: {
+        denom:
+          swapInfo.swapType === SwapType.DEPOSIT
+            ? foreignChainConfig.microDenom
+            : swapInfo.denom,
+        amount: String(
+          Number(swapAmount) *
+            Math.pow(
+              10,
+              swapInfo.swapType === SwapType.DEPOSIT
+                ? 6
+                : TokenStatus[swapInfo.denom].decimal || 6
+            )
+        ),
+      },
+      timeoutHeight: undefined,
+      timeoutTimestamp: timeoutTimestampNanoseconds,
+    })
 		if (senderAddress && client) {
 			try {
 				await client.signAndBroadcast(
