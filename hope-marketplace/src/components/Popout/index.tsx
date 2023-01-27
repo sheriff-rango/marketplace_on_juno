@@ -235,7 +235,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 					// setHasErrorOnMobileConnection(false);
 					const balance = await client.getBalance(
 						account.address,
-						chainConfig.microDenom
+						tokenStatus.isNativeCoin? chainConfig.microDenom : tokenStatus.denom || ''
 					);
 					setIBCNativeTokenBalance((prev) => ({
 						...prev,
@@ -297,9 +297,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			return;
 		}
 		setSendingTx(true);
-    console.log('debug logic start')
 		const wallets = await getWallets(swapInfo.swapChains);
-    console.log('debug wallets', wallets)
 
 		const foreignChainConfig = ChainConfigs[swapInfo.swapChains.foreign];
 
@@ -319,29 +317,27 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		const receiverAddress = wallets.origin.account?.address;
 
 		const client = wallets.foreign.client;
-    console.log('debug balance check', swapInfo, senderAddress, client)
 		if (swapInfo.swapType === SwapType.DEPOSIT && senderAddress && client) {
-      try {
-        let balanceWithoutFee = Number(
-          ibcNativeTokenBalance[swapInfo.denom].amount
-        );
-        if (isNaN(Number(ibcNativeTokenBalance[swapInfo.denom]?.amount))) {
-          setErrMsg("Can't fetch balance.");
-          setSendingTx(false);
-          return;
-        }
-        balanceWithoutFee = balanceWithoutFee / 1e6 - 0.025;
-        if (balanceWithoutFee < amount) {
-          setErrMsg("Not enough balance!");
-          setSendingTx(false);
-          return;
-        }
-      } catch(e) {
-        console.log('debug balance check error', e)
-        setSendingTx(false)
-      }
+		try {
+			let balanceWithoutFee = Number(
+			ibcNativeTokenBalance[swapInfo.denom].amount
+			);
+			if (isNaN(Number(ibcNativeTokenBalance[swapInfo.denom]?.amount))) {
+			setErrMsg("Can't fetch balance.");
+			setSendingTx(false);
+			return;
+			}
+			balanceWithoutFee = balanceWithoutFee / 1e6 - 0.025;
+			if (balanceWithoutFee < amount) {
+			setErrMsg("Not enough balance!");
+			setSendingTx(false);
+			return;
+			}
+		} catch(e) {
+			console.log('debug balance check error', e)
+			setSendingTx(false)
 		}
-    console.log('debug balance check passed')
+		}
 
 		const transferMsg: MsgTransferEncodeObject = {
 			typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
@@ -372,6 +368,32 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 				timeoutTimestamp: timeoutTimestampNanoseconds,
 			}),
 		};
+    console.log("debug transfer message", {
+				sourcePort: "transfer",
+				sourceChannel:
+					swapInfo.swapType === SwapType.DEPOSIT
+						? IBCConfig[tokenStatus.chain].channel
+						: IBCConfig[tokenStatus.chain].juno_channel,
+				sender: senderAddress,
+				receiver: receiverAddress,
+				token: {
+					denom:
+						swapInfo.swapType === SwapType.DEPOSIT
+							? foreignChainConfig.microDenom
+							: swapInfo.denom,
+					amount: String(
+						Number(swapAmount) *
+							Math.pow(
+								10,
+								swapInfo.swapType === SwapType.DEPOSIT
+									? 6
+									: TokenStatus[swapInfo.denom].decimal || 6
+							)
+					),
+				},
+				timeoutHeight: undefined,
+				timeoutTimestamp: timeoutTimestampNanoseconds,
+			})
 
 		if (senderAddress && client) {
 			try {
@@ -384,7 +406,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 				await getTokenBalances();
 				closeNewWindow(true);
 			} catch (e) {
-				console.error("popout transaction error", e);
+				console.error("debug popout transaction error", e);
 				setSendingTx(false);
 			}
 		} else {

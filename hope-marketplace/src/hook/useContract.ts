@@ -176,14 +176,14 @@ const useContract = () => {
 				),
 			}
 		);
-		const denoms: { denom: TokenType; isNativeCoin: boolean }[] = [];
+		const denoms: { denom: TokenType; field: 'balance' | 'amount' }[] = [];
 		const queries = (
 			Object.keys(TokenType) as Array<keyof typeof TokenType>
 		).map((key) => {
 			const tokenStatus = TokenStatus[TokenType[key]];
 			denoms.push({
 				denom: TokenType[key],
-				isNativeCoin: tokenStatus.isNativeCoin,
+				field: !tokenStatus.isNativeCoin && tokenStatus.contractAddress? 'balance' :  'amount',
 			});
 			return !tokenStatus.isNativeCoin && tokenStatus.contractAddress
 				? runQuery(tokenStatus.contractAddress, {
@@ -198,14 +198,14 @@ const useContract = () => {
 				};
 				denoms.forEach(
 					(
-						denom: { denom: TokenType; isNativeCoin: boolean },
+						denom,
 						index: number
 					) => {
 						const crrResult = results[index];
 						returnValue[denom.denom] = {
 							denom: denom.denom,
 							amount: Number(
-								denom.isNativeCoin ? crrResult.amount : crrResult.balance
+								crrResult[denom.field]
 							),
 						};
 					}
