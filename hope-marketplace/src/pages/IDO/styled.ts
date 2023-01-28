@@ -281,7 +281,7 @@ export const PresaleStatus = styled.div<{ backgroundColor: string }>`
 
 export const IDODetailWrapper = styled.div`
 	height: 100%;
-	padding: 0 5%;
+	padding: 20px 5%;
 	background: linear-gradient(
 		180deg,
 		rgba(2, 226, 150, 0.12) 0%,

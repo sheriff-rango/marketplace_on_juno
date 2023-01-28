@@ -101,13 +101,13 @@ const IDOItem: React.FC<IDOItemProps> = ({ idoInfo }) => {
 							{/* <Text bold>{`${idoStatus.total} ${idoInfo.symbol}`}</Text> */}
 							<Text bold>{`${idoStatus.total} ${idoInfo.symbol}`}</Text>
 						</TokenSoldStatusItem>
-						<TokenSoldStatusItem>
+						{!idoInfo.visibleOption?.hideSoldAmount && <TokenSoldStatusItem>
 							<Text>Percentage Sold</Text>
 							<TokenPercentageSoldValue
 								bold
 								percentage={idoStatus.percentageSold}
 							>{`${idoStatus.percentageSold}%`}</TokenPercentageSoldValue>
-						</TokenSoldStatusItem>
+						</TokenSoldStatusItem>}
 					</TokenSoldStatus>
 					<SwapAmountInput idoInfo={idoInfo} isMobile={isMobile} />
 				</TokenOperationPanel>
