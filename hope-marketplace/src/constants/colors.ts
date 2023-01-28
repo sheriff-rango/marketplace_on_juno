@@ -27,5 +27,8 @@ export const LineColors = {
 	[TokenType.GLTO]: "brown",
 	[TokenType.AQUA]: "yellow",
 	[TokenType.OSMO]: 'blue',
+  [TokenType.DRGN]: '#bdcf32',
+  [TokenType.BANANA]: '#87bc45',
+  [TokenType.CZAR]: '#27aeef',
 	Others: "#ede15b",
 };

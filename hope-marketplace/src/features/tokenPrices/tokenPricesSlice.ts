@@ -24,6 +24,9 @@ export const TokenCoingeckoIds: { [key in TokenType]: string } = {
 	[TokenType.GLTO]: "",
 	[TokenType.AQUA]: "",
 	[TokenType.OSMO]: "osmosis",
+  [TokenType.DRGN]: '',
+  [TokenType.BANANA]: '',
+  [TokenType.CZAR]: ''
 };
 
 const CoinGeckoAPIKey = "CG-CV5rXz5JpbGcc36wL76u5gnd";
