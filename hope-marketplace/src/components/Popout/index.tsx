@@ -504,16 +504,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 					</div>
 				</div>
 				<div className="token-balance">
-					{swapInfo.swapType === SwapType.DEPOSIT ? (
-						<span style={isDark ? {} : { color: "black" }}>
-							{addSuffix(ibcTokenBalance)}
-						</span>
-					) : (
-						<>
-							<span>{addSuffix(tokenBalance)}</span>
-							<span>{`$${addSuffix(tokenBalance * tokenPrice)}`}</span>
-						</>
-					)}
+          <span>{swapInfo.swapType === SwapType.DEPOSIT ? addSuffix(ibcTokenBalance): addSuffix(tokenBalance)}</span>
+          <span>{`$${addSuffix((swapInfo.swapType === SwapType.DEPOSIT? ibcTokenBalance : tokenBalance) * tokenPrice)}`}</span>
 				</div>
 			</div>
 		);
@@ -554,18 +546,10 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 					</div>
 				</div>
 				<div className="token-balance">
-					{swapInfo.swapType === SwapType.DEPOSIT ? (
-						<span style={isDark ? {} : { color: "black" }}>
-							{addSuffix(ibcTokenBalance)}
-						</span>
-					) : (
-						<>
-							<span style={isDark ? {} : { color: "black" }}>
-								{addSuffix(tokenBalance)}
-							</span>
-							<span>{`$${addSuffix(tokenBalance * tokenPrice)}`}</span>
-						</>
-					)}
+          <span style={isDark ? {} : { color: "black" }}>
+            {addSuffix(swapInfo.swapType === SwapType.DEPOSIT ? ibcTokenBalance : tokenBalance)}
+          </span>
+          <span>{`$${addSuffix((swapInfo.swapType === SwapType.DEPOSIT ? ibcTokenBalance : tokenBalance) * tokenPrice)}`}</span>
 				</div>
 			</div>
 		);
