@@ -345,14 +345,14 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 				sourcePort: "transfer",
 				sourceChannel:
 					swapInfo.swapType === SwapType.DEPOSIT
-						? IBCConfig[tokenStatus.chain].channel
+						? (IBCConfig[tokenStatus.chain].channel)
 						: IBCConfig[tokenStatus.chain].juno_channel,
 				sender: senderAddress,
 				receiver: receiverAddress,
 				token: {
 					denom:
 						swapInfo.swapType === SwapType.DEPOSIT
-							? foreignChainConfig.microDenom
+							? (tokenStatus.denom || foreignChainConfig.microDenom)
 							: swapInfo.denom,
 					amount: String(
 						Math.floor(Number(swapAmount) *
@@ -369,34 +369,37 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			}),
 		};
     console.log("debug transfer message", {
-      sourcePort: "transfer",
-      sourceChannel:
-        swapInfo.swapType === SwapType.DEPOSIT
-          ? IBCConfig[tokenStatus.chain].channel
-          : IBCConfig[tokenStatus.chain].juno_channel,
-      sender: senderAddress,
-      receiver: receiverAddress,
-      token: {
-        denom:
-          swapInfo.swapType === SwapType.DEPOSIT
-            ? foreignChainConfig.microDenom
-            : swapInfo.denom,
-        amount: String(
-          Number(swapAmount) *
-            Math.pow(
-              10,
-              swapInfo.swapType === SwapType.DEPOSIT
-                ? 6
-                : TokenStatus[swapInfo.denom].decimal || 6
-            )
-        ),
-      },
-      timeoutHeight: undefined,
-      timeoutTimestamp: timeoutTimestampNanoseconds,
-    })
+			typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+			value: MsgTransfer.fromPartial({
+				sourcePort: "transfer",
+				sourceChannel:
+					swapInfo.swapType === SwapType.DEPOSIT
+						? (IBCConfig[tokenStatus.chain].channel)
+						: IBCConfig[tokenStatus.chain].juno_channel,
+				sender: senderAddress,
+				receiver: receiverAddress,
+				token: {
+					denom:
+						swapInfo.swapType === SwapType.DEPOSIT
+							? (tokenStatus.denom || foreignChainConfig.microDenom)
+							: swapInfo.denom,
+					amount: String(
+						Math.floor(Number(swapAmount) *
+							Math.pow(
+								10,
+								swapInfo.swapType === SwapType.DEPOSIT
+									? 6
+									: TokenStatus[swapInfo.denom].decimal || 6
+							))
+					),
+				},
+				timeoutHeight: undefined,
+				timeoutTimestamp: timeoutTimestampNanoseconds,
+			}),
+		})
 		if (senderAddress && client) {
 			try {
-				await client.signAndBroadcast(
+				const tx = await client.signAndBroadcast(
 					senderAddress,
 					[transferMsg],
 					"auto",
@@ -404,6 +407,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 				);
 				await getTokenBalances();
 				closeNewWindow(true);
+        console.log('popout transaction successfully', tx)
 			} catch (e) {
 				console.error("debug popout transaction error", e);
 				setSendingTx(false);
