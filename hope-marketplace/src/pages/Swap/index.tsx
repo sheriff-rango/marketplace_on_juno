@@ -300,7 +300,7 @@ const Swap: React.FC = () => {
 		setIsPending(true);
 		let transactions = [],
 			funds: any[] = [];
-		if (!TokenStatus[swapInfo.from.token].isNativeCoin) {
+		if (!TokenStatus[swapInfo.from.token].isIBCCoin && !TokenStatus[swapInfo.from.token].isNativeCoin) {
 			transactions.push(
 				createExecuteMessage({
 					senderAddress: account.address,

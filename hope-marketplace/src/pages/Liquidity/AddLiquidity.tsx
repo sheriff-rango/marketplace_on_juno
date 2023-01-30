@@ -120,7 +120,7 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 
 		let funds: any[] = [];
 
-		if (!TokenStatus[pool.token1].isNativeCoin) {
+		if (!TokenStatus[pool.token1].isIBCCoin && !TokenStatus[pool.token1].isNativeCoin) {
 			transactions.push(
 				createExecuteMessage({
 					senderAddress: account.address,
@@ -148,7 +148,7 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 				),
 			];
 		}
-		if (!TokenStatus[pool.token2].isNativeCoin) {
+		if (!TokenStatus[pool.token2].isIBCCoin && !TokenStatus[pool.token2].isNativeCoin) {
 			transactions.push(
 				createExecuteMessage({
 					senderAddress: account.address,
