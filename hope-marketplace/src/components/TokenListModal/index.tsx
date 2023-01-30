@@ -58,7 +58,7 @@ const TokenListModal: React.FC<ITokenListModal> = ({
 	const [addedTokenStatus, setAddedTokenStatus] = useState<TAddedTokenStatus>(
 		{}
 	);
-	const [hideZeroAssets, setHideZeroAssets] = useState(true);
+	const [hideZeroAssets, setHideZeroAssets] = useState(false);
 	const [showSecond, setShowSecond] = useState(false);
 	const balances = useAppSelector((state) => state.balances);
 	const { runQuery } = useContract();
@@ -70,7 +70,10 @@ const TokenListModal: React.FC<ITokenListModal> = ({
 				return {
 					name: key as string,
 					token: TokenType[key],
-					imageUrl: `/coin-images/${tokenType.replace(/\//g, "")}.png`,
+					imageUrl: `/coin-images/${tokenType.replace(
+						/\//g,
+						""
+					)}.png`,
 					balance:
 						+(balances?.[tokenType]?.amount || 0) /
 						Math.pow(10, TokenStatus[tokenType].decimal || 6),
@@ -81,7 +84,9 @@ const TokenListModal: React.FC<ITokenListModal> = ({
 		return searchValue
 			? result.filter(
 					(item) =>
-						item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+						item.name
+							.toLowerCase()
+							.includes(searchValue.toLowerCase()) ||
 						item.contract === searchValue
 			  )
 			: result;
@@ -94,7 +99,9 @@ const TokenListModal: React.FC<ITokenListModal> = ({
 		onClose();
 	};
 
-	const handleChangeSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChangeSearchValue = (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
 		const { value } = e.target;
 		setSearchValue(value);
 	};
@@ -162,10 +169,13 @@ const TokenListModal: React.FC<ITokenListModal> = ({
 				value={searchValue}
 				onChange={handleChangeSearchValue}
 			/>
-			<Text margin="20px 0" alignItems="center" justifyContent="space-between">
+			<Text
+				margin="20px 0"
+				alignItems="center"
+				justifyContent="space-between"
+			>
 				Common tokens
 				<ToggleButton
-					defaultChecked
 					label={{ title: "Hide 0 Balances:" }}
 					onChange={(checked) => setHideZeroAssets(checked)}
 				/>
@@ -183,7 +193,10 @@ const TokenListModal: React.FC<ITokenListModal> = ({
 						>
 							<TokenImage
 								alt=""
-								src={`/coin-images/${tokenType.replace(/\//g, "")}.png`}
+								src={`/coin-images/${tokenType.replace(
+									/\//g,
+									""
+								)}.png`}
 							/>
 							<Text bold>{tokenName}</Text>
 						</CommonTokenItem>
@@ -201,9 +214,14 @@ const TokenListModal: React.FC<ITokenListModal> = ({
 					tokenList.map((tokenItem) => (
 						<>
 							<TokensTableTokenNameContainer
-								onClick={() => handleClickToken(tokenItem.token)}
+								onClick={() =>
+									handleClickToken(tokenItem.token)
+								}
 							>
-								<TokensTableTokenName imgUrl={tokenItem.imageUrl} bold>
+								<TokensTableTokenName
+									imgUrl={tokenItem.imageUrl}
+									bold
+								>
 									{tokenItem.name}
 								</TokensTableTokenName>
 							</TokensTableTokenNameContainer>
@@ -260,14 +278,21 @@ const TokenListModal: React.FC<ITokenListModal> = ({
 					<>
 						<AddedTokenStatusItem>
 							<Text alignItems="center" gap="30px">
-								{`Token "${addedTokenStatus.name}"`} <CheckIcon />
+								{`Token "${addedTokenStatus.name}"`}{" "}
+								<CheckIcon />
 							</Text>
 							<AddTokenButton>Add Token</AddTokenButton>
 						</AddedTokenStatusItem>
 						<AddedTokenStatusItem>
 							<Text alignItems="center" gap="30px">
-								{`Pool "${addedTokenStatus.pool || "Not Found"}"`}{" "}
-								{addedTokenStatus.pool ? <CheckIcon /> : <CancelIcon />}
+								{`Pool "${
+									addedTokenStatus.pool || "Not Found"
+								}"`}{" "}
+								{addedTokenStatus.pool ? (
+									<CheckIcon />
+								) : (
+									<CancelIcon />
+								)}
 							</Text>
 							<AddTokenButton>Create a Pool +</AddTokenButton>
 						</AddedTokenStatusItem>
