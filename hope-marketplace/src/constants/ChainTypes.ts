@@ -33,7 +33,7 @@ export const IBCConfig: {
 		juno_channel: "channel-28",
 	},
 	[ChainTypes.OSMOSIS]: { channel: "channel-42", juno_channel: "channel-0" },
-	[ChainTypes.KUJIRA]: { channel: "channel-1", juno_channel: " channel-87" },
+	[ChainTypes.KUJIRA]: { channel: "channel-1", juno_channel: "channel-87" },
 };
 
 export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
