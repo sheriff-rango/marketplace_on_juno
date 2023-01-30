@@ -208,6 +208,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		SelectOptions[0].value
 	);
 	const [errMsg, setErrorMsg] = useState("");
+	const [statusMsg, setStatusMsg] = useState("");
 	// const [hasErrorOnMobileConnection, setHasErrorOnMobileConnection] =
 	// 	useState(false);
 	const [ibcNativeTokenBalance, setIBCNativeTokenBalance] = useState<{
@@ -315,6 +316,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			return;
 		}
 		setSendingTx(true);
+		setStatusMsg("starting transfer. getting clients...");
 		const wallets = await getWallets(swapInfo.swapChains);
 
 		const foreignChainConfig = ChainConfigs[swapInfo.swapChains.foreign];
@@ -325,6 +327,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			: undefined;
 
 		if (!wallets.origin || !wallets.foreign) {
+			setErrMsg("getting clients failed.");
+			setStatusMsg("");
 			setSendingTx(false);
 			return;
 		}
@@ -336,6 +340,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 
 		const client = wallets.foreign.client;
 		if (swapInfo.swapType === SwapType.DEPOSIT && senderAddress && client) {
+			setStatusMsg("balance checking...");
 			try {
 				let balanceWithoutFee = Number(
 					ibcNativeTokenBalance[swapInfo.denom].amount
@@ -344,17 +349,21 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 					isNaN(Number(ibcNativeTokenBalance[swapInfo.denom]?.amount))
 				) {
 					setErrMsg("Can't fetch balance.");
+					setStatusMsg("");
 					setSendingTx(false);
 					return;
 				}
 				balanceWithoutFee = balanceWithoutFee / 1e6 - 0.025;
 				if (balanceWithoutFee < amount) {
 					setErrMsg("Not enough balance!");
+					setStatusMsg("");
 					setSendingTx(false);
 					return;
 				}
 			} catch (e) {
 				console.log("debug balance check error", e);
+				setErrMsg("error occured during balance checking.");
+				setStatusMsg("");
 				setSendingTx(false);
 			}
 		}
@@ -424,6 +433,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			}),
 		});
 		if (senderAddress && client) {
+			setStatusMsg("executing transaction...");
 			try {
 				const tx = await client.signAndBroadcast(
 					senderAddress,
@@ -433,12 +443,16 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 				);
 				await getTokenBalances();
 				closeNewWindow(true);
+				setStatusMsg("");
 				console.log("popout transaction successfully", tx);
 			} catch (e) {
 				console.error("debug popout transaction error", e);
+				setErrorMsg("error occured during transaction");
+				setStatusMsg("");
 				setSendingTx(false);
 			}
 		} else {
+			setStatusMsg("");
 			setSendingTx(false);
 		}
 	};
@@ -720,7 +734,12 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 							value={swapAmount}
 						/>
 					</div>
-					<div className="err-msg-container">{errMsg}</div>
+					<div
+						className="err-msg-container"
+						style={{ color: statusMsg ? "black" : "red" }}
+					>
+						{statusMsg || errMsg}
+					</div>
 					<div className="operation-button-container">
 						<div
 							className="operation-button"
