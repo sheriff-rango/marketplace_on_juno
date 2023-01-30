@@ -42,7 +42,8 @@ export const getOfflineSigner = async (chainId: string) => {
 	if (window.keplr) {
 		await window.keplr.enable(chainId);
 		let signer: any = await window.keplr.getOfflineSignerAuto(chainId);
-		if (!signer) signer = await window.keplr.getOfflineSignerOnlyAmino(chainId);
+		if (!signer)
+			signer = await window.keplr.getOfflineSignerOnlyAmino(chainId);
 		if (!signer) signer = await window.keplr.getOfflineSignerAuto(chainId);
 		return signer;
 	}
@@ -62,7 +63,10 @@ const useContract = () => {
 	const runQuery = useCallback(
 		async (contractAddress: string, queryMsg: any) => {
 			const client = await getJunoQueryClient();
-			const result = await client.queryContractSmart(contractAddress, queryMsg);
+			const result = await client.queryContractSmart(
+				contractAddress,
+				queryMsg
+			);
 			return result;
 		},
 		[getJunoQueryClient]
@@ -153,7 +157,8 @@ const useContract = () => {
 								executeFunds,
 								ChainConfigs[ChainTypes.JUNO]["coinDecimals"]
 							),
-							executeDenom || ChainConfigs[ChainTypes.JUNO]["microDenom"]
+							executeDenom ||
+								ChainConfigs[ChainTypes.JUNO]["microDenom"]
 					  )
 					: undefined
 			);
@@ -176,14 +181,17 @@ const useContract = () => {
 				),
 			}
 		);
-		const denoms: { denom: TokenType; field: 'balance' | 'amount' }[] = [];
+		const denoms: { denom: TokenType; field: "balance" | "amount" }[] = [];
 		const queries = (
 			Object.keys(TokenType) as Array<keyof typeof TokenType>
 		).map((key) => {
 			const tokenStatus = TokenStatus[TokenType[key]];
 			denoms.push({
 				denom: TokenType[key],
-				field: !tokenStatus.isNativeCoin && tokenStatus.contractAddress? 'balance' :  'amount',
+				field:
+					!tokenStatus.isNativeCoin && tokenStatus.contractAddress
+						? "balance"
+						: "amount",
 			});
 			return !tokenStatus.isNativeCoin && tokenStatus.contractAddress
 				? runQuery(tokenStatus.contractAddress, {
@@ -196,20 +204,13 @@ const useContract = () => {
 				let returnValue: { [key in TokenType]: any } = {} as {
 					[key in TokenType]: any;
 				};
-				denoms.forEach(
-					(
-						denom,
-						index: number
-					) => {
-						const crrResult = results[index];
-						returnValue[denom.denom] = {
-							denom: denom.denom,
-							amount: Number(
-								crrResult[denom.field]
-							),
-						};
-					}
-				);
+				denoms.forEach((denom, index: number) => {
+					const crrResult = results[index];
+					returnValue[denom.denom] = {
+						denom: denom.denom,
+						amount: Number(crrResult[denom.field]),
+					};
+				});
 				return returnValue;
 			})
 			.catch((err: any) => {

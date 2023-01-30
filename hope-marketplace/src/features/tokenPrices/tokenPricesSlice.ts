@@ -24,9 +24,10 @@ export const TokenCoingeckoIds: { [key in TokenType]: string } = {
 	[TokenType.GLTO]: "",
 	[TokenType.AQUA]: "",
 	[TokenType.OSMO]: "osmosis",
-  [TokenType.DRGN]: '',
-  [TokenType.BANANA]: '',
-  [TokenType.CZAR]: ''
+	[TokenType.DRGN]: "",
+	[TokenType.BANANA]: "",
+	[TokenType.CZAR]: "",
+	[TokenType.KUJIRA]: "kujira",
 };
 
 const CoinGeckoAPIKey = "CG-CV5rXz5JpbGcc36wL76u5gnd";
@@ -109,7 +110,9 @@ export const fetchTokenPriceHistory = async (
 				};
 				result.prices.forEach((historyItem: any) => {
 					const crrHistory = {
-						label: moment(new Date(historyItem[0])).format(TimeFormats[period]),
+						label: moment(new Date(historyItem[0])).format(
+							TimeFormats[period]
+						),
 						value: historyItem[1],
 					};
 					if (
@@ -126,7 +129,8 @@ export const fetchTokenPriceHistory = async (
 						//     previousHistoryOption.totalValue / previousHistoryOption.count,
 						// });
 						priceHistories[previousHistoryOption.label] =
-							previousHistoryOption.totalValue / previousHistoryOption.count;
+							previousHistoryOption.totalValue /
+							previousHistoryOption.count;
 						previousHistoryOption = {
 							label: crrHistory.label,
 							totalValue: crrHistory.value,

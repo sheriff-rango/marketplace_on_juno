@@ -76,62 +76,69 @@ interface QuickSwapProps {
 }
 
 type TWasmChainClients = {
-  [key in ChainTypes]: {
-    client: SigningCosmWasmClient | null,
-    account: AccountData | null,
-  }
-}
+	[key in ChainTypes]: {
+		client: SigningCosmWasmClient | null;
+		account: AccountData | null;
+	};
+};
 
 let wasmChainClients: TWasmChainClients = {} as TWasmChainClients;
 
 const getClient = async (chainType: ChainTypes) => {
-  // if (connectedWallet) {
-	  if (wasmChainClients[chainType] && wasmChainClients[chainType].client && wasmChainClients[chainType].account) {
-      return wasmChainClients[chainType]
-    }
-  if (!!window.keplr && !!window.getOfflineSignerAuto) {
-    try {
-      const chainConfig = ChainConfigs[chainType];
-      // const offlineSigner = await getOfflineSigner(chainConfig.chainId);
-      // const { wallet, walletClient } = connectedWallet;
-      // const offlineSigner = await wallet.getOfflineSignerFunction(
-      // 	walletClient
-      // )(chainConfig.chainId);
-      // const account = await offlineSigner?.getAccounts();
-      // console.log('debug start', chainConfig)
-      await window.keplr.enable(chainConfig.chainId);
-      const offlineSigner = await window.getOfflineSignerAuto(chainConfig.chainId);
-      const account = await offlineSigner.getAccounts();
-      let wasmChainClient = null;
-      if (offlineSigner) {
-        try {
-          wasmChainClient = await SigningCosmWasmClient.connectWithSigner(
-            chainConfig.rpcEndpoint,
-            offlineSigner,
-            {
-              gasPrice: GasPrice.fromString(
-                `${chainConfig.gasPrice}${chainConfig.microDenom}`
-              ),
-            }
-          );
-          // console.log('debug wasmChainClient', wasmChainClient)
-          const result = {
-            account: account?.[0],
-            client: wasmChainClient,
-          }
-          wasmChainClients[chainType] = result;
-          return result;
-        } catch (e) {
-          console.error("wallets", chainConfig, e);
-          return { account: account?.[0], client: null };
-        }
-      }
-    } catch (e) {
-      console.log("debug", e);
-    }
-  }
-  return { account: null, client: null };
-}
+	// if (connectedWallet) {
+	if (
+		wasmChainClients[chainType] &&
+		wasmChainClients[chainType].client &&
+		wasmChainClients[chainType].account
+	) {
+		return wasmChainClients[chainType];
+	}
+	if (!!window.keplr && !!window.getOfflineSignerAuto) {
+		try {
+			const chainConfig = ChainConfigs[chainType];
+			// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
+			// const { wallet, walletClient } = connectedWallet;
+			// const offlineSigner = await wallet.getOfflineSignerFunction(
+			// 	walletClient
+			// )(chainConfig.chainId);
+			// const account = await offlineSigner?.getAccounts();
+			// console.log('debug start', chainConfig)
+			await window.keplr.enable(chainConfig.chainId);
+			const offlineSigner = await window.getOfflineSignerAuto(
+				chainConfig.chainId
+			);
+			const account = await offlineSigner.getAccounts();
+			let wasmChainClient = null;
+			if (offlineSigner) {
+				try {
+					wasmChainClient =
+						await SigningCosmWasmClient.connectWithSigner(
+							chainConfig.rpcEndpoint,
+							offlineSigner,
+							{
+								gasPrice: GasPrice.fromString(
+									`${chainConfig.gasPrice}${chainConfig.microDenom}`
+								),
+							}
+						);
+					// console.log('debug wasmChainClient', wasmChainClient)
+					const result = {
+						account: account?.[0],
+						client: wasmChainClient,
+					};
+					wasmChainClients[chainType] = result;
+					return result;
+				} catch (e) {
+					console.error("wallets", chainConfig, e);
+					return { account: account?.[0], client: null };
+				}
+			}
+		} catch (e) {
+			console.log("debug", e);
+		}
+	}
+	return { account: null, client: null };
+};
 
 const OutLinkIcon = ({ ...props }) => (
 	<svg
@@ -163,22 +170,19 @@ l64 65 -64 65 c-35 36 -69 65 -74 65 -6 0 19 -29 54 -65z"
 	</svg>
 );
 
-const SelectOptions = (
-		Object.keys(TokenType) as Array<keyof typeof TokenType>
-	)
-		.filter((token) => TokenStatus[TokenType[token]].isIBCCoin)
-		.map((key) => {
-			return {
-				value: TokenType[key],
-			};
-		});
+const SelectOptions = (Object.keys(TokenType) as Array<keyof typeof TokenType>)
+	.filter((token) => TokenStatus[TokenType[token]].isIBCCoin)
+	.map((key) => {
+		return {
+			value: TokenType[key],
+		};
+	});
 
 const QuickSwap: React.FC<QuickSwapProps> = ({
 	closeNewWindow,
 	isFullControl,
 	swapInfo: swapInfoProps,
 }) => {
-
 	const [sendingTx, setSendingTx] = useState(false);
 	const [swapAmount, setSwapAmount] = useState("");
 	const [swapInfo, setSwapInfo] = useState<SwapInfo>({
@@ -227,32 +231,34 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 	}, [swapInfoProps]);
 
 	const getTokenBalanceOnIBCChain = async (token: TokenType) => {
-			const tokenStatus = TokenStatus[token];
-			const chainConfig = ChainConfigs[tokenStatus.chain];
-			if (connectedWallet) {
-				const { client, account } = await getClient(tokenStatus.chain);
-				if (client && account) {
-					// setHasErrorOnMobileConnection(false);
-					const balance = await client.getBalance(
-						account.address,
-						tokenStatus.isNativeCoin? chainConfig.microDenom : tokenStatus.denom || ''
-					);
-					setIBCNativeTokenBalance((prev) => ({
-						...prev,
-						[token]: balance,
-					}));
-				}
-				// else {
-				// 	setHasErrorOnMobileConnection(true);
-				// }
+		const tokenStatus = TokenStatus[token];
+		const chainConfig = ChainConfigs[tokenStatus.chain];
+		if (connectedWallet) {
+			const { client, account } = await getClient(tokenStatus.chain);
+			if (client && account) {
+				// setHasErrorOnMobileConnection(false);
+				const balance = await client.getBalance(
+					account.address,
+					tokenStatus.isNativeCoin
+						? chainConfig.microDenom
+						: tokenStatus.denom || ""
+				);
+				setIBCNativeTokenBalance((prev) => ({
+					...prev,
+					[token]: balance,
+				}));
 			}
-		};
+			// else {
+			// 	setHasErrorOnMobileConnection(true);
+			// }
+		}
+	};
 
 	useEffect(() => {
 		for (const option of SelectOptions) {
 			getTokenBalanceOnIBCChain(option.value);
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const { direction } = useMemo(() => {
@@ -292,7 +298,9 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 				balances[swapInfo.denom].amount
 		) {
 			setErrMsg(
-				`Amount should be smaller than ${balances[swapInfo.denom].amount}`
+				`Amount should be smaller than ${
+					balances[swapInfo.denom].amount
+				}`
 			);
 			return;
 		}
@@ -318,25 +326,27 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 
 		const client = wallets.foreign.client;
 		if (swapInfo.swapType === SwapType.DEPOSIT && senderAddress && client) {
-		try {
-			let balanceWithoutFee = Number(
-			ibcNativeTokenBalance[swapInfo.denom].amount
-			);
-			if (isNaN(Number(ibcNativeTokenBalance[swapInfo.denom]?.amount))) {
-			setErrMsg("Can't fetch balance.");
-			setSendingTx(false);
-			return;
+			try {
+				let balanceWithoutFee = Number(
+					ibcNativeTokenBalance[swapInfo.denom].amount
+				);
+				if (
+					isNaN(Number(ibcNativeTokenBalance[swapInfo.denom]?.amount))
+				) {
+					setErrMsg("Can't fetch balance.");
+					setSendingTx(false);
+					return;
+				}
+				balanceWithoutFee = balanceWithoutFee / 1e6 - 0.025;
+				if (balanceWithoutFee < amount) {
+					setErrMsg("Not enough balance!");
+					setSendingTx(false);
+					return;
+				}
+			} catch (e) {
+				console.log("debug balance check error", e);
+				setSendingTx(false);
 			}
-			balanceWithoutFee = balanceWithoutFee / 1e6 - 0.025;
-			if (balanceWithoutFee < amount) {
-			setErrMsg("Not enough balance!");
-			setSendingTx(false);
-			return;
-			}
-		} catch(e) {
-			console.log('debug balance check error', e)
-			setSendingTx(false)
-		}
 		}
 
 		const transferMsg: MsgTransferEncodeObject = {
@@ -345,58 +355,64 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 				sourcePort: "transfer",
 				sourceChannel:
 					swapInfo.swapType === SwapType.DEPOSIT
-						? (IBCConfig[tokenStatus.chain].channel)
+						? IBCConfig[tokenStatus.chain].channel
 						: IBCConfig[tokenStatus.chain].juno_channel,
 				sender: senderAddress,
 				receiver: receiverAddress,
 				token: {
 					denom:
 						swapInfo.swapType === SwapType.DEPOSIT
-							? (tokenStatus.denom || foreignChainConfig.microDenom)
+							? tokenStatus.denom || foreignChainConfig.microDenom
 							: swapInfo.denom,
 					amount: String(
-						Math.floor(Number(swapAmount) *
-							Math.pow(
-								10,
-								swapInfo.swapType === SwapType.DEPOSIT
-									? 6
-									: TokenStatus[swapInfo.denom].decimal || 6
-							))
+						Math.floor(
+							Number(swapAmount) *
+								Math.pow(
+									10,
+									swapInfo.swapType === SwapType.DEPOSIT
+										? 6
+										: TokenStatus[swapInfo.denom].decimal ||
+												6
+								)
+						)
 					),
 				},
 				timeoutHeight: undefined,
 				timeoutTimestamp: timeoutTimestampNanoseconds,
 			}),
 		};
-    console.log("debug transfer message", {
+		console.log("debug transfer message", {
 			typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
 			value: MsgTransfer.fromPartial({
 				sourcePort: "transfer",
 				sourceChannel:
 					swapInfo.swapType === SwapType.DEPOSIT
-						? (IBCConfig[tokenStatus.chain].channel)
+						? IBCConfig[tokenStatus.chain].channel
 						: IBCConfig[tokenStatus.chain].juno_channel,
 				sender: senderAddress,
 				receiver: receiverAddress,
 				token: {
 					denom:
 						swapInfo.swapType === SwapType.DEPOSIT
-							? (tokenStatus.denom || foreignChainConfig.microDenom)
+							? tokenStatus.denom || foreignChainConfig.microDenom
 							: swapInfo.denom,
 					amount: String(
-						Math.floor(Number(swapAmount) *
-							Math.pow(
-								10,
-								swapInfo.swapType === SwapType.DEPOSIT
-									? 6
-									: TokenStatus[swapInfo.denom].decimal || 6
-							))
+						Math.floor(
+							Number(swapAmount) *
+								Math.pow(
+									10,
+									swapInfo.swapType === SwapType.DEPOSIT
+										? 6
+										: TokenStatus[swapInfo.denom].decimal ||
+												6
+								)
+						)
 					),
 				},
 				timeoutHeight: undefined,
 				timeoutTimestamp: timeoutTimestampNanoseconds,
 			}),
-		})
+		});
 		if (senderAddress && client) {
 			try {
 				const tx = await client.signAndBroadcast(
@@ -407,7 +423,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 				);
 				await getTokenBalances();
 				closeNewWindow(true);
-        console.log('popout transaction successfully', tx)
+				console.log("popout transaction successfully", tx);
 			} catch (e) {
 				console.error("debug popout transaction error", e);
 				setSendingTx(false);
@@ -483,7 +499,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			Math.pow(10, TokenStatus[token].decimal || 6);
 		const ibcTokenBalance =
 			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) / 1e6;
-		const tokenPrice = tokenPrices[token]?.market_data.current_price?.usd || 0;
+		const tokenPrice =
+			tokenPrices[token]?.market_data.current_price?.usd || 0;
 		return (
 			<div
 				className={`custom-menu-item ${
@@ -508,8 +525,16 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 					</div>
 				</div>
 				<div className="token-balance">
-          <span>{swapInfo.swapType === SwapType.DEPOSIT ? addSuffix(ibcTokenBalance): addSuffix(tokenBalance)}</span>
-          <span>{`$${addSuffix((swapInfo.swapType === SwapType.DEPOSIT? ibcTokenBalance : tokenBalance) * tokenPrice)}`}</span>
+					<span>
+						{swapInfo.swapType === SwapType.DEPOSIT
+							? addSuffix(ibcTokenBalance)
+							: addSuffix(tokenBalance)}
+					</span>
+					<span>{`$${addSuffix(
+						(swapInfo.swapType === SwapType.DEPOSIT
+							? ibcTokenBalance
+							: tokenBalance) * tokenPrice
+					)}`}</span>
 				</div>
 			</div>
 		);
@@ -518,7 +543,11 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 	const CustomMenuList = (props: any) => {
 		const { options, selectOption } = props;
 		return options.map((option: any, index: number) => (
-			<CustomMenuItem key={index} selectOption={selectOption} option={option} />
+			<CustomMenuItem
+				key={index}
+				selectOption={selectOption}
+				option={option}
+			/>
 		));
 	};
 
@@ -530,7 +559,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			Math.pow(10, TokenStatus[token].decimal || 6);
 		const ibcTokenBalance =
 			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) / 1e6;
-		const tokenPrice = tokenPrices[token]?.market_data.current_price?.usd || 0;
+		const tokenPrice =
+			tokenPrices[token]?.market_data.current_price?.usd || 0;
 		return (
 			<div className="custom-control">
 				<div className="token-name-container">
@@ -550,10 +580,18 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 					</div>
 				</div>
 				<div className="token-balance">
-          <span style={isDark ? {} : { color: "black" }}>
-            {addSuffix(swapInfo.swapType === SwapType.DEPOSIT ? ibcTokenBalance : tokenBalance)}
-          </span>
-          <span>{`$${addSuffix((swapInfo.swapType === SwapType.DEPOSIT ? ibcTokenBalance : tokenBalance) * tokenPrice)}`}</span>
+					<span style={isDark ? {} : { color: "black" }}>
+						{addSuffix(
+							swapInfo.swapType === SwapType.DEPOSIT
+								? ibcTokenBalance
+								: tokenBalance
+						)}
+					</span>
+					<span>{`$${addSuffix(
+						(swapInfo.swapType === SwapType.DEPOSIT
+							? ibcTokenBalance
+							: tokenBalance) * tokenPrice
+					)}`}</span>
 				</div>
 			</div>
 		);
@@ -609,7 +647,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 							<ReactSelect
 								value={{ value: selectedTokenType }}
 								onChange={(value) => {
-									if (value) handleChangeSwapToken(value.value);
+									if (value)
+										handleChangeSwapToken(value.value);
 								}}
 								options={SelectOptions}
 								styles={{
@@ -655,8 +694,14 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 						<div className="auto-amount-container">
 							<span>SELECT AMOUNT</span>
 							<div className="button-container">
-								<span onClick={() => handleClickAutoAmount(0.5)}>HALF</span>
-								<span onClick={() => handleClickAutoAmount(1)}>MAX</span>
+								<span
+									onClick={() => handleClickAutoAmount(0.5)}
+								>
+									HALF
+								</span>
+								<span onClick={() => handleClickAutoAmount(1)}>
+									MAX
+								</span>
 							</div>
 						</div>
 						<input
@@ -667,7 +712,10 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 					</div>
 					<div className="err-msg-container">{errMsg}</div>
 					<div className="operation-button-container">
-						<div className="operation-button" onClick={handleAccept}>
+						<div
+							className="operation-button"
+							onClick={handleAccept}
+						>
 							{sendingTx
 								? "..."
 								: swapInfo.swapType === SwapType.DEPOSIT
@@ -704,7 +752,10 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 								{swapInfo.swapType === SwapType.DEPOSIT
 									? "WITHDRAW"
 									: "DEPOSIT"}
-								<OutLinkIcon width={20} fill={isDark ? "white" : "black"} />
+								<OutLinkIcon
+									width={20}
+									fill={isDark ? "white" : "black"}
+								/>
 							</div>
 						</div>
 					)}

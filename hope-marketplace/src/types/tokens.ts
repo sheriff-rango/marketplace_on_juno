@@ -19,9 +19,10 @@ export enum TokenType {
 	AQUA = "aqua",
 	GLTO = "glto",
 	RAW = "raw",
-  DRGN = 'drgn',
-  BANANA = 'banana',
-  CZAR = 'czar'
+	DRGN = "drgn",
+	BANANA = "banana",
+	CZAR = "czar",
+	KUJIRA = "ibc/7F7D3698E2E3484D576001608BB84D13F5C8B02B97359716ECC60A29A7523BF3",
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
@@ -48,9 +49,10 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.GLTO]: "GLTO",
 	[TokenType.AQUA]: "AQUA",
 	[TokenType.OSMO]: "OSMO",
-  [TokenType.DRGN]: 'DRGN',
-  [TokenType.BANANA]: 'BANANA',
-  [TokenType.CZAR]: 'CZAR'
+	[TokenType.DRGN]: "DRGN",
+	[TokenType.BANANA]: "BANANA",
+	[TokenType.CZAR]: "CZAR",
+	[TokenType.KUJIRA]: "KUJI",
 };
 
 export type TokenStatusType = {
@@ -61,7 +63,7 @@ export type TokenStatusType = {
 	chain: ChainTypes;
 	coinName?: string;
 	decimal?: number;
-  denom?: string;
+	denom?: string;
 };
 
 export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
@@ -103,7 +105,7 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		isIBCCoin: true,
 		chain: ChainTypes.AXELAR,
 		originChain: ChainTypes.AXELAR,
-    denom:'uusdc'
+		denom: "uusdc",
 	},
 	[TokenType.HOPERS]: {
 		isNativeCoin: false,
@@ -208,6 +210,12 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		chain: ChainTypes.JUNO,
 		contractAddress:
 			"juno1x02k67asfmjawgc96dj8nxq6se3fmx36gedgs5hvkjegdhfy97rs3jgj2h",
+	},
+	[TokenType.KUJIRA]: {
+		isNativeCoin: true,
+		isIBCCoin: true,
+		chain: ChainTypes.KUJIRA,
+		originChain: ChainTypes.KUJIRA,
 	},
 };
 

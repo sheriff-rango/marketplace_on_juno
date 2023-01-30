@@ -4,6 +4,7 @@ export enum ChainTypes {
 	AXELAR = "axelar",
 	CHIHUAHUA = "chihuahua-1",
 	OSMOSIS = "osmosis-1",
+	KUJIRA = "kaiyo-1",
 }
 
 export type ConfigType = {
@@ -27,8 +28,12 @@ export const IBCConfig: {
 	[ChainTypes.JUNO]: { channel: "", juno_channel: "" },
 	[ChainTypes.COSMOS]: { channel: "channel-207", juno_channel: "channel-1" },
 	[ChainTypes.AXELAR]: { channel: "channel-4", juno_channel: "channel-71" },
-	[ChainTypes.CHIHUAHUA]: { channel: "channel-11", juno_channel: "channel-28" },
+	[ChainTypes.CHIHUAHUA]: {
+		channel: "channel-11",
+		juno_channel: "channel-28",
+	},
 	[ChainTypes.OSMOSIS]: { channel: "channel-42", juno_channel: "channel-0" },
+	[ChainTypes.KUJIRA]: { channel: "channel-1", juno_channel: " channel-87" },
 };
 
 export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
@@ -92,6 +97,17 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 		faucetEndpoint: "",
 		addressPrefix: "osmo",
 		microDenom: "uosmo",
+		coinDecimals: "6",
+		gasPrice: "0.025",
+	},
+	[ChainTypes.KUJIRA]: {
+		chainName: "Kujura",
+		chainId: "kaiyo-1",
+		rpcEndpoint: "https://rpc-kujira.whispernode.com",
+		restEndpoint: "https://rest.cosmos.directory/kujira",
+		faucetEndpoint: "",
+		addressPrefix: "kujira",
+		microDenom: "ukuji",
 		coinDecimals: "6",
 		gasPrice: "0.025",
 	},
