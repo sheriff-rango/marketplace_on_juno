@@ -93,7 +93,7 @@ const getClient = async (chainType: ChainTypes) => {
 	) {
 		return wasmChainClients[chainType];
 	}
-	if (!!window.keplr && !!window.getOfflineSignerAuto) {
+	if (!!window.keplr && !!window.getOfflineSigner) {
 		try {
 			const chainConfig = ChainConfigs[chainType];
 			// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
@@ -104,7 +104,7 @@ const getClient = async (chainType: ChainTypes) => {
 			// const account = await offlineSigner?.getAccounts();
 			// console.log('debug start', chainConfig)
 			await window.keplr.enable(chainConfig.chainId);
-			const offlineSigner = await window.getOfflineSignerAuto(
+			const offlineSigner = await window.getOfflineSigner(
 				chainConfig.chainId
 			);
 			const account = await offlineSigner.getAccounts();
