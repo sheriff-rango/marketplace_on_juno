@@ -87,15 +87,20 @@ let wasmChainClients: TWasmChainClients = {} as TWasmChainClients;
 
 const getClient = async (chainType: ChainTypes) => {
 	// if (connectedWallet) {
+	const chainConfig = ChainConfigs[chainType];
+	toast.info(
+		`getting client. ${chainConfig.chainId} ${chainConfig.chainName}`
+	);
 	if (
 		wasmChainClients[chainType] &&
 		wasmChainClients[chainType].client &&
 		wasmChainClients[chainType].account
 	) {
+		toast.info(`existed clients`);
 		return wasmChainClients[chainType];
 	}
+	toast.info("getting new client");
 	if (!!window.keplr && !!window.getOfflineSigner) {
-		const chainConfig = ChainConfigs[chainType];
 		try {
 			// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
 			// const { wallet, walletClient } = connectedWallet;
@@ -153,6 +158,7 @@ const getClient = async (chainType: ChainTypes) => {
 			);
 		}
 	}
+	toast.info("no keplr in window");
 	return { account: null, client: null };
 };
 
