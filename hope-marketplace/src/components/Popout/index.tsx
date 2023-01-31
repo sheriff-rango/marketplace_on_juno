@@ -38,6 +38,7 @@ import { useWalletManager } from "@noahsaso/cosmodal";
 import ReactSelect, { ControlProps } from "react-select";
 import { addSuffix, convertStringToNumber } from "../../util/string";
 import { AccountData } from "@cosmjs/proto-signing";
+import { toast } from "react-toastify";
 
 // import {
 //   Wrapper,
@@ -310,13 +311,15 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		) {
 			setErrMsg(
 				`Amount should be smaller than ${
-					balances[swapInfo.denom].amount
+					balances[swapInfo.denom].amount /
+					Math.pow(10, TokenStatus[swapInfo.denom].decimal || 6)
 				}`
 			);
 			return;
 		}
 		setSendingTx(true);
 		setStatusMsg("starting transfer. getting clients...");
+		toast.info("starting transfer. getting clients...");
 		const wallets = await getWallets(swapInfo.swapChains);
 
 		const foreignChainConfig = ChainConfigs[swapInfo.swapChains.foreign];
@@ -341,6 +344,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		const client = wallets.foreign.client;
 		if (swapInfo.swapType === SwapType.DEPOSIT && senderAddress && client) {
 			setStatusMsg("balance checking...");
+			toast.info("balance checking...");
 			try {
 				let balanceWithoutFee = Number(
 					ibcNativeTokenBalance[swapInfo.denom].amount
@@ -434,6 +438,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		});
 		if (senderAddress && client) {
 			setStatusMsg("executing transaction...");
+			toast.info("executing transaction...");
 			try {
 				const tx = await client.signAndBroadcast(
 					senderAddress,
