@@ -95,8 +95,8 @@ const getClient = async (chainType: ChainTypes) => {
 		return wasmChainClients[chainType];
 	}
 	if (!!window.keplr && !!window.getOfflineSigner) {
+		const chainConfig = ChainConfigs[chainType];
 		try {
-			const chainConfig = ChainConfigs[chainType];
 			// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
 			// const { wallet, walletClient } = connectedWallet;
 			// const offlineSigner = await wallet.getOfflineSignerFunction(
@@ -146,6 +146,11 @@ const getClient = async (chainType: ChainTypes) => {
 			}
 		} catch (e) {
 			console.log("debug", e);
+			toast.error(
+				`getting client error. ${chainConfig.chainId} ${
+					chainConfig.chainName
+				} ${JSON.stringify(e)}`
+			);
 		}
 	}
 	return { account: null, client: null };
