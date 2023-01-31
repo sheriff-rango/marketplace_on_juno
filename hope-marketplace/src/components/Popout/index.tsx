@@ -38,7 +38,6 @@ import { useWalletManager } from "@noahsaso/cosmodal";
 import ReactSelect, { ControlProps } from "react-select";
 import { addSuffix, convertStringToNumber } from "../../util/string";
 import { AccountData } from "@cosmjs/proto-signing";
-import { toast } from "react-toastify";
 
 // import {
 //   Wrapper,
@@ -88,19 +87,19 @@ let wasmChainClients: TWasmChainClients = {} as TWasmChainClients;
 const getClient = async (chainType: ChainTypes) => {
 	// if (connectedWallet) {
 	const chainConfig = ChainConfigs[chainType];
-	toast.info(
-		`getting client. ${chainConfig.chainId} ${chainConfig.chainName}`
-	);
+	// toast.info(
+	// 	`getting client. ${chainConfig.chainId} ${chainConfig.chainName}`
+	// );
 	if (
 		wasmChainClients[chainType] &&
 		wasmChainClients[chainType].client &&
 		wasmChainClients[chainType].account
 	) {
-		toast.info(`existed clients`);
+		// toast.info(`existed clients`);
 		return wasmChainClients[chainType];
 	}
-	toast.info("getting new client");
-	if (!!window.keplr && !!window.getOfflineSigner) {
+	// toast.info("getting new client");
+	if (!!window.keplr) {
 		try {
 			// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
 			// const { wallet, walletClient } = connectedWallet;
@@ -110,9 +109,12 @@ const getClient = async (chainType: ChainTypes) => {
 			// const account = await offlineSigner?.getAccounts();
 			// console.log('debug start', chainConfig)
 			await window.keplr.enable(chainConfig.chainId);
-			let offlineSigner: any = await window.getOfflineSigner(
-				chainConfig.chainId
-			);
+			let offlineSigner: any = null;
+			if (!!window.getOfflineSigner) {
+				offlineSigner = await window.getOfflineSigner(
+					chainConfig.chainId
+				);
+			}
 			if (!offlineSigner && !!window.getOfflineSignerAuto) {
 				offlineSigner = await window.getOfflineSignerAuto(
 					chainConfig.chainId
@@ -151,14 +153,14 @@ const getClient = async (chainType: ChainTypes) => {
 			}
 		} catch (e) {
 			console.log("debug", e);
-			toast.error(
-				`getting client error. ${chainConfig.chainId} ${
-					chainConfig.chainName
-				} ${JSON.stringify(e)}`
-			);
+			// toast.error(
+			// 	`getting client error. ${chainConfig.chainId} ${
+			// 		chainConfig.chainName
+			// 	} ${JSON.stringify(e)}`
+			// );
 		}
 	}
-	toast.info("no keplr in window");
+	// toast.info("no keplr in window");
 	return { account: null, client: null };
 };
 
@@ -330,7 +332,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		}
 		setSendingTx(true);
 		setStatusMsg("starting transfer. getting clients...");
-		toast.info("starting transfer. getting clients...");
+		// toast.info("starting transfer. getting clients...");
 		const wallets = await getWallets(swapInfo.swapChains);
 
 		const foreignChainConfig = ChainConfigs[swapInfo.swapChains.foreign];
@@ -355,7 +357,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		const client = wallets.foreign.client;
 		if (swapInfo.swapType === SwapType.DEPOSIT && senderAddress && client) {
 			setStatusMsg("balance checking...");
-			toast.info("balance checking...");
+			// toast.info("balance checking...");
 			try {
 				let balanceWithoutFee = Number(
 					ibcNativeTokenBalance[swapInfo.denom].amount
@@ -449,7 +451,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		});
 		if (senderAddress && client) {
 			setStatusMsg("executing transaction...");
-			toast.info("executing transaction...");
+			// toast.info("executing transaction...");
 			try {
 				const tx = await client.signAndBroadcast(
 					senderAddress,
