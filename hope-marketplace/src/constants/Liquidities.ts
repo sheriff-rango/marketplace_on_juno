@@ -123,8 +123,10 @@ export const Liquidities: TLiquidity[] = [
 		tokenB: TokenType.CANLAB,
 		contractAddress:
 			"juno1f6hyczl2yn6gwrh0yqwr0mjpzqywcy5p80ntn40cn7ha0etqtl3qs6xfv3",
-		stakingAddress:
+		stakingAddress: [
 			"juno1ll35ncyf6vmenh2yvsh3ut9lj7kkrcgssxza3jpr60l80qt7c26skawpeg",
+			"juno1pf3h950yfhnsny5mf9ssha99ugjxqc2f45r0v4vtqpenv68dplwqcnn66n",
+		],
 	},
 	{
 		tokenA: TokenType.HOPERS,
