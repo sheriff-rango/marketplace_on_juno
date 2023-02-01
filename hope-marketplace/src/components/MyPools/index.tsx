@@ -20,7 +20,16 @@ const MyPools: React.FC = () => {
 	const myLiquidities = useMemo(
 		() =>
 			liquidities.filter((liquidity) => {
-				return (liquidity.bonded || 0) > 0;
+				if (!liquidity.bonded) return false;
+				const bonded =
+					typeof liquidity.bonded === "number"
+						? [liquidity.bonded as number]
+						: (liquidity.bonded as number[]);
+				const isBonded = bonded.reduce(
+					(result, crrBonded) => result || (crrBonded || 0) > 0,
+					false
+				);
+				return isBonded;
 			}),
 		[liquidities]
 	);
@@ -120,7 +129,10 @@ const MyPools: React.FC = () => {
 				{myLiquidities.map((liquidity, index: number) => (
 					<MyPoolItem key={index}>
 						<MyPoolItemRow>
-							<PoolImage token1={liquidity.token1} token2={liquidity.token2} />
+							<PoolImage
+								token1={liquidity.token1}
+								token2={liquidity.token2}
+							/>
 							<PoolName pool={liquidity} />
 						</MyPoolItemRow>
 						<MyPoolContentRow>
@@ -129,7 +141,11 @@ const MyPools: React.FC = () => {
 									<Text bold color="#c5c5c5">
 										{content.title}
 									</Text>
-									<Text bold color="black" alignItems="center">
+									<Text
+										bold
+										color="black"
+										alignItems="center"
+									>
 										{content.value(liquidity)}
 									</Text>
 								</MyPoolContentItem>
