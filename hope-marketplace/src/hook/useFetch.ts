@@ -9,14 +9,14 @@ import {
 import { setNFTs } from "../features/nfts/nftsSlice";
 import useContract from "./useContract";
 import { setCollectionTraitStates } from "../features/collectionTraits/collectionTraitsSlice";
-import { TokenType } from "../types/tokens";
+import { TokenType, TokenStatus } from "../types/tokens";
 import { setRarityRankState } from "../features/rarityRanks/rarityRanksSlice";
 import {
 	BalancesType,
 	clearBalances,
 	setTokenBalances,
 } from "../features/balances/balancesSlice";
-import { TPool } from "../types/pools";
+import { TPool, TPoolConfig } from "../types/pools";
 import { setLiquidityInfo } from "../features/liquidities/liquiditiesSlice";
 import {
 	TokenCoingeckoIds,
@@ -56,7 +56,9 @@ const useFetch = () => {
 							rank: item.rank,
 						};
 					});
-					dispatch(setRarityRankState([collection.collectionId, rarities]));
+					dispatch(
+						setRarityRankState([collection.collectionId, rarities])
+					);
 				}
 			} catch (e) {
 				console.error("file read error", collection.collectionId, e);
@@ -80,20 +82,26 @@ const useFetch = () => {
 				};
 				if (collection.mintContract) {
 					if (collection.mintInfo?.mintLogic?.fetchInfo) {
-						storeObject = await collection.mintInfo.mintLogic.fetchInfo({
-							collection,
-							runQuery,
-							account: account?.address,
-						});
+						storeObject =
+							await collection.mintInfo.mintLogic.fetchInfo({
+								collection,
+								runQuery,
+								account: account?.address,
+							});
 					} else if (account && account.address) {
-						const userInfo = await runQuery(collection.mintContract, {
-							get_user_info: { address: account.address },
-						});
+						const userInfo = await runQuery(
+							collection.mintContract,
+							{
+								get_user_info: { address: account.address },
+							}
+						);
 						storeObject.myMintedNfts =
 							(storeObject.myMintedNfts || 0) + (userInfo || "0");
 					}
 				}
-				dispatch(setCollectionState([collection.collectionId, storeObject]));
+				dispatch(
+					setCollectionState([collection.collectionId, storeObject])
+				);
 			});
 		},
 		[dispatch, runQuery]
@@ -104,10 +112,14 @@ const useFetch = () => {
 			Collections.forEach((collection: MarketplaceInfo) => {
 				const basicNFTInfo =
 					basicData?.marketplaceNFTs?.[collection.collectionId] || [];
-				const metaData = basicData?.collectionTraits?.[collection.collectionId];
+				const metaData =
+					basicData?.collectionTraits?.[collection.collectionId];
 				if (metaData) {
 					dispatch(
-						setCollectionTraitStates([collection.collectionId, metaData])
+						setCollectionTraitStates([
+							collection.collectionId,
+							metaData,
+						])
 					);
 				}
 				let listedNFTs: any = [];
@@ -116,9 +128,14 @@ const useFetch = () => {
 						listedNFTs = [...listedNFTs, item];
 					}
 				});
-				dispatch(setNFTs([`${collection.collectionId}_listed`, listedNFTs]));
 				dispatch(
-					setNFTs([`${collection.collectionId}_marketplace`, basicNFTInfo])
+					setNFTs([`${collection.collectionId}_listed`, listedNFTs])
+				);
+				dispatch(
+					setNFTs([
+						`${collection.collectionId}_marketplace`,
+						basicNFTInfo,
+					])
 				);
 			});
 		},
@@ -130,13 +147,16 @@ const useFetch = () => {
 			if (!account) return;
 			Collections.forEach(async (collection: MarketplaceInfo) => {
 				if (collection.nftContract) {
-					const queryResult: any = await runQuery(collection.nftContract, {
-						tokens: {
-							owner: account?.address,
-							start_after: undefined,
-							limit: 100,
-						},
-					});
+					const queryResult: any = await runQuery(
+						collection.nftContract,
+						{
+							tokens: {
+								owner: account?.address,
+								start_after: undefined,
+								limit: 100,
+							},
+						}
+					);
 					const customTokenId = collection.customTokenId;
 					const nftList = queryResult?.tokens?.length
 						? queryResult.tokens.map((item: string) => ({
@@ -198,7 +218,8 @@ const useFetch = () => {
 				fetchRewardQueries: any[] = [];
 			let balances: any[] = [],
 				rewards: any[] = [];
-			let stakingQueryIndices: number[] = [];
+			let stakingQueryIndices: number[] = [],
+				tokenDecimals: number[] = [];
 			let liquidities: TPool[] = Liquidities.reduce(
 				(result: TPool[], liquidity, index: number) => {
 					const liquidityInfo = (basicData as TPool[]).find(
@@ -219,16 +240,32 @@ const useFetch = () => {
 								typeof stakingAddress === "string"
 									? [stakingAddress]
 									: stakingAddress;
-							stakingAddressArray.forEach((address) => {
-								stakingQueryIndices.push(index);
-								fetchRewardQueries.push(
-									runQuery(address, {
-										staker_info: {
-											staker: account?.address,
-										},
-									})
-								);
-							});
+							const configs =
+								typeof stakingAddress === "string"
+									? [liquidityInfo.config as TPoolConfig]
+									: (liquidityInfo.config as TPoolConfig[]);
+							stakingAddressArray.forEach(
+								(address, addressIndex) => {
+									stakingQueryIndices.push(index);
+									const config = configs[addressIndex];
+									if (config.rewardToken) {
+										const tokenStatus =
+											TokenStatus[config.rewardToken];
+										tokenDecimals.push(
+											tokenStatus.decimal || 6
+										);
+									} else {
+										tokenDecimals.push(6);
+									}
+									fetchRewardQueries.push(
+										runQuery(address, {
+											staker_info: {
+												staker: account?.address,
+											},
+										})
+									);
+								}
+							);
 						}
 						return [...result, liquidityInfo];
 					}
@@ -256,36 +293,43 @@ const useFetch = () => {
 				for (let index = 0; index < rewards.length; index++) {
 					const liquidityIndex = stakingQueryIndices[index];
 					const hasSeveralStakingContract =
-						typeof liquidities[liquidityIndex].stakingAddress !== "string";
-
+						typeof liquidities[liquidityIndex].stakingAddress !==
+						"string";
 					const reward =
-						convertStringToNumber(rewards[index]?.pending_reward) / 1e6;
-					liquidities[liquidityIndex].pendingReward = hasSeveralStakingContract
-						? [
-								...((liquidities[liquidityIndex].pendingReward ||
-									[]) as number[]),
-								reward,
-						  ]
-						: reward;
+						convertStringToNumber(rewards[index]?.pending_reward) /
+						Math.pow(10, tokenDecimals[index]);
+					liquidities[liquidityIndex].pendingReward =
+						hasSeveralStakingContract
+							? [
+									...((liquidities[liquidityIndex]
+										.pendingReward || []) as number[]),
+									reward,
+							  ]
+							: reward;
 
 					const bonded =
-						convertStringToNumber(rewards[index]?.bond_amount) / 1e6;
-					liquidities[liquidityIndex].bonded = hasSeveralStakingContract
-						? [
-								...((liquidities[liquidityIndex].bonded || []) as number[]),
-								bonded,
-						  ]
-						: bonded;
+						convertStringToNumber(rewards[index]?.bond_amount) /
+						1e6;
+					liquidities[liquidityIndex].bonded =
+						hasSeveralStakingContract
+							? [
+									...((liquidities[liquidityIndex].bonded ||
+										[]) as number[]),
+									bonded,
+							  ]
+							: bonded;
 
 					const totalEarned =
-						convertStringToNumber(rewards[index]?.total_earned) / 1e6;
-					liquidities[liquidityIndex].totalEarned = hasSeveralStakingContract
-						? [
-								...((liquidities[liquidityIndex].totalEarned ||
-									[]) as number[]),
-								totalEarned,
-						  ]
-						: totalEarned;
+						convertStringToNumber(rewards[index]?.total_earned) /
+						1e6;
+					liquidities[liquidityIndex].totalEarned =
+						hasSeveralStakingContract
+							? [
+									...((liquidities[liquidityIndex]
+										.totalEarned || []) as number[]),
+									totalEarned,
+							  ]
+							: totalEarned;
 				}
 			}
 			setLiquiditiesInfo(liquidities);
@@ -318,7 +362,10 @@ const useFetch = () => {
 		// Second calculates price of tokens which can't be fetched from coingecko
 		Object.keys(TokenCoingeckoIds).forEach((key: string) => {
 			const tokenType = key as TokenType;
-			if (tokenType !== TokenType.HOPERS && !TokenCoingeckoIds[tokenType]) {
+			if (
+				tokenType !== TokenType.HOPERS &&
+				!TokenCoingeckoIds[tokenType]
+			) {
 				const targetPool = liquiditiesInfo.find(
 					(liquidity) =>
 						liquidity.token1 === TokenType.HOPERS &&
@@ -329,7 +376,11 @@ const useFetch = () => {
 				dispatch(
 					setTokenPrice([
 						tokenType,
-						{ market_data: { current_price: { usd: targetPrice } } },
+						{
+							market_data: {
+								current_price: { usd: targetPrice },
+							},
+						},
 					])
 				);
 			}
@@ -365,7 +416,11 @@ const useFetch = () => {
 				dispatch(
 					setTokenPrice([
 						tokenType,
-						{ market_data: { current_price: { usd: targetPrice } } },
+						{
+							market_data: {
+								current_price: { usd: targetPrice },
+							},
+						},
 					])
 				);
 			}

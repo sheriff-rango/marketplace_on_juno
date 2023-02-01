@@ -68,20 +68,24 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 				const pendingReward =
 					((rowData.pendingReward || []) as number[])[index] || 0;
 				const tokenPriceInUsd = item.rewardToken
-					? tokenPrices[item.rewardToken]?.market_data.current_price?.usd || 0
+					? tokenPrices[item.rewardToken]?.market_data.current_price
+							?.usd || 0
 					: 0;
 				return {
 					rewardToken: item.rewardToken,
 					pendingReward,
 					bonded: ((rowData.bonded || []) as number[])[index],
-					stakingAddress: ((rowData.stakingAddress || []) as string[])[index],
+					stakingAddress: (
+						(rowData.stakingAddress || []) as string[]
+					)[index],
 					priceInUsd: pendingReward * tokenPriceInUsd,
 				};
 			});
 		} else {
 			const pendingReward = (rowData.pendingReward || 0) as number;
 			const tokenPriceInUsd = config?.rewardToken
-				? tokenPrices[config.rewardToken]?.market_data.current_price?.usd || 0
+				? tokenPrices[config.rewardToken]?.market_data.current_price
+						?.usd || 0
 				: 0;
 			result = [
 				{
@@ -122,7 +126,8 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 	};
 
 	const handleClickClaim = async (data: TRowDataDetailInfo) => {
-		if (isPendingClaim || !data.pendingReward || !data.stakingAddress) return;
+		if (isPendingClaim || !data.pendingReward || !data.stakingAddress)
+			return;
 		setIsPendingClaim(true);
 		try {
 			await runExecute(data.stakingAddress, {
@@ -157,7 +162,9 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 						alignItems="center"
 						cursor="pointer"
 						onClick={() =>
-							history.push(`/liquidity?type=add&poolId=${rowData.id}`)
+							history.push(
+								`/liquidity?type=add&poolId=${rowData.id}`
+							)
 						}
 					>
 						{`Get ${getTokenName(rowData.token1)}-${getTokenName(
@@ -184,7 +191,9 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 						alignItems="center"
 						cursor="pointer"
 						onClick={() =>
-							history.push(`/liquidity?type=add&poolId=${rowData.id}`)
+							history.push(
+								`/liquidity?type=add&poolId=${rowData.id}`
+							)
 						}
 					>
 						See Pair Info <ExternalLinkIcon />
@@ -223,7 +232,11 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 							TOKEN REWARDS
 						</Text>
 						{rowDataDetailInfo.length > 0 ? (
-							<Flex flexDirection="column" gap="20px" width="100%">
+							<Flex
+								flexDirection="column"
+								gap="20px"
+								width="100%"
+							>
 								{rowDataDetailInfo.map(
 									(detailInfo, index) =>
 										detailInfo.rewardToken && (
@@ -242,19 +255,34 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 													<Text
 														color="black"
 														bold
-														title={"" + (detailInfo.pendingReward || 0)}
+														title={
+															"" +
+															(detailInfo.pendingReward ||
+																0)
+														}
 													>
-														{addSuffix(detailInfo.pendingReward || 0)}
+														{addSuffix(
+															detailInfo.pendingReward ||
+																0
+														)}
 													</Text>
 													<SmallText
 														color="black"
 														letterSpacing="-1px"
-														title={"" + detailInfo.priceInUsd}
+														title={
+															"" +
+															detailInfo.priceInUsd
+														}
 													>
-														{`(${addSuffix(detailInfo.priceInUsd)} USD)`}
+														{`(${addSuffix(
+															detailInfo.priceInUsd
+														)} USD)`}
 													</SmallText>
 												</Text>
-												<Flex gap="5px" alignItems="center">
+												<Flex
+													gap="5px"
+													alignItems="center"
+												>
 													<img
 														width={25}
 														alt=""
@@ -263,12 +291,26 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 															""
 														)}.png`}
 													/>
-													<SmallText color="black" bold letterSpacing="-2px">
-														{getTokenName(detailInfo.rewardToken)}
+													<SmallText
+														color="black"
+														bold
+														letterSpacing="-2px"
+													>
+														{getTokenName(
+															detailInfo.rewardToken
+														)}
 													</SmallText>
 												</Flex>
-												<Button onClick={() => handleClickClaim(detailInfo)}>
-													{isPendingClaim ? "Claiming" : "Claim"}
+												<Button
+													onClick={() =>
+														handleClickClaim(
+															detailInfo
+														)
+													}
+												>
+													{isPendingClaim
+														? "Claiming"
+														: "Claim"}
 												</Button>
 											</Flex>
 										)
@@ -289,7 +331,11 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 							gap="10px"
 							justifyContent="flex-start"
 						>
-							<Text color="black" justifyContent="flex-start" bold>
+							<Text
+								color="black"
+								justifyContent="flex-start"
+								bold
+							>
 								Bond
 							</Text>
 							<Flex gap="30px">
@@ -300,7 +346,9 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 									rowDataDetailInfo.reduce(
 										(result, crrValue) => ({
 											...crrValue,
-											bonded: (result.bonded || 0) + crrValue.bonded,
+											bonded:
+												(result.bonded || 0) +
+												crrValue.bonded,
 										}),
 										{ bonded: 0 }
 									).bonded
@@ -317,10 +365,17 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 							gap="10px"
 							justifyContent="flex-start"
 						>
-							<Text color="black" justifyContent="flex-start" bold>
+							<Text
+								color="black"
+								justifyContent="flex-start"
+								bold
+							>
 								Bond
 							</Text>
-							<Button colored onClick={handleClickConnectWalletButton}>
+							<Button
+								colored
+								onClick={handleClickConnectWalletButton}
+							>
 								Connect Wallet
 							</Button>
 						</Flex>
