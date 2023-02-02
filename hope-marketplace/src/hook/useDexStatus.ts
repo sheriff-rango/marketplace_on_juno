@@ -23,32 +23,43 @@ const useDexStatus = () => {
 			const txNumber = convertStringToNumber(fetchedDexStatus.txNumber);
 			const tradingVolume =
 				convertStringToNumber(fetchedDexStatus.tradingVolume) / 1e6;
-			const burningVolume =
-				convertStringToNumber(fetchedDexStatus.burningVolume) / 1e6;
+			const hopersTokenAddress =
+				TokenStatus[TokenType.HOPERS].contractAddress;
+			if (!hopersTokenAddress) return;
+			const hopersTokenInfo = await runQuery(hopersTokenAddress, {
+				token_info: {},
+			});
+			const totalSupply = convertStringToNumber(
+				hopersTokenInfo?.total_supply
+			);
+			const burningVolume = 2 * 1e9 - totalSupply / 1e6;
 			setDexStatus({
 				txNumber,
 				tradingVolume,
 				burningVolume,
 			});
 		})();
-	}, []);
-
-	useEffect(() => {
-		(async () => {
-			const hopersTokenAddress = TokenStatus[TokenType.HOPERS].contractAddress;
-			if (!hopersTokenAddress) return;
-			const hopersTokenInfo = await runQuery(hopersTokenAddress, {
-				token_info: {},
-			});
-			const totalSupply = convertStringToNumber(hopersTokenInfo?.total_supply);
-			if (totalSupply) {
-				setDexStatus((prev) => ({
-					...prev,
-					burningVolume: 2 * 1e9 - totalSupply / 1e6,
-				}));
-			}
-		})();
 	}, [runQuery]);
+
+	// useEffect(() => {
+	// 	(async () => {
+	// 		const hopersTokenAddress =
+	// 			TokenStatus[TokenType.HOPERS].contractAddress;
+	// 		if (!hopersTokenAddress) return;
+	// 		const hopersTokenInfo = await runQuery(hopersTokenAddress, {
+	// 			token_info: {},
+	// 		});
+	// 		const totalSupply = convertStringToNumber(
+	// 			hopersTokenInfo?.total_supply
+	// 		);
+	// 		if (totalSupply) {
+	// 			setDexStatus((prev) => ({
+	// 				...prev,
+	// 				burningVolume: 2 * 1e9 - totalSupply / 1e6,
+	// 			}));
+	// 		}
+	// 	})();
+	// }, [runQuery]);
 
 	return dexStatus;
 };
