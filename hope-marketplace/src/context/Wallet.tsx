@@ -50,9 +50,8 @@ export const WalletProvider = ({ children }: { children: any }) => {
 	);
 	const [client, setClient] = useState<SigningCosmWasmClient | null>(null);
 	const [provider, setProvider] = useState<any>(null);
-	const [junoQueryClient, setJunoQueryClient] = useState<CosmWasmClient | null>(
-		null
-	);
+	const [junoQueryClient, setJunoQueryClient] =
+		useState<CosmWasmClient | null>(null);
 	const dispatch = useAppDispatch();
 
 	const config = ChainConfigs[ChainTypes.JUNO];
@@ -143,10 +142,13 @@ export const WalletProvider = ({ children }: { children: any }) => {
 		>
 			<WalletManagerProvider
 				defaultChainId={config.chainId}
-				enabledWalletTypes={[WalletType.Keplr, WalletType.WalletConnectKeplr]}
+				enabledWalletTypes={[
+					WalletType.Keplr,
+					WalletType.WalletConnectKeplr,
+				]}
 				localStorageKey="keplr-wallet"
 				walletConnectClientMeta={{
-					name: "Hopers.io Marketplace",
+					name: "Hopers | Protocol",
 					description:
 						"The DAO governs the marketplace and earns rewards through the staking system of the token $HOPE.",
 					url: "https://hopers.io",
