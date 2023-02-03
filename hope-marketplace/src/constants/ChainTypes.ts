@@ -5,6 +5,7 @@ export enum ChainTypes {
 	CHIHUAHUA = "chihuahua-1",
 	OSMOSIS = "osmosis-1",
 	KUJIRA = "kaiyo-1",
+	EVMOS = "evmos_9001-2",
 }
 
 export type ConfigType = {
@@ -34,6 +35,7 @@ export const IBCConfig: {
 	},
 	[ChainTypes.OSMOSIS]: { channel: "channel-42", juno_channel: "channel-0" },
 	[ChainTypes.KUJIRA]: { channel: "channel-1", juno_channel: "channel-87" },
+	[ChainTypes.EVMOS]: { channel: "channel-5", juno_channel: "channel-70" },
 };
 
 export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
@@ -109,6 +111,17 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 		addressPrefix: "kujira",
 		microDenom: "ukuji",
 		coinDecimals: "6",
+		gasPrice: "0.025",
+	},
+	[ChainTypes.EVMOS]: {
+		chainName: "Evmos",
+		chainId: "evmos_9001-2",
+		rpcEndpoint: "https://rpc.cosmos.directory/evmos",
+		restEndpoint: "https://rest.cosmos.directory/evmos",
+		faucetEndpoint: "",
+		addressPrefix: "evmos",
+		microDenom: "aevmos",
+		coinDecimals: "18",
 		gasPrice: "0.025",
 	},
 };

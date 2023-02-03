@@ -23,6 +23,7 @@ export enum TokenType {
 	DRGN = "drgn",
 	BANANA = "banana",
 	CZAR = "czar",
+	EVMOS = "ibc/9B990F95D85E7CA8C46544975776CAA20A3DEE3507EEA829A4000D8D65617F6D",
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
@@ -53,6 +54,7 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.BANANA]: "BANANA",
 	[TokenType.CZAR]: "CZAR",
 	[TokenType.KUJIRA]: "KUJI",
+	[TokenType.EVMOS]: "EVMOS",
 };
 
 export type TokenStatusType = {
@@ -216,6 +218,13 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		isIBCCoin: true,
 		chain: ChainTypes.KUJIRA,
 		originChain: ChainTypes.KUJIRA,
+	},
+	[TokenType.EVMOS]: {
+		isNativeCoin: true,
+		isIBCCoin: true,
+		chain: ChainTypes.EVMOS,
+		originChain: ChainTypes.EVMOS,
+		decimal: 18,
 	},
 };
 

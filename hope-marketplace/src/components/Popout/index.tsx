@@ -373,6 +373,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		if (swapInfo.swapType === SwapType.DEPOSIT && senderAddress && client) {
 			setStatusMsg("balance checking...");
 			// toast.info("balance checking...");
+			const depositTokenStatus = TokenStatus[swapInfo.denom];
 			try {
 				let balanceWithoutFee = Number(
 					ibcNativeTokenBalance[swapInfo.denom].amount
@@ -385,7 +386,10 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 					setSendingTx(false);
 					return;
 				}
-				balanceWithoutFee = balanceWithoutFee / 1e6 - 0.025;
+				balanceWithoutFee =
+					balanceWithoutFee /
+						Math.pow(10, depositTokenStatus.decimal || 6) -
+					0.025;
 				if (balanceWithoutFee < amount) {
 					setErrMsg("Not enough balance!");
 					setStatusMsg("");
@@ -420,10 +424,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 							Number(swapAmount) *
 								Math.pow(
 									10,
-									swapInfo.swapType === SwapType.DEPOSIT
-										? 6
-										: TokenStatus[swapInfo.denom].decimal ||
-												6
+									TokenStatus[swapInfo.denom].decimal || 6
 								)
 						)
 					),
@@ -482,13 +483,14 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 	const handleClickAutoAmount = (ratio: 0.5 | 1) => {
 		if (sendingTx) return;
 		if (swapInfo.swapType === SwapType.DEPOSIT) {
+			const depositTokenStatus = TokenStatus[swapInfo.denom];
 			setSwapAmount(
 				"" +
 					(convertStringToNumber(
 						ibcNativeTokenBalance[swapInfo.denom]?.amount
 					) *
 						ratio) /
-						1e6
+						Math.pow(10, depositTokenStatus.decimal || 6)
 			);
 		} else {
 			const tokenBalance =
@@ -538,12 +540,14 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		const checked = token === selectedTokenType;
 		const tokenStatus = TokenStatus[token];
 		const chain = tokenStatus.chain;
-		const chainName = ChainConfigs[chain].chainName;
+		const chainConfig = ChainConfigs[chain];
+		const chainName = chainConfig.chainName;
 		const tokenBalance =
 			(balances?.[token]?.amount || 0) /
 			Math.pow(10, TokenStatus[token].decimal || 6);
 		const ibcTokenBalance =
-			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) / 1e6;
+			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) /
+			Math.pow(10, tokenStatus.decimal || 6);
 		const tokenPrice =
 			tokenPrices[token]?.market_data.current_price?.usd || 0;
 		return (
@@ -599,11 +603,13 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 	const CustomControl = ({ ...props }) => {
 		const { option } = props;
 		const token = option.value as TokenType;
+		const tokenStatus = TokenStatus[token];
 		const tokenBalance =
 			(balances?.[token]?.amount || 0) /
 			Math.pow(10, TokenStatus[token].decimal || 6);
 		const ibcTokenBalance =
-			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) / 1e6;
+			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) /
+			Math.pow(10, tokenStatus.decimal || 6);
 		const tokenPrice =
 			tokenPrices[token]?.market_data.current_price?.usd || 0;
 		return (
