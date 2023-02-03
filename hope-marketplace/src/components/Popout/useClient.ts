@@ -32,11 +32,20 @@ const useClient = (tokens?: TokenType[]) => {
 				const chainConfig = ChainConfigs[chainType];
 				// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
 				const { wallet, walletClient } = connectedWallet;
-				toast.info(`getting offline signer ${chainType}`);
+				toast.info(
+					`getting offline signer ${chainType} ${!!wallet.getOfflineSignerFunction}`
+				);
 				const offlineSigner = await wallet.getOfflineSignerFunction(
 					walletClient
 				)(chainConfig.chainId);
-				toast.info(`getting account ${chainType}`);
+				toast.info(
+					`getting account ${chainType} ${!!offlineSigner?.getAccounts}`
+				);
+				try {
+					await offlineSigner?.getAccounts();
+				} catch (e) {
+					toast.error(`getting account error ${chainType}`);
+				}
 				const account = await offlineSigner?.getAccounts();
 				let wasmChainClient = null;
 				if (offlineSigner) {
