@@ -31,5 +31,6 @@ export const LineColors = {
 	[TokenType.BANANA]: "#87bc45",
 	[TokenType.CZAR]: "#27aeef",
 	[TokenType.KUJIRA]: "#b33dc6",
+	[TokenType.STARS]: "#ea5545",
 	Others: "#ede15b",
 };

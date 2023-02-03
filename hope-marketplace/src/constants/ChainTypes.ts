@@ -5,6 +5,7 @@ export enum ChainTypes {
 	CHIHUAHUA = "chihuahua-1",
 	OSMOSIS = "osmosis-1",
 	KUJIRA = "kaiyo-1",
+	STARGAZE = "stargaze-1",
 }
 
 export type ConfigType = {
@@ -34,6 +35,7 @@ export const IBCConfig: {
 	},
 	[ChainTypes.OSMOSIS]: { channel: "channel-42", juno_channel: "channel-0" },
 	[ChainTypes.KUJIRA]: { channel: "channel-1", juno_channel: "channel-87" },
+	[ChainTypes.STARGAZE]: { channel: "channel-5", juno_channel: "channel-20" },
 };
 
 export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
@@ -108,6 +110,17 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 		faucetEndpoint: "",
 		addressPrefix: "kujira",
 		microDenom: "ukuji",
+		coinDecimals: "6",
+		gasPrice: "0.025",
+	},
+	[ChainTypes.STARGAZE]: {
+		chainName: "Stargaze",
+		chainId: "stargaze-1",
+		rpcEndpoint: "https://rpc.cosmos.directory/stargaze",
+		restEndpoint: "https://rest.cosmos.directory/stargaze",
+		faucetEndpoint: "",
+		addressPrefix: "stars",
+		microDenom: "ustars",
 		coinDecimals: "6",
 		gasPrice: "0.025",
 	},

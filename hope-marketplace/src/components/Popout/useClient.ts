@@ -95,10 +95,12 @@ const useClient = (tokens?: TokenType[]) => {
 
 	const getBalance = useCallback(
 		async (token: TokenType) => {
+			console.log("debug", token, ibcNativeTokenBalance[token]);
 			if (ibcNativeTokenBalance[token]) return;
 			const tokenStatus = TokenStatus[token];
 			const chainConfig = ChainConfigs[tokenStatus.chain];
-			const { client, account } = wasmClients[tokenStatus.chain];
+			const { client, account } = wasmClients?.[tokenStatus.chain] || {};
+			console.log("debug", token, client, account);
 			if (connectedWallet && client && account) {
 				// setHasErrorOnMobileConnection(false);
 				const balance = await client.getBalance(
