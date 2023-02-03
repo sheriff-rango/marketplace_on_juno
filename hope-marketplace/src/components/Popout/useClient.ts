@@ -5,6 +5,7 @@ import { useWalletManager } from "@noahsaso/cosmodal";
 import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
 import { AccountData } from "@cosmjs/proto-signing";
 import { TokenStatus, TokenType } from "../../types/tokens";
+import { toast } from "react-toastify";
 
 type TWasmChainClients = {
 	[key in ChainTypes]: {
@@ -74,11 +75,17 @@ const useClient = (tokens?: TokenType[]) => {
 				const token = TokenType[key];
 				const tokenStatus = TokenStatus[token];
 				const chain = tokenStatus.chain;
-				const client = await getClient(chain);
-				setWasmClients((prev) => ({
-					...prev,
-					[chain]: client,
-				}));
+				try {
+					toast.info(`getting client start ${key}`);
+					const client = await getClient(chain);
+					toast.info(`getting client success ${key}`);
+					setWasmClients((prev) => ({
+						...prev,
+						[chain]: client,
+					}));
+				} catch (e) {
+					toast.error(`getting client error ${key}`);
+				}
 			});
 	}, [getClient]);
 
