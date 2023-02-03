@@ -54,9 +54,20 @@ const CloseButton = styled.span`
 `;
 
 const RenderInWindow = ({ option, onClose, children }: RenderInWindowProps) => {
-	const [container] = useState<any>(document.createElement("div"));
+	const [container] = useState<HTMLDivElement>(document.createElement("div"));
 	const { isDark } = useContext(ThemeContext);
 	const newWindow: any = useRef(window);
+	const [refresh, setRefresh] = useState(0);
+
+	useEffect(() => {
+		setInterval(() => {
+			setRefresh((prev) => (prev > 100 ? prev : prev + 1));
+		}, 100);
+	}, []);
+
+	useEffect(() => {
+		copyStyles(window.document, newWindow.current.document);
+	}, [refresh]);
 
 	// useEffect(() => {
 	//   // Create container element on client-side
@@ -79,7 +90,8 @@ const RenderInWindow = ({ option, onClose, children }: RenderInWindowProps) => {
 			// the problem is that newWindow.current is NULL.
 			newWindow.current?.document?.body?.appendChild(container);
 			if (isDark && newWindow.current?.document?.body) {
-				newWindow.current.document.body.style.backgroundColor = "#313131";
+				newWindow.current.document.body.style.backgroundColor =
+					"#313131";
 			}
 			newWindow.current.addEventListener("beforeunload", () => {
 				if (!newWindow.current.alreadyPrompted) onClose();
@@ -154,7 +166,9 @@ const PopoutContextProvider = ({ children }: { children: any }) => {
 			)}
 			{isMobile && showWindow && (
 				<NewWindowOnMobile>
-					<CloseButton onClick={() => closeNewWindow()}>X</CloseButton>
+					<CloseButton onClick={() => closeNewWindow()}>
+						X
+					</CloseButton>
 					{windowChildren}
 				</NewWindowOnMobile>
 			)}

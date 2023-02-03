@@ -3,20 +3,9 @@ import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { GasPrice } from "@cosmjs/stargate";
 import { useWalletManager } from "@noahsaso/cosmodal";
 import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
-import { AccountData } from "@cosmjs/proto-signing";
 import { TokenStatus, TokenType } from "../../types/tokens";
+import { TIbcNativeTokenBalance, TWasmChainClients } from "./type";
 // import { toast } from "react-toastify";
-
-type TWasmChainClients = {
-	[key in ChainTypes]: {
-		client: SigningCosmWasmClient | null;
-		account: AccountData | null;
-	};
-};
-
-type TIbcNativeTokenBalance = {
-	[key in TokenType]: any;
-};
 
 const useClient = (tokens?: TokenType[]) => {
 	const { connectedWallet } = useWalletManager();
@@ -95,12 +84,10 @@ const useClient = (tokens?: TokenType[]) => {
 
 	const getBalance = useCallback(
 		async (token: TokenType) => {
-			console.log("debug", token, ibcNativeTokenBalance[token]);
 			if (ibcNativeTokenBalance[token]) return;
 			const tokenStatus = TokenStatus[token];
 			const chainConfig = ChainConfigs[tokenStatus.chain];
 			const { client, account } = wasmClients?.[tokenStatus.chain] || {};
-			console.log("debug", token, client, account);
 			if (connectedWallet && client && account) {
 				// setHasErrorOnMobileConnection(false);
 				const balance = await client.getBalance(

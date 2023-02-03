@@ -682,7 +682,9 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 					}
 				/>
 				<div
-					style={{ height: `calc(100% - ${logoHeight}px - 50px)` }}
+					style={{
+						height: `calc(100% - ${logoHeight || 70}px - 50px)`,
+					}}
 					className="container"
 				>
 					<div className="transfer-title">{`${direction} IBC Asset`}</div>
@@ -712,6 +714,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 									menu: (provided, state) => ({
 										...provided,
 										// backgroundColor: isDark ? "#838383" : "white",
+										maxHeight: "40vh",
+										overflow: "auto",
 										zIndex: 10,
 									}),
 								}}
