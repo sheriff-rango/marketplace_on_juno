@@ -10,13 +10,13 @@ import React, {
 // import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 import {
 	// MsgTransferEncodeObject,
-	GasPrice,
+	// GasPrice,
 	MsgTransferEncodeObject,
 } from "@cosmjs/stargate";
-import {
-	SigningCosmWasmClient,
-	// CosmWasmClient,
-} from "@cosmjs/cosmwasm-stargate";
+// import {
+// 	SigningCosmWasmClient,
+// 	// CosmWasmClient,
+// } from "@cosmjs/cosmwasm-stargate";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 // import { Height } from "cosmjs-types/ibc/core/client/v1/client";
 import Long from "long";
@@ -37,7 +37,8 @@ import { ThemeContext } from "../../context/ThemeContext";
 import { useWalletManager } from "@noahsaso/cosmodal";
 import ReactSelect, { ControlProps } from "react-select";
 import { addSuffix, convertStringToNumber } from "../../util/string";
-import { AccountData } from "@cosmjs/proto-signing";
+// import { AccountData } from "@cosmjs/proto-signing";
+import useClient from "./useClient";
 
 // import {
 //   Wrapper,
@@ -75,94 +76,94 @@ interface QuickSwapProps {
 	closeNewWindow: (params: any) => void;
 }
 
-type TWasmChainClients = {
-	[key in ChainTypes]: {
-		client: SigningCosmWasmClient | null;
-		account: AccountData | null;
-	};
-};
+// type TWasmChainClients = {
+// 	[key in ChainTypes]: {
+// 		client: SigningCosmWasmClient | null;
+// 		account: AccountData | null;
+// 	};
+// };
 
-let wasmChainClients: TWasmChainClients = {} as TWasmChainClients;
+// let wasmChainClients: TWasmChainClients = {} as TWasmChainClients;
 
-const getClient = async (chainType: ChainTypes) => {
-	// if (connectedWallet) {
-	const chainConfig = ChainConfigs[chainType];
-	// toast.info(
-	// 	`getting client. ${chainConfig.chainId} ${chainConfig.chainName}`
-	// );
-	if (
-		wasmChainClients[chainType] &&
-		wasmChainClients[chainType].client &&
-		wasmChainClients[chainType].account
-	) {
-		// toast.info(`existed clients`);
-		return wasmChainClients[chainType];
-	}
-	// toast.info("getting new client");
-	if (!!window.keplr) {
-		try {
-			// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
-			// const { wallet, walletClient } = connectedWallet;
-			// const offlineSigner = await wallet.getOfflineSignerFunction(
-			// 	walletClient
-			// )(chainConfig.chainId);
-			// const account = await offlineSigner?.getAccounts();
-			// console.log('debug start', chainConfig)
-			await window.keplr.enable(chainConfig.chainId);
-			let offlineSigner: any = null;
-			if (!!window.getOfflineSigner) {
-				offlineSigner = await window.getOfflineSigner(
-					chainConfig.chainId
-				);
-			}
-			if (!offlineSigner && !!window.getOfflineSignerAuto) {
-				offlineSigner = await window.getOfflineSignerAuto(
-					chainConfig.chainId
-				);
-			}
-			if (!offlineSigner && !!window.getOfflineSignerOnlyAmino) {
-				offlineSigner = await window.getOfflineSignerOnlyAmino(
-					chainConfig.chainId
-				);
-			}
-			const account = await offlineSigner.getAccounts();
-			let wasmChainClient = null;
-			if (offlineSigner) {
-				try {
-					wasmChainClient =
-						await SigningCosmWasmClient.connectWithSigner(
-							chainConfig.rpcEndpoint,
-							offlineSigner,
-							{
-								gasPrice: GasPrice.fromString(
-									`${chainConfig.gasPrice}${chainConfig.microDenom}`
-								),
-							}
-						);
-					// console.log('debug wasmChainClient', wasmChainClient)
-					const result = {
-						account: account?.[0],
-						client: wasmChainClient,
-					};
-					wasmChainClients[chainType] = result;
-					return result;
-				} catch (e) {
-					console.error("wallets", chainConfig, e);
-					return { account: account?.[0], client: null };
-				}
-			}
-		} catch (e) {
-			console.log("debug", e);
-			// toast.error(
-			// 	`getting client error. ${chainConfig.chainId} ${
-			// 		chainConfig.chainName
-			// 	} ${JSON.stringify(e)}`
-			// );
-		}
-	}
-	// toast.info("no keplr in window");
-	return { account: null, client: null };
-};
+// const getClient = async (chainType: ChainTypes) => {
+// 	// if (connectedWallet) {
+// 	const chainConfig = ChainConfigs[chainType];
+// 	// toast.info(
+// 	// 	`getting client. ${chainConfig.chainId} ${chainConfig.chainName}`
+// 	// );
+// 	if (
+// 		wasmChainClients[chainType] &&
+// 		wasmChainClients[chainType].client &&
+// 		wasmChainClients[chainType].account
+// 	) {
+// 		// toast.info(`existed clients`);
+// 		return wasmChainClients[chainType];
+// 	}
+// 	// toast.info("getting new client");
+// 	if (!!window.keplr) {
+// 		try {
+// 			// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
+// 			// const { wallet, walletClient } = connectedWallet;
+// 			// const offlineSigner = await wallet.getOfflineSignerFunction(
+// 			// 	walletClient
+// 			// )(chainConfig.chainId);
+// 			// const account = await offlineSigner?.getAccounts();
+// 			// console.log('debug start', chainConfig)
+// 			await window.keplr.enable(chainConfig.chainId);
+// 			let offlineSigner: any = null;
+// 			if (!!window.getOfflineSigner) {
+// 				offlineSigner = await window.getOfflineSigner(
+// 					chainConfig.chainId
+// 				);
+// 			}
+// 			if (!offlineSigner && !!window.getOfflineSignerAuto) {
+// 				offlineSigner = await window.getOfflineSignerAuto(
+// 					chainConfig.chainId
+// 				);
+// 			}
+// 			if (!offlineSigner && !!window.getOfflineSignerOnlyAmino) {
+// 				offlineSigner = await window.getOfflineSignerOnlyAmino(
+// 					chainConfig.chainId
+// 				);
+// 			}
+// 			const account = await offlineSigner.getAccounts();
+// 			let wasmChainClient = null;
+// 			if (offlineSigner) {
+// 				try {
+// 					wasmChainClient =
+// 						await SigningCosmWasmClient.connectWithSigner(
+// 							chainConfig.rpcEndpoint,
+// 							offlineSigner,
+// 							{
+// 								gasPrice: GasPrice.fromString(
+// 									`${chainConfig.gasPrice}${chainConfig.microDenom}`
+// 								),
+// 							}
+// 						);
+// 					// console.log('debug wasmChainClient', wasmChainClient)
+// 					const result = {
+// 						account: account?.[0],
+// 						client: wasmChainClient,
+// 					};
+// 					wasmChainClients[chainType] = result;
+// 					return result;
+// 				} catch (e) {
+// 					console.error("wallets", chainConfig, e);
+// 					return { account: account?.[0], client: null };
+// 				}
+// 			}
+// 		} catch (e) {
+// 			console.log("debug", e);
+// 			// toast.error(
+// 			// 	`getting client error. ${chainConfig.chainId} ${
+// 			// 		chainConfig.chainName
+// 			// 	} ${JSON.stringify(e)}`
+// 			// );
+// 		}
+// 	}
+// 	// toast.info("no keplr in window");
+// 	return { account: null, client: null };
+// };
 
 const OutLinkIcon = ({ ...props }) => (
 	<svg
@@ -225,66 +226,70 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 	const [statusMsg, setStatusMsg] = useState("");
 	// const [hasErrorOnMobileConnection, setHasErrorOnMobileConnection] =
 	// 	useState(false);
-	const [ibcNativeTokenBalance, setIBCNativeTokenBalance] = useState<{
-		[key in TokenType]: any;
-	}>({} as { [key in TokenType]: any });
+	// const [ibcNativeTokenBalance, setIBCNativeTokenBalance] = useState<{
+	// 	[key in TokenType]: any;
+	// }>({} as { [key in TokenType]: any });
 	const { isDark } = useContext(ThemeContext);
 	const balances = useAppSelector((state) => state.balances);
 	const tokenPrices = useAppSelector((state) => state.tokenPrices);
 	const { getTokenBalances } = useFetch();
 	const { connectedWallet } = useWalletManager();
 
-	const getWallets = useCallback(
-		async ({
-			origin,
-			foreign,
-		}: {
-			origin: ChainTypes;
-			foreign: ChainTypes;
-		}) => {
-			const originResult = await getClient(origin);
-			const foreignResult = await getClient(foreign);
-
-			return { origin: originResult, foreign: foreignResult };
-		},
-		[]
+	const { clients, ibcBalance: ibcNativeTokenBalance } = useClient(
+		SelectOptions.map((option) => option.value)
 	);
+
+	// const getWallets = useCallback(
+	// 	async ({
+	// 		origin,
+	// 		foreign,
+	// 	}: {
+	// 		origin: ChainTypes;
+	// 		foreign: ChainTypes;
+	// 	}) => {
+	// 		const originResult = await getClient(origin);
+	// 		const foreignResult = await getClient(foreign);
+
+	// 		return { origin: originResult, foreign: foreignResult };
+	// 	},
+	// 	[]
+	// );
 
 	useEffect(() => {
 		setSelectedTokenType(swapInfoProps.denom);
 		setSwapInfo(swapInfoProps);
 	}, [swapInfoProps]);
 
-	const getTokenBalanceOnIBCChain = async (token: TokenType) => {
-		const tokenStatus = TokenStatus[token];
-		const chainConfig = ChainConfigs[tokenStatus.chain];
-		if (connectedWallet) {
-			const { client, account } = await getClient(tokenStatus.chain);
-			if (client && account) {
-				// setHasErrorOnMobileConnection(false);
-				const balance = await client.getBalance(
-					account.address,
-					tokenStatus.isNativeCoin
-						? chainConfig.microDenom
-						: tokenStatus.denom || ""
-				);
-				setIBCNativeTokenBalance((prev) => ({
-					...prev,
-					[token]: balance,
-				}));
-			}
-			// else {
-			// 	setHasErrorOnMobileConnection(true);
-			// }
-		}
-	};
+	// const getTokenBalanceOnIBCChain = async (token: TokenType) => {
+	// 	const tokenStatus = TokenStatus[token];
+	// 	const chainConfig = ChainConfigs[tokenStatus.chain];
+	// 	if (connectedWallet) {
+	// 		const { client, account } = await getClient(tokenStatus.chain);
+	// 		if (client && account) {
+	// 			// setHasErrorOnMobileConnection(false);
+	// 			const balance = await client.getBalance(
+	// 				account.address,
+	// 				tokenStatus.isNativeCoin
+	// 					? chainConfig.microDenom
+	// 					: tokenStatus.denom || ""
+	// 			);
+	// 			setIBCNativeTokenBalance((prev) => ({
+	// 				...prev,
+	// 				[token]: balance,
+	// 			}));
+	// 		}
+	// 		// else {
+	// 		// 	setHasErrorOnMobileConnection(true);
+	// 		// }
+	// 	}
+	// };
 
-	useEffect(() => {
-		for (const option of SelectOptions) {
-			getTokenBalanceOnIBCChain(option.value);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	// useEffect(() => {
+	// 	for (const option of SelectOptions) {
+	// 		getTokenBalanceOnIBCChain(option.value);
+	// 	}
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, []);
 
 	const { direction } = useMemo(() => {
 		return {
@@ -298,7 +303,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		setTimeout(() => setErrorMsg(""), 2000);
 	};
 
-	const handleAccept = async () => {
+	const handleAccept = useCallback(async () => {
 		if (sendingTx) return;
 		if (!swapAmount) {
 			setErrMsg("Please input amount.");
@@ -333,9 +338,13 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		setSendingTx(true);
 		setStatusMsg("starting transfer. getting clients...");
 		// toast.info("starting transfer. getting clients...");
-		const wallets = await getWallets(swapInfo.swapChains);
+		// const wallets = await getWallets(swapInfo.swapChains);
+		const wallets = {
+			origin: clients[swapInfo.swapChains.origin],
+			foreign: clients[swapInfo.swapChains.foreign],
+		};
 
-		const foreignChainConfig = ChainConfigs[swapInfo.swapChains.foreign];
+		const originChainConfig = ChainConfigs[swapInfo.swapChains.origin];
 
 		const timeout = Math.floor(new Date().getTime() / 1000) + 600;
 		const timeoutTimestampNanoseconds = timeout
@@ -350,11 +359,17 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		}
 
 		const tokenStatus = TokenStatus[swapInfo.denom];
+		console.log(
+			"debug token status",
+			tokenStatus,
+			originChainConfig,
+			swapInfo
+		);
 
-		const senderAddress = wallets.foreign.account?.address;
-		const receiverAddress = wallets.origin.account?.address;
+		const senderAddress = wallets.origin.account?.address;
+		const receiverAddress = wallets.foreign.account?.address;
 
-		const client = wallets.foreign.client;
+		const client = wallets.origin.client;
 		if (swapInfo.swapType === SwapType.DEPOSIT && senderAddress && client) {
 			setStatusMsg("balance checking...");
 			// toast.info("balance checking...");
@@ -398,7 +413,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 				token: {
 					denom:
 						swapInfo.swapType === SwapType.DEPOSIT
-							? tokenStatus.denom || foreignChainConfig.microDenom
+							? tokenStatus.denom || originChainConfig.microDenom
 							: swapInfo.denom,
 					amount: String(
 						Math.floor(
@@ -417,38 +432,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 				timeoutTimestamp: timeoutTimestampNanoseconds,
 			}),
 		};
-		console.log("debug transfer message", {
-			typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
-			value: MsgTransfer.fromPartial({
-				sourcePort: "transfer",
-				sourceChannel:
-					swapInfo.swapType === SwapType.DEPOSIT
-						? IBCConfig[tokenStatus.chain].channel
-						: IBCConfig[tokenStatus.chain].juno_channel,
-				sender: senderAddress,
-				receiver: receiverAddress,
-				token: {
-					denom:
-						swapInfo.swapType === SwapType.DEPOSIT
-							? tokenStatus.denom || foreignChainConfig.microDenom
-							: swapInfo.denom,
-					amount: String(
-						Math.floor(
-							Number(swapAmount) *
-								Math.pow(
-									10,
-									swapInfo.swapType === SwapType.DEPOSIT
-										? 6
-										: TokenStatus[swapInfo.denom].decimal ||
-												6
-								)
-						)
-					),
-				},
-				timeoutHeight: undefined,
-				timeoutTimestamp: timeoutTimestampNanoseconds,
-			}),
-		});
+		console.log("debug transfer message", transferMsg);
 		if (senderAddress && client) {
 			setStatusMsg("executing transaction...");
 			// toast.info("executing transaction...");
@@ -473,7 +457,16 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			setStatusMsg("");
 			setSendingTx(false);
 		}
-	};
+	}, [
+		balances,
+		clients,
+		closeNewWindow,
+		getTokenBalances,
+		ibcNativeTokenBalance,
+		sendingTx,
+		swapAmount,
+		swapInfo,
+	]);
 
 	// const handleCancel = () => {
 	// 	if (sendingTx) return;
@@ -522,6 +515,16 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		setSwapInfo((prev) => ({
 			...prev,
 			denom,
+			swapChains:
+				prev.swapType === SwapType.DEPOSIT
+					? {
+							origin: TokenStatus[denom].chain,
+							foreign: ChainTypes.JUNO,
+					  }
+					: {
+							origin: ChainTypes.JUNO,
+							foreign: TokenStatus[denom].chain,
+					  },
 		}));
 	};
 
