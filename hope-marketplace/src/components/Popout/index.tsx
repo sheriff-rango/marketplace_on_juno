@@ -10,13 +10,13 @@ import React, {
 // import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 import {
 	// MsgTransferEncodeObject,
-	GasPrice,
+	// GasPrice,
 	MsgTransferEncodeObject,
 } from "@cosmjs/stargate";
-import {
-	SigningCosmWasmClient,
-	// CosmWasmClient,
-} from "@cosmjs/cosmwasm-stargate";
+// import {
+// 	SigningCosmWasmClient,
+// 	// CosmWasmClient,
+// } from "@cosmjs/cosmwasm-stargate";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 // import { Height } from "cosmjs-types/ibc/core/client/v1/client";
 import Long from "long";
@@ -37,7 +37,7 @@ import { ThemeContext } from "../../context/ThemeContext";
 import { useWalletManager } from "@noahsaso/cosmodal";
 import ReactSelect, { ControlProps } from "react-select";
 import { addSuffix, convertStringToNumber } from "../../util/string";
-import { AccountData } from "@cosmjs/proto-signing";
+// import { AccountData } from "@cosmjs/proto-signing";
 import useClient from "./useClient";
 
 // import {
