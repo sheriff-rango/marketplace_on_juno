@@ -719,6 +719,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 										zIndex: 10,
 									}),
 								}}
+								classNamePrefix="popout"
 								components={{
 									MenuList: CustomMenuList,
 									Control: CustomControlItem,

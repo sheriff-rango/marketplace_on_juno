@@ -41,6 +41,13 @@
 			padding: 30px 20px;
 			width: 100%;
 			box-sizing: border-box;
+			& > div {
+				position: relative;
+				box-sizing: border-box;
+				border: 1px solid #02e296;
+				border-radius: 5px;
+				width: 100%;
+			}
 		}
 
 		.amount-inputer-wrapper {
@@ -259,6 +266,20 @@
 				}
 			}
 		}
+	}
+	.popout__menu {
+		top: 100%;
+		background-color: #ffffff;
+		border-radius: 4px;
+		box-shadow: 0 0 0 1px #0000001a, 0 4px 11px #0000001a;
+		margin-bottom: 8px;
+		margin-top: 8px;
+		position: absolute;
+		width: 100%;
+		z-index: 10;
+		box-sizing: border-box;
+		max-height: 40vh;
+		overflow: auto;
 	}
 }
 
