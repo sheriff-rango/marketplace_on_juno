@@ -77,7 +77,7 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 				config: TPoolConfig,
 				startAfter = 0
 			) => {
-				if (!liquidity.stakingAddress) return;
+				if (!address) return;
 				const result = await runQuery(address, {
 					unbonding_info: {
 						staker: account?.address,
@@ -92,24 +92,32 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 							resultItem.time * 1e3 + (config?.lockDuration || 0)
 						);
 						redeemAvailability =
-							redeemAvailability || Number(unlockTime) < Number(now);
+							redeemAvailability ||
+							Number(unlockTime) < Number(now);
 
 						let remainTimeString = "Ready for Redeem";
 						if (Number(unlockTime) > Number(now)) {
-							const duration = moment.duration(moment(unlockTime).diff(now));
+							const duration = moment.duration(
+								moment(unlockTime).diff(now)
+							);
 							const days = duration.days();
 							const hours = duration.hours();
 							if (!days && !hours) {
 								remainTimeString = "Less than an hour";
 							} else {
-								remainTimeString = `${hours ? `${hours} hours` : ""} ${
-									days ? `${hours ? " and " : ""}${days} days` : ""
+								remainTimeString = `${
+									hours ? `${hours} hours` : ""
+								} ${
+									days
+										? `${hours ? " and " : ""}${days} days`
+										: ""
 								}`;
 							}
 						}
 						return {
 							...resultItem,
 							remainTimeString,
+							rewardToken: config.rewardToken,
 						};
 					})
 				);
@@ -126,16 +134,18 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 					stakingAddress,
 					liquidity.config as TPoolConfig
 				);
+				setUnbondHistory(fetchedUnbondHistory);
+				setIsAvailableRedeem(redeemAvailability);
 			} else {
 				stakingAddress.forEach(async (address, index) => {
 					await fetchUnbondHistory(
 						address,
 						((liquidity.config || []) as TPoolConfig[])[index]
 					);
+					setUnbondHistory(fetchedUnbondHistory);
+					setIsAvailableRedeem(redeemAvailability);
 				});
 			}
-			setUnbondHistory(fetchedUnbondHistory);
-			setIsAvailableRedeem(redeemAvailability);
 		})();
 	}, [account, liquidity, runQuery]);
 
@@ -244,7 +254,9 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 		const stakingAddress = liquidity.stakingAddress;
 		if (isPendingRedeem || !isAvailableRedeem || !stakingAddress) return;
 		const stakingAddressArray =
-			typeof stakingAddress === "string" ? [stakingAddress] : stakingAddress;
+			typeof stakingAddress === "string"
+				? [stakingAddress]
+				: stakingAddress;
 		const queries = stakingAddressArray.map((address) =>
 			runExecute(address, {
 				redeem: {},
@@ -268,7 +280,10 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 	return (
 		<Wrapper isOpen={isOpen} onClose={handleCloseModal}>
 			<ModalHeader>
-				<PoolImage token1={liquidity.token1} token2={liquidity.token2} />
+				<PoolImage
+					token1={liquidity.token1}
+					token2={liquidity.token2}
+				/>
 				<PoolName pool={liquidity} />
 				<Text bold fontSize="22px" color="black">
 					Manage Bonding
@@ -283,21 +298,23 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 					alignItems="center"
 				>
 					<ModalTabContainer isRight={selectedTab !== ModalTabs.BOND}>
-						{(Object.keys(ModalTabs) as Array<keyof typeof ModalTabs>).map(
-							(key, index) => (
-								<ModalTab
-									key={index}
-									checked={selectedTab === ModalTabs[key]}
-									onClick={() =>
-										!isPendingAction &&
-										!isPendingRedeem &&
-										setSelectedTab(ModalTabs[key])
-									}
-								>
-									{ModalTabs[key]}
-								</ModalTab>
-							)
-						)}
+						{(
+							Object.keys(ModalTabs) as Array<
+								keyof typeof ModalTabs
+							>
+						).map((key, index) => (
+							<ModalTab
+								key={index}
+								checked={selectedTab === ModalTabs[key]}
+								onClick={() =>
+									!isPendingAction &&
+									!isPendingRedeem &&
+									setSelectedTab(ModalTabs[key])
+								}
+							>
+								{ModalTabs[key]}
+							</ModalTab>
+						))}
 					</ModalTabContainer>
 					{selectedTab === ModalTabs.UNBOND ? (
 						<UnbondingPeriodContainer>
@@ -314,16 +331,27 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 						<div />
 					)}
 				</Flex>
-				<Text color="black" bold fontSize="18px" justifyContent="flex-start">
+				<Text
+					color="black"
+					bold
+					fontSize="18px"
+					justifyContent="flex-start"
+				>
 					{selectedTab === ModalTabs.BOND ? (
-						`Available LP: ${addSuffix(liquidity.balance || 0)} ${getTokenName(
-							liquidity.token1
-						)}-${getTokenName(liquidity.token2)}`
+						`Available LP: ${addSuffix(
+							liquidity.balance || 0
+						)} ${getTokenName(liquidity.token1)}-${getTokenName(
+							liquidity.token2
+						)}`
 					) : (
 						<Flex alignItems="center" gap="10px">
 							<Text color="black">LP Bonded</Text>
 							{stakingContracts.map((contract, index) => (
-								<Text key={index} color="black" alignItems="center">
+								<Text
+									key={index}
+									color="black"
+									alignItems="center"
+								>
 									{addSuffix(contract.bonded || 0)} in{" "}
 									<img
 										width={25}
@@ -338,7 +366,11 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 						</Flex>
 					)}
 				</Text>
-				<Flex width="100%" justifyContent="space-evenly" margin="20px 0">
+				<Flex
+					width="100%"
+					justifyContent="space-evenly"
+					margin="20px 0"
+				>
 					{AutoBondAmounts.map((amount, index) => (
 						<Text
 							key={index}
@@ -346,9 +378,12 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 							cursor="pointer"
 							onClick={() =>
 								selectedTab === ModalTabs.BOND
-									? setBondAmount((liquidity.balance || 0) * amount)
+									? setBondAmount(
+											(liquidity.balance || 0) * amount
+									  )
 									: setUnbondAmount(
-											(stakingContracts[selectedUnbondLP].bonded || 0) * amount
+											(stakingContracts[selectedUnbondLP]
+												.bonded || 0) * amount
 									  )
 							}
 						>{`${amount * 100}%`}</Text>
@@ -357,13 +392,19 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 				<BondAmountInputer
 					hasError={
 						Number(
-							(selectedTab === ModalTabs.BOND ? bondAmount : unbondAmount) || 0
+							(selectedTab === ModalTabs.BOND
+								? bondAmount
+								: unbondAmount) || 0
 						) >
 						((selectedTab === ModalTabs.BOND
 							? liquidity.balance
 							: stakingContracts[selectedUnbondLP].bonded) || 0)
 					}
-					value={selectedTab === ModalTabs.BOND ? bondAmount : unbondAmount}
+					value={
+						selectedTab === ModalTabs.BOND
+							? bondAmount
+							: unbondAmount
+					}
 					onChange={handleChangeBondAmount}
 				/>
 				<Flex
@@ -401,7 +442,9 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 										style={{
 											cursor: "pointer",
 											filter:
-												selectedUnbondLP === index ? "none" : "grayscale(1)",
+												selectedUnbondLP === index
+													? "none"
+													: "grayscale(1)",
 										}}
 										width={25}
 										alt=""
@@ -409,7 +452,9 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 											/\//g,
 											""
 										)}.png`}
-										onClick={() => setSelectedUnbondLP(index)}
+										onClick={() =>
+											setSelectedUnbondLP(index)
+										}
 									/>
 								))}
 							</Flex>
@@ -419,27 +464,49 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 						</Flex>
 					)}
 				</Flex>
-				{selectedTab === ModalTabs.UNBOND && unbondHistory.length > 0 && (
-					<UnbondHistoryContainer>
-						<Flex justifyContent="flex-end">
-							<Button margin="20px 0" onClick={handleClickRedeem}>
-								{isPendingRedeem ? "Redeeming" : "Redeem"}
-							</Button>
-						</Flex>
-						<UnbondHistoryTable>
-							{unbondHistory.map((history, index) => {
-								return (
-									<UnbondItem key={index}>
-										<Text color="black">
-											{addSuffix((history.amount || 0) / 1e6)}
-										</Text>
-										<Text color="black">{history.remainTimeString}</Text>
-									</UnbondItem>
-								);
-							})}
-						</UnbondHistoryTable>
-					</UnbondHistoryContainer>
-				)}
+				{selectedTab === ModalTabs.UNBOND &&
+					unbondHistory.length > 0 && (
+						<UnbondHistoryContainer>
+							<Flex justifyContent="flex-end">
+								<Button
+									margin="20px 0"
+									onClick={handleClickRedeem}
+								>
+									{isPendingRedeem ? "Redeeming" : "Redeem"}
+								</Button>
+							</Flex>
+							<UnbondHistoryTable>
+								{unbondHistory.map((history, index) => {
+									return (
+										<UnbondItem key={index}>
+											<Text
+												color="black"
+												alignItems="center"
+											>
+												{addSuffix(
+													(history.amount || 0) / 1e6
+												)}
+												{" from "}
+												{history.rewardToken && (
+													<img
+														width={25}
+														alt=""
+														src={`/coin-images/${history.rewardToken.replace(
+															/\//g,
+															""
+														)}.png`}
+													/>
+												)}
+											</Text>
+											<Text color="black">
+												{history.remainTimeString}
+											</Text>
+										</UnbondItem>
+									);
+								})}
+							</UnbondHistoryTable>
+						</UnbondHistoryContainer>
+					)}
 			</ModalBody>
 		</Wrapper>
 	);
