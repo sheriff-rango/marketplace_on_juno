@@ -36,6 +36,7 @@ export const MyPoolItem = styled.div`
 export const MyPoolItemRow = styled.div`
 	display: flex;
 	justify-content: center;
+	align-items: center;
 	gap: 20px;
 `;
 

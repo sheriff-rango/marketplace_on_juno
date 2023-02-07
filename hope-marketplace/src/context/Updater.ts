@@ -48,7 +48,8 @@ export default function Updater(): null {
 
 	useEffect(() => {
 		fetchLiquidities(account, basicData.liquiditiesInfo);
-	}, [account, basicData.liquiditiesInfo, fetchLiquidities, nftRefresh]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [account, basicData.liquiditiesInfo, nftRefresh]);
 
 	useEffect(() => {
 		fetchAllNFTs(account, basicData);

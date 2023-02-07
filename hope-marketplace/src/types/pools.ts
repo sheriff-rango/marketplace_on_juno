@@ -16,6 +16,7 @@ export type TPool = {
 	apr: string | string[];
 	contract: string;
 	lpAddress: string;
+	lpPrice?: number;
 	stakingAddress?: string | string[];
 	pool: number;
 	ratio: number;

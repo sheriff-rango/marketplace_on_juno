@@ -37,9 +37,9 @@ const useFetch = () => {
 	const { runQuery, getBalances } = useContract();
 	const [liquiditiesInfo, setLiquiditiesInfo] = useState<TPool[]>([]);
 	const dispatch = useAppDispatch();
-	const junoPrice = useAppSelector(
-		(state) => state.tokenPrices[TokenType.JUNO]
-	);
+
+	const tokenPrices = useAppSelector((state) => state.tokenPrices);
+	const junoPrice = tokenPrices[TokenType.JUNO];
 
 	useEffect(() => {
 		Collections.forEach(async (collection: MarketplaceInfo) => {
@@ -222,7 +222,9 @@ const useFetch = () => {
 				tokenDecimals: number[] = [];
 			let liquidities: TPool[] = Liquidities.reduce(
 				(result: TPool[], liquidity, index: number) => {
-					const liquidityInfo = (basicData as TPool[]).find(
+					const liquidityInfo: TPool | undefined = (
+						basicData as TPool[]
+					).find(
 						(item) =>
 							item.token1 === liquidity.tokenA &&
 							item.token2 === liquidity.tokenB
@@ -267,7 +269,32 @@ const useFetch = () => {
 								}
 							);
 						}
-						return [...result, liquidityInfo];
+						const token1Reserve =
+							liquidityInfo.token1Reserve /
+							Math.pow(
+								10,
+								TokenStatus[liquidityInfo.token1].decimal || 6
+							);
+						const token1Price =
+							tokenPrices[liquidityInfo.token1]?.market_data
+								?.current_price?.usd || 0;
+						const token2Reserve =
+							liquidityInfo.token2Reserve /
+							Math.pow(
+								10,
+								TokenStatus[liquidityInfo.token2].decimal || 6
+							);
+						const token2Price =
+							tokenPrices[liquidityInfo.token2]?.market_data
+								?.current_price?.usd || 0;
+						const totalLocked =
+							token1Reserve * token1Price +
+							token2Reserve * token2Price;
+						const lpPrice = liquidityInfo.pool
+							? totalLocked / liquidityInfo.pool
+							: 0;
+
+						return [...result, { ...liquidityInfo, lpPrice }];
 					}
 					return result;
 				},
@@ -338,7 +365,7 @@ const useFetch = () => {
 			setLiquiditiesInfo(liquidities);
 			dispatch(setLiquidityInfo(liquidities));
 		},
-		[dispatch, runQuery]
+		[dispatch, runQuery, tokenPrices]
 	);
 
 	const fetchOtherTokenPrice = useCallback(() => {

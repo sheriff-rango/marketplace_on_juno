@@ -17,6 +17,7 @@ import { TPool, TPoolConfig } from "../../types/pools";
 
 const MyPools: React.FC = () => {
 	const liquidities = useAppSelector((state) => state.liquidities);
+	const tokenPrices = useAppSelector((state) => state.tokenPrices);
 	const myLiquidities = useMemo(
 		() =>
 			liquidities.filter((liquidity) => {
@@ -50,30 +51,54 @@ const MyPools: React.FC = () => {
 					const config = liquidity.config as TPoolConfig;
 					renderInfo = [
 						{
-							bonded: addSuffix(bonded),
+							bonded,
 							rewardToken: config.rewardToken || "",
 						},
 					];
 				} else {
 					const config = liquidity.config as TPoolConfig[];
 					renderInfo = config.map((item, index) => ({
-						bonded: addSuffix(bonded[index]),
+						bonded: bonded[index],
 						rewardToken: item.rewardToken || "",
 					}));
 				}
 				return (
 					<>
 						{renderInfo.map((info, index) => (
-							<Text key={index} alignItems="center" bold>
-								<img
-									width={25}
-									alt=""
-									src={`/coin-images/${info.rewardToken.replace(
-										/\//g,
-										""
-									)}.png`}
-								/>
-								{info.bonded}
+							<Text
+								key={index}
+								gap="10px"
+								alignItems="center"
+								title={"" + info.bonded}
+							>
+								{info.rewardToken && (
+									<img
+										width={25}
+										alt=""
+										src={`/coin-images/${info.rewardToken.replace(
+											/\//g,
+											""
+										)}.png`}
+									/>
+								)}
+								<Text
+									flexDirection="column"
+									alignItems="flex-start"
+								>
+									<Text color="black" bold>
+										{addSuffix(info.bonded)}
+									</Text>
+									<Text
+										style={{ fontSize: 14 }}
+										color="#787878"
+									>
+										{addSuffix(
+											info.bonded *
+												(liquidity.lpPrice || 0)
+										)}
+										$
+									</Text>
+								</Text>
 							</Text>
 						))}
 					</>
@@ -90,30 +115,62 @@ const MyPools: React.FC = () => {
 					const config = liquidity.config as TPoolConfig;
 					renderInfo = [
 						{
-							pendingReward: addSuffix(pendingReward),
+							pendingReward,
 							rewardToken: config.rewardToken || "",
+							rewardTokenPrice: config.rewardToken
+								? tokenPrices[config.rewardToken]?.market_data
+										?.current_price?.usd || 0
+								: 0,
 						},
 					];
 				} else {
 					const config = liquidity.config as TPoolConfig[];
 					renderInfo = config.map((item, index) => ({
-						pendingReward: addSuffix(pendingReward[index]),
+						pendingReward: pendingReward[index],
 						rewardToken: item.rewardToken || "",
+						rewardTokenPrice: item.rewardToken
+							? tokenPrices[item.rewardToken]?.market_data
+									?.current_price?.usd || 0
+							: 0,
 					}));
 				}
 				return (
 					<>
 						{renderInfo.map((info, index) => (
-							<Text key={index} alignItems="center" bold>
-								<img
-									width={25}
-									alt=""
-									src={`/coin-images/${info.rewardToken.replace(
-										/\//g,
-										""
-									)}.png`}
-								/>
-								{info.pendingReward}
+							<Text
+								key={index}
+								gap="10px"
+								alignItems="center"
+								title={"" + info.pendingReward}
+							>
+								{info.rewardToken && (
+									<img
+										width={25}
+										alt=""
+										src={`/coin-images/${info.rewardToken.replace(
+											/\//g,
+											""
+										)}.png`}
+									/>
+								)}
+								<Text
+									flexDirection="column"
+									alignItems="flex-start"
+								>
+									<Text color="black" bold>
+										{addSuffix(info.pendingReward)}
+									</Text>
+									<Text
+										style={{ fontSize: 14 }}
+										color="#787878"
+									>
+										{addSuffix(
+											info.pendingReward *
+												info.rewardTokenPrice
+										)}
+										$
+									</Text>
+								</Text>
 							</Text>
 						))}
 					</>

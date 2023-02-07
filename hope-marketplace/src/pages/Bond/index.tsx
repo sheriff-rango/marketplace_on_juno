@@ -9,13 +9,41 @@ import { CancelIcon, VerifiedBadge } from "../../components/SvgIcons";
 import Table, { ColumnTypes, TColumns } from "../../components/Table";
 import Text from "../../components/Text";
 import { TPool, TPoolConfig } from "../../types/pools";
-import { getTokenName } from "../../types/tokens";
+import { getTokenName, TokenType } from "../../types/tokens";
 import { Wrapper } from "./styled";
 
 import { addSuffix } from "../../util/string";
 import { PoolType } from "../Liquidity/type";
 import BondTableDetailRow from "./BondTableDetailRow";
 import Flex from "../../components/Flex";
+
+const BalanceItem = ({
+	rewardToken,
+	bonded,
+	lpPrice,
+}: {
+	rewardToken?: TokenType;
+	bonded: number;
+	lpPrice?: number;
+}) => (
+	<Text gap="10px" alignItems="center" title={"" + bonded}>
+		{rewardToken && (
+			<img
+				width={25}
+				alt=""
+				src={`/coin-images/${rewardToken.replace(/\//g, "")}.png`}
+			/>
+		)}
+		<Text flexDirection="column" alignItems="flex-start">
+			<Text color="black" bold>
+				{addSuffix(bonded)}
+			</Text>
+			<Text style={{ fontSize: 14 }} color="#787878">
+				{addSuffix(bonded * (lpPrice || 0))}$
+			</Text>
+		</Text>
+	</Text>
+);
 
 const Bond: React.FC = () => {
 	const liquidities = useAppSelector((state) => state.liquidities);
@@ -54,7 +82,8 @@ const Bond: React.FC = () => {
 		{
 			name: "isVerified",
 			title: "Verified",
-			render: (value, data) => (value ? <VerifiedBadge /> : <CancelIcon />),
+			render: (value, data) =>
+				value ? <VerifiedBadge /> : <CancelIcon />,
 		},
 		{
 			name: "bonded",
@@ -64,50 +93,32 @@ const Bond: React.FC = () => {
 				const bonded = data.bonded;
 				if (!bonded) return null;
 				if (typeof bonded === "number") {
-					const rewardToken = (data.config as TPoolConfig)?.rewardToken;
+					const rewardToken = (data.config as TPoolConfig)
+						?.rewardToken;
 					return (
-						<Text
-							gap="10px"
-							color="black"
-							alignItems="center"
-							title={"" + bonded}
-						>
-							{rewardToken && (
-								<img
-									width={25}
-									alt=""
-									src={`/coin-images/${rewardToken.replace(/\//g, "")}.png`}
-								/>
-							)}
-							{addSuffix(bonded)}
-						</Text>
+						<BalanceItem
+							rewardToken={rewardToken}
+							bonded={bonded}
+							lpPrice={data.lpPrice}
+						/>
 					);
 				} else {
 					return (
-						<Flex flexDirection="column" alignItems="flex-start" gap="5px">
+						<Flex
+							flexDirection="column"
+							alignItems="flex-start"
+							gap="5px"
+						>
 							{bonded.map((item, index) => {
-								const rewardToken = (data.config as TPoolConfig[])?.[index]
-									?.rewardToken;
+								const rewardToken = (
+									data.config as TPoolConfig[]
+								)?.[index]?.rewardToken;
 								return (
-									<Text
-										key={index}
-										gap="10px"
-										color="black"
-										alignItems="center"
-										flexWrap="no-wrap"
-									>
-										{rewardToken && (
-											<img
-												width={25}
-												alt=""
-												src={`/coin-images/${rewardToken.replace(
-													/\//g,
-													""
-												)}.png`}
-											/>
-										)}
-										{item}
-									</Text>
+									<BalanceItem
+										rewardToken={rewardToken}
+										bonded={item}
+										lpPrice={data.lpPrice}
+									/>
 								);
 							})}
 						</Flex>
@@ -121,14 +132,18 @@ const Bond: React.FC = () => {
 			render: (value, data) => {
 				const apr = data.apr;
 				if (typeof apr === "string") {
-					const rewardToken = (data.config as TPoolConfig)?.rewardToken;
+					const rewardToken = (data.config as TPoolConfig)
+						?.rewardToken;
 					return (
 						<Text gap="10px" color="black" alignItems="center">
 							{rewardToken && (
 								<img
 									width={25}
 									alt=""
-									src={`/coin-images/${rewardToken.replace(/\//g, "")}.png`}
+									src={`/coin-images/${rewardToken.replace(
+										/\//g,
+										""
+									)}.png`}
 								/>
 							)}
 							{apr}
@@ -136,10 +151,15 @@ const Bond: React.FC = () => {
 					);
 				} else {
 					return (
-						<Flex flexDirection="column" alignItems="flex-start" gap="5px">
+						<Flex
+							flexDirection="column"
+							alignItems="flex-start"
+							gap="5px"
+						>
 							{apr.map((item, index) => {
-								const rewardToken = (data.config as TPoolConfig[])?.[index]
-									?.rewardToken;
+								const rewardToken = (
+									data.config as TPoolConfig[]
+								)?.[index]?.rewardToken;
 								return (
 									<Text
 										key={index}
@@ -178,9 +198,11 @@ const Bond: React.FC = () => {
 			title: "Value",
 			sort: true,
 			render: (value, data) => (
-				<Text bold color="black">{`1${getTokenName(data.token1)} = ${addSuffix(
-					value || 0
-				)}${getTokenName(data.token2)}`}</Text>
+				<Text bold color="black">{`1${getTokenName(
+					data.token1
+				)} = ${addSuffix(value || 0)}${getTokenName(
+					data.token2
+				)}`}</Text>
 			),
 		},
 	];
@@ -210,9 +232,13 @@ const Bond: React.FC = () => {
 					</Text>
 				</Text>
 				<Table<TPool>
-					data={liquidities.filter((liquidity) => !!liquidity.stakingAddress)}
+					data={liquidities.filter(
+						(liquidity) => !!liquidity.stakingAddress
+					)}
 					columns={Columns}
-					defaultExpanded={(rowData) => rowData.id === Number(poolId || 1)}
+					defaultExpanded={(rowData) =>
+						rowData.id === Number(poolId || 1)
+					}
 					renderDetailRow={(rowData) => (
 						<BondTableDetailRow
 							rowData={rowData}
@@ -222,9 +248,11 @@ const Bond: React.FC = () => {
 					option={{
 						emptyString: "No Liquidities",
 						tab: {
-							tabs: (Object.keys(PoolType) as Array<keyof typeof PoolType>).map(
-								(key) => PoolType[key]
-							),
+							tabs: (
+								Object.keys(PoolType) as Array<
+									keyof typeof PoolType
+								>
+							).map((key) => PoolType[key]),
 						},
 						search: {
 							onChange: (searchValue, liquidities) =>
@@ -233,7 +261,9 @@ const Bond: React.FC = () => {
 										!searchValue ||
 										liquidity.token1
 											.toLowerCase()
-											.includes(searchValue.toLowerCase()) ||
+											.includes(
+												searchValue.toLowerCase()
+											) ||
 										liquidity.token2
 											.toLowerCase()
 											.includes(searchValue.toLowerCase())
