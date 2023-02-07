@@ -2,9 +2,9 @@ import { AdvertiseItemProps } from ".";
 
 export const Advertise1: AdvertiseItemProps[] = [
 	{
-		url: "/advertises-images/image_007.png",
+		url: "/advertises-images/image_008.png",
 		description:
-			"Calling the @ChihuahuaChain community! $HUAHUA has just been added to our #DEX ready to be swapped.",
+			"We have just listed $MARS, the new L1 credit protocol on Cosmos🛸",
 	},
 	{
 		url: "/advertises-images/image_006.png",
@@ -12,17 +12,17 @@ export const Advertise1: AdvertiseItemProps[] = [
 			"Thrilled to announce that we've teamed up with @PURPLE_DAO to bring u an exciting new phase of gameplay on @JunoNetwork",
 	},
 	{
-		url: "/advertises-images/image_002.png",
+		url: "/advertises-images/image_009.png",
 		description:
-			"The Mint pass for our 2nd collection is officially live! Grab yours NOW!",
+			"Hopers is proud to announce the listing of $KUJI , the token of the sustainable #FinTech ecosystem TeamKujira",
 	},
 ];
 
 export const Advertise2: AdvertiseItemProps[] = [
 	{
-		url: "/advertises-images/image_007.png",
+		url: "/advertises-images/image_008.png",
 		description:
-			"Calling the @ChihuahuaChain community! $HUAHUA has just been added to our #DEX ready to be swapped.",
+			"We have just listed $MARS, the new L1 credit protocol on Cosmos🛸",
 		style: {
 			description: {
 				color: "black",
@@ -40,9 +40,9 @@ export const Advertise2: AdvertiseItemProps[] = [
 		},
 	},
 	{
-		url: "/advertises-images/image_002.png",
+		url: "/advertises-images/image_009.png",
 		description:
-			"The Mint pass for our 2nd collection is officially live! Grab yours NOW!",
+			"Hopers is proud to announce the listing of $KUJI , the token of the sustainable #FinTech ecosystem TeamKujira",
 		style: {
 			description: {
 				color: "black",
