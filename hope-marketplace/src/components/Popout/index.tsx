@@ -39,6 +39,8 @@ import ReactSelect, { ControlProps } from "react-select";
 import { addSuffix, convertStringToNumber } from "../../util/string";
 // import { AccountData } from "@cosmjs/proto-signing";
 import useClient from "./useClient";
+import { isMobileDevice } from "../../util/basic";
+import { toast } from "react-toastify";
 
 // import {
 //   Wrapper,
@@ -235,6 +237,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 	const { getTokenBalances } = useFetch();
 	const { connectedWallet } = useWalletManager();
 
+	const isMobile = useMemo(() => isMobileDevice(), []);
+
 	const { clients, ibcBalance: ibcNativeTokenBalance } = useClient(
 		SelectOptions.map((option) => option.value)
 	);
@@ -254,6 +258,14 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 	// 	},
 	// 	[]
 	// );
+
+	useEffect(() => {
+		if (isMobile) {
+			toast.info(
+				"Please check your KEPLR wallet and approve to add chains!"
+			);
+		}
+	}, [isMobile]);
 
 	useEffect(() => {
 		setSelectedTokenType(swapInfoProps.denom);
