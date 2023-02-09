@@ -25,7 +25,6 @@ export enum TokenType {
 	DRGN = "drgn",
 	BANANA = "banana",
 	CZAR = "czar",
-	HOWL = "howl",
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
@@ -58,7 +57,6 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.KUJIRA]: "KUJI",
 	[TokenType.STARS]: "STARS",
 	[TokenType.MARS]: "MARS",
-	[TokenType.HOWL]: "HOWL",
 };
 
 export type TokenStatusType = {
@@ -234,13 +232,6 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		isIBCCoin: true,
 		chain: ChainTypes.MARS,
 		originChain: ChainTypes.MARS,
-	},
-	[TokenType.HOWL]: {
-		isNativeCoin: false,
-		isIBCCoin: false,
-		chain: ChainTypes.JUNO,
-		contractAddress:
-			"juno1g0wuyu2f49ncf94r65278puxzclf5arse9f3kvffxyv4se4vgdmsk4dvqz",
 	},
 };
 

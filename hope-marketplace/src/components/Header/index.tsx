@@ -186,12 +186,10 @@ const Header: React.FC = () => {
 	const { pathname } = useLocation();
 	const history = useHistory();
 	// const { initContracts } = useContract();
-	const { refresh } = useRefresh();
 
 	const { isMobile } = useWindowSize(900);
 
 	useEffect(() => {
-		refresh();
 		// initContracts();
 		return () => {
 			dispatch(setKeplrAccount());
@@ -224,7 +222,7 @@ const Header: React.FC = () => {
 				})
 			);
 		}
-	}, [connectedWallet, dispatch, config, refresh]);
+	}, [connectedWallet, dispatch, config]);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	// useEffect(() => {

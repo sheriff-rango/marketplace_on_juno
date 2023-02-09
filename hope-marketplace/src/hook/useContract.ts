@@ -62,6 +62,7 @@ const useContract = () => {
 
 	const runQuery = useCallback(
 		async (contractAddress: string, queryMsg: any) => {
+			// console.log(`Running query to ${contractAddress}: ${JSON.stringify(queryMsg)}`)
 			const client = await getJunoQueryClient();
 			const result = await client.queryContractSmart(
 				contractAddress,

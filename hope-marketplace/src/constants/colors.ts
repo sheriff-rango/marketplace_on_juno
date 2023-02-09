@@ -33,6 +33,5 @@ export const LineColors = {
 	[TokenType.KUJIRA]: "#b33dc6",
 	[TokenType.STARS]: "#ea5545",
 	[TokenType.MARS]: "#f46a9b",
-	[TokenType.HOWL]: "#ef9b20",
 	Others: "#ede15b",
 };
