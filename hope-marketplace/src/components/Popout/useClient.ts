@@ -5,7 +5,6 @@ import { useWalletManager } from "@noahsaso/cosmodal";
 import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
 import { TokenStatus, TokenType } from "../../types/tokens";
 import { TIbcNativeTokenBalance, TWasmChainClients } from "./type";
-import { getChainConfig, getKeplr } from "../../features/accounts/useKeplr";
 // import { toast } from "react-toastify";
 
 const useClient = (tokens?: TokenType[]) => {
@@ -20,10 +19,6 @@ const useClient = (tokens?: TokenType[]) => {
 		async (chainType: ChainTypes) => {
 			if (connectedWallet) {
 				const chainConfig = ChainConfigs[chainType];
-				const keplr = await getKeplr();
-				await keplr.experimentalSuggestChain(
-					getChainConfig(chainConfig)
-				);
 				// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
 				const { wallet, walletClient } = connectedWallet;
 				// toast.info(`getting offline signer ${chainType}`);
