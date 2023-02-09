@@ -695,7 +695,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 				/>
 				<div
 					style={{
-						height: `calc(100% - ${logoHeight || 70}px - 50px)`,
+						height: `calc(100% - ${logoHeight || 70}px - 70px)`,
 					}}
 					className="container"
 				>
