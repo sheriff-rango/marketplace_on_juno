@@ -26,6 +26,8 @@ export enum TokenType {
 	BANANA = "banana",
 	CZAR = "czar",
 	HOWL = "howl",
+	PLANQ = "ibc/9AFC3B24C30BE40250D3F40818CFED98C74EA320F744AA6CF2129F0D109E6FF5",
+	EVMOS = "ibc/9B990F95D85E7CA8C46544975776CAA20A3DEE3507EEA829A4000D8D65617F6D",
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
@@ -59,6 +61,8 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.STARS]: "STARS",
 	[TokenType.MARS]: "MARS",
 	[TokenType.HOWL]: "HOWL",
+	[TokenType.PLANQ]: "PLANQ",
+	[TokenType.EVMOS]: "EVMOS",
 };
 
 export type TokenStatusType = {
@@ -241,6 +245,20 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		chain: ChainTypes.JUNO,
 		contractAddress:
 			"juno1g0wuyu2f49ncf94r65278puxzclf5arse9f3kvffxyv4se4vgdmsk4dvqz",
+	},
+	[TokenType.PLANQ]: {
+		isNativeCoin: true,
+		isIBCCoin: true,
+		chain: ChainTypes.PLANQ,
+		originChain: ChainTypes.PLANQ,
+		decimal: 18,
+	},
+	[TokenType.EVMOS]: {
+		isNativeCoin: true,
+		isIBCCoin: true,
+		chain: ChainTypes.EVMOS,
+		originChain: ChainTypes.EVMOS,
+		decimal: 18,
 	},
 };
 

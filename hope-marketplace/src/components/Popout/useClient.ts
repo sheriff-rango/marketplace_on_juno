@@ -5,7 +5,7 @@ import { useWalletManager } from "@noahsaso/cosmodal";
 import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
 import { TokenStatus, TokenType } from "../../types/tokens";
 import { TIbcNativeTokenBalance, TWasmChainClients } from "./type";
-// import { toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const useClient = (tokens?: TokenType[]) => {
 	const { connectedWallet } = useWalletManager();
@@ -46,6 +46,7 @@ const useClient = (tokens?: TokenType[]) => {
 							client: wasmChainClient,
 						};
 					} catch (e) {
+						toast.error(`getting client error ${chainType}`);
 						console.error("wallets", e);
 						return { account: account?.[0], client: null };
 					}

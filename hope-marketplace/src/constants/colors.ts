@@ -34,5 +34,7 @@ export const LineColors = {
 	[TokenType.STARS]: "#ea5545",
 	[TokenType.MARS]: "#f46a9b",
 	[TokenType.HOWL]: "#ef9b20",
+	[TokenType.PLANQ]: "#edbf33",
+	[TokenType.EVMOS]: "#red",
 	Others: "#ede15b",
 };

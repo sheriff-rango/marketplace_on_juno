@@ -361,9 +361,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		const originChainConfig = ChainConfigs[swapInfo.swapChains.origin];
 
 		const timeout = Math.floor(new Date().getTime() / 1000) + 600;
-		const timeoutTimestampNanoseconds = timeout
-			? Long.fromNumber(timeout).multiply(1_000_000_000)
-			: undefined;
+		const timeoutTimestampNanoseconds =
+			Long.fromNumber(timeout).multiply(1_000_000_000);
 
 		if (!wallets.origin || !wallets.foreign) {
 			setErrMsg("getting clients failed.");
@@ -422,6 +421,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			}
 		}
 
+		// const transferMsg: MsgTransferEncodeObject = {
 		const transferMsg: MsgTransferEncodeObject = {
 			typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
 			value: MsgTransfer.fromPartial({
@@ -430,8 +430,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 					swapInfo.swapType === SwapType.DEPOSIT
 						? IBCConfig[tokenStatus.chain].channel
 						: IBCConfig[tokenStatus.chain].juno_channel,
-				sender: senderAddress,
-				receiver: receiverAddress,
+				sender: senderAddress || "",
+				receiver: receiverAddress || "",
 				token: {
 					denom:
 						swapInfo.swapType === SwapType.DEPOSIT
@@ -442,10 +442,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 							Number(swapAmount) *
 								Math.pow(
 									10,
-									swapInfo.swapType === SwapType.DEPOSIT
-										? 6
-										: TokenStatus[swapInfo.denom].decimal ||
-												6
+									TokenStatus[swapInfo.denom].decimal || 6
 								)
 						)
 					),
@@ -511,7 +508,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 						ibcNativeTokenBalance[swapInfo.denom]?.amount
 					) *
 						ratio) /
-						1e6
+						Math.pow(10, TokenStatus[swapInfo.denom].decimal || 6)
 			);
 		} else {
 			const tokenBalance =
@@ -566,7 +563,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			(balances?.[token]?.amount || 0) /
 			Math.pow(10, TokenStatus[token].decimal || 6);
 		const ibcTokenBalance =
-			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) / 1e6;
+			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) /
+			Math.pow(10, TokenStatus[token].decimal || 6);
 		const tokenPrice =
 			tokenPrices[token]?.market_data.current_price?.usd || 0;
 		return (
@@ -626,7 +624,8 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			(balances?.[token]?.amount || 0) /
 			Math.pow(10, TokenStatus[token].decimal || 6);
 		const ibcTokenBalance =
-			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) / 1e6;
+			convertStringToNumber(ibcNativeTokenBalance[token]?.amount) /
+			Math.pow(10, TokenStatus[token].decimal || 6);
 		const tokenPrice =
 			tokenPrices[token]?.market_data.current_price?.usd || 0;
 		return (

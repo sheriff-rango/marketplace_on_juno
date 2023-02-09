@@ -7,6 +7,8 @@ export enum ChainTypes {
 	KUJIRA = "kaiyo-1",
 	STARGAZE = "stargaze-1",
 	MARS = "mars-1",
+	PLANQ = "planq_7070-2",
+	EVMOS = "evmos_9001-2",
 }
 
 export type ConfigType = {
@@ -38,6 +40,8 @@ export const IBCConfig: {
 	[ChainTypes.KUJIRA]: { channel: "channel-1", juno_channel: "channel-87" },
 	[ChainTypes.STARGAZE]: { channel: "channel-5", juno_channel: "channel-20" },
 	[ChainTypes.MARS]: { channel: "channel-3", juno_channel: "channel-209" },
+	[ChainTypes.PLANQ]: { channel: "", juno_channel: "channel-204" },
+	[ChainTypes.EVMOS]: { channel: "channel-5", juno_channel: "channel-70" },
 };
 
 export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
@@ -131,12 +135,34 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 		chainName: "Mars",
 		chainId: "mars-1",
 		// rpcEndpoint: "https://rpc.cosmos.directory/mars",
-		rpcEndpoint: "https://rpc-mars.goldenratiostaking.net/",
+		rpcEndpoint: "https://rpc-mars.keplr.app",
 		restEndpoint: "https://rest.cosmos.directory/mars",
 		faucetEndpoint: "",
 		addressPrefix: "mars",
 		microDenom: "umars",
 		coinDecimals: "6",
+		gasPrice: "0.025",
+	},
+	[ChainTypes.PLANQ]: {
+		chainName: "Planq",
+		chainId: "planq_7070-2",
+		rpcEndpoint: "https://rpc.cosmos.directory/planq",
+		restEndpoint: "https://rest.cosmos.directory/planq",
+		faucetEndpoint: "",
+		addressPrefix: "plq",
+		microDenom: "aplanq",
+		coinDecimals: "18",
+		gasPrice: "0.025",
+	},
+	[ChainTypes.EVMOS]: {
+		chainName: "Evmos",
+		chainId: "evmos_9001-2",
+		rpcEndpoint: "https://rpc.cosmos.directory/evmos",
+		restEndpoint: "https://rest.cosmos.directory/evmos",
+		faucetEndpoint: "",
+		addressPrefix: "evmos",
+		microDenom: "aevmos",
+		coinDecimals: "18",
 		gasPrice: "0.025",
 	},
 };
