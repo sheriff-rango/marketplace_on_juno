@@ -107,7 +107,8 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 	[ChainTypes.KUJIRA]: {
 		chainName: "Kujura",
 		chainId: "kaiyo-1",
-		rpcEndpoint: "https://rpc-kujira.whispernode.com",
+		// rpcEndpoint: "https://rpc-kujira.whispernode.com",
+		rpcEndpoint: "https://rpc-kujira.ecostake.com/",
 		restEndpoint: "https://rest.cosmos.directory/kujira",
 		faucetEndpoint: "",
 		addressPrefix: "kujira",
@@ -129,7 +130,8 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 	[ChainTypes.MARS]: {
 		chainName: "Mars",
 		chainId: "mars-1",
-		rpcEndpoint: "https://rpc.cosmos.directory/mars",
+		// rpcEndpoint: "https://rpc.cosmos.directory/mars",
+		rpcEndpoint: "https://rpc-mars.goldenratiostaking.net/",
 		restEndpoint: "https://rest.cosmos.directory/mars",
 		faucetEndpoint: "",
 		addressPrefix: "mars",

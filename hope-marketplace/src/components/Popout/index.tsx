@@ -239,9 +239,11 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 
 	const isMobile = useMemo(() => isMobileDevice(), []);
 
-	const { clients, ibcBalance: ibcNativeTokenBalance } = useClient(
-		SelectOptions.map((option) => option.value)
-	);
+	const {
+		clients,
+		ibcBalance: ibcNativeTokenBalance,
+		getClient,
+	} = useClient(SelectOptions.map((option) => option.value));
 
 	// const getWallets = useCallback(
 	// 	async ({
@@ -367,7 +369,15 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			setErrMsg("getting clients failed.");
 			setStatusMsg("");
 			setSendingTx(false);
-			return;
+			if (!wallets.origin) {
+				wallets.origin = await getClient(swapInfo.swapChains.origin);
+			}
+			if (!wallets.foreign) {
+				wallets.foreign = await getClient(swapInfo.swapChains.foreign);
+			}
+			if (!wallets.origin || !wallets.foreign) {
+				return;
+			}
 		}
 
 		const tokenStatus = TokenStatus[swapInfo.denom];
@@ -473,6 +483,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 		balances,
 		clients,
 		closeNewWindow,
+		getClient,
 		getTokenBalances,
 		ibcNativeTokenBalance,
 		sendingTx,
