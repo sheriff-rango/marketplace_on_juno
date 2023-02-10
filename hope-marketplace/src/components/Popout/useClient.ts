@@ -5,6 +5,7 @@ import { useWalletManager } from "@noahsaso/cosmodal";
 import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
 import { TokenStatus, TokenType } from "../../types/tokens";
 import { TIbcNativeTokenBalance, TWasmChainClients } from "./type";
+import { toast } from "react-toastify";
 // import { toast } from "react-toastify";
 
 const useClient = (tokens?: TokenType[]) => {
@@ -26,7 +27,15 @@ const useClient = (tokens?: TokenType[]) => {
 					walletClient
 				)(chainConfig.chainId);
 				// toast.info(`getting account ${chainType}`);
-				const account = await offlineSigner?.getAccounts();
+
+				let account = null;
+
+				try {
+					account = await offlineSigner?.getAccounts();
+				} catch (e: any) {
+					if (e.message) toast.error(e.message);
+				}
+
 				let wasmChainClient = null;
 				if (offlineSigner) {
 					try {
@@ -42,12 +51,12 @@ const useClient = (tokens?: TokenType[]) => {
 								}
 							);
 						return {
-							account: account?.[0],
+							account: account?.[0] || null,
 							client: wasmChainClient,
 						};
 					} catch (e) {
 						console.error("wallets", e);
-						return { account: account?.[0], client: null };
+						return { account: account?.[0] || null, client: null };
 					}
 				}
 			}

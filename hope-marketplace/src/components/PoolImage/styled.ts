@@ -15,6 +15,7 @@ export const LiquidityImage = styled.div<TLiquidityImage>`
 			? css`calc(${size.token1} + ${size.token2} - ${size.token2} * 0.3)`
 			: "100px"};
 	img {
+		border-radius: 50%;
 		&:nth-child(1) {
 			width: ${({ size }) => (size ? size.token1 : "40px")};
 			height: ${({ size }) => (size ? size.token1 : "40px")};

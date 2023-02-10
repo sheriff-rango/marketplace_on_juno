@@ -26,6 +26,7 @@ export enum TokenType {
 	BANANA = "banana",
 	CZAR = "czar",
 	HOWL = "howl",
+	KLEO = "kleo",
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
@@ -59,6 +60,7 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.STARS]: "STARS",
 	[TokenType.MARS]: "MARS",
 	[TokenType.HOWL]: "HOWL",
+	[TokenType.KLEO]: "KLEO",
 };
 
 export type TokenStatusType = {
@@ -241,6 +243,13 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		chain: ChainTypes.JUNO,
 		contractAddress:
 			"juno1g0wuyu2f49ncf94r65278puxzclf5arse9f3kvffxyv4se4vgdmsk4dvqz",
+	},
+	[TokenType.KLEO]: {
+		isNativeCoin: false,
+		isIBCCoin: false,
+		chain: ChainTypes.JUNO,
+		contractAddress:
+			"juno10gthz5ufgrpuk5cscve2f0hjp56wgp90psqxcrqlg4m9mcu9dh8q4864xy",
 	},
 };
 

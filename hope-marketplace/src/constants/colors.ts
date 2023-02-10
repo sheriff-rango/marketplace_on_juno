@@ -8,31 +8,28 @@ import { TokenType } from "../types/tokens";
 //   [TokenType.ATOM]: "#ede15b", // "#bdcf32", "#87bc45", "#27aeef", "#b33dc6"
 // };
 
-export const LineColors = {
-	[TokenType.JUNO]: "red",
-	[TokenType.HOPE]: "pink",
-	[TokenType.NETA]: "brown",
-	[TokenType.RAW]: "yellow",
-	[TokenType.ATOM]: "blue",
-	[TokenType.USDC]: "#bdcf32",
-	[TokenType.HOPERS]: "#87bc45",
-	[TokenType.PUNK]: "#27aeef",
-	[TokenType.HUAHUA]: "#b33dc6",
-	[TokenType.CANLAB]: "#ea5545",
-	[TokenType.RED]: "#f46a9b",
-	[TokenType.BLUE]: "#ef9b20",
-	[TokenType.WYND]: "#edbf33",
-	[TokenType.SGNL]: "red",
-	[TokenType.RACOON]: "pink",
-	[TokenType.GLTO]: "brown",
-	[TokenType.AQUA]: "yellow",
-	[TokenType.OSMO]: "blue",
-	[TokenType.DRGN]: "#bdcf32",
-	[TokenType.BANANA]: "#87bc45",
-	[TokenType.CZAR]: "#27aeef",
-	[TokenType.KUJIRA]: "#b33dc6",
-	[TokenType.STARS]: "#ea5545",
-	[TokenType.MARS]: "#f46a9b",
-	[TokenType.HOWL]: "#ef9b20",
-	Others: "#ede15b",
-};
+const BasicColors = [
+	"red",
+	"pink",
+	"brown",
+	"yellow",
+	"blue",
+	"#bdcf32",
+	"#87bc45",
+	"#27aeef",
+	"#b33dc6",
+	"#ea5545",
+	"#f46a9b",
+	"#ef9b20",
+	"#edbf33",
+];
+
+export const LineColors: any = (
+	Object.keys(TokenType) as Array<keyof typeof TokenType>
+).reduce(
+	(result, key, index) => ({
+		...result,
+		[TokenType[key]]: BasicColors[index % BasicColors.length],
+	}),
+	{ Others: "#ede15b" }
+);
