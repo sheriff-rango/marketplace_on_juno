@@ -21,12 +21,36 @@ const useClient = (tokens?: TokenType[]) => {
 				const chainConfig = ChainConfigs[chainType];
 				// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
 				const { wallet, walletClient } = connectedWallet;
-				// toast.info(`getting offline signer ${chainType}`);
+				if (chainType === ChainTypes.MARS) {
+					toast.info(`getting offline signer ${chainType}`);
+				}
 				const offlineSigner = await wallet.getOfflineSignerFunction(
 					walletClient
 				)(chainConfig.chainId);
-				// toast.info(`getting account ${chainType}`);
-				const account = await offlineSigner?.getAccounts();
+				if (chainType === ChainTypes.MARS) {
+					toast.info(
+						`got offline signer ${chainType} ${!!offlineSigner}`
+					);
+				}
+
+				let account = null;
+
+				try {
+					if (chainType === ChainTypes.MARS) {
+						toast.info(`getting account ${chainType} `);
+					}
+					account = await offlineSigner?.getAccounts();
+					if (chainType === ChainTypes.MARS) {
+						toast.info(`got account ${chainType} ${!!account}`);
+					}
+				} catch (e: any) {
+					toast.error(
+						`got account ${chainType} ${JSON.stringify(
+							e?.message || "no error message"
+						)} ${!!wallet}`
+					);
+				}
+
 				let wasmChainClient = null;
 				if (offlineSigner) {
 					try {
@@ -42,13 +66,12 @@ const useClient = (tokens?: TokenType[]) => {
 								}
 							);
 						return {
-							account: account?.[0],
+							account: account?.[0] || null,
 							client: wasmChainClient,
 						};
 					} catch (e) {
-						toast.error(`getting client error ${chainType}`);
 						console.error("wallets", e);
-						return { account: account?.[0], client: null };
+						return { account: account?.[0] || null, client: null };
 					}
 				}
 			}

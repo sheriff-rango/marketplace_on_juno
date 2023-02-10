@@ -83,6 +83,7 @@
 		"@keplr-wallet/types": "0.9.12",
 		"@types/file-saver": "^2.0.5",
 		"@types/react-helmet": "6.1.5",
+		"@types/recharts": "^1.8.24",
 		"@types/styled-components": "^5.1.24",
 		"@types/styled-react-modal": "^1.2.2",
 		"craco": "^0.0.3",
