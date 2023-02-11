@@ -44,7 +44,7 @@ const Marketplace: React.FC = () => {
 	);
 	const [filterOption, setFilterOption] = useState<FilterOptions>();
 	const { isXs, isSm, isMd } = useMatchBreakpoints();
-	const { nftRefresh } = useRefresh();
+	const { onNftRefresh } = useRefresh();
 	const { withdrawBid } = useHandleNftItem();
 	const { search } = useLocation();
 	const collectionId = new URLSearchParams(search).get("id") || "";
@@ -66,7 +66,7 @@ const Marketplace: React.FC = () => {
 			});
 			setCollectionOffers(data[collectionId]);
 		})();
-	}, [targetCollection, nftRefresh]);
+	}, [targetCollection, onNftRefresh]);
 
 	const marketplaceNFTs = useAppSelector((state) => {
 		// console.log("debug nfts", state.nfts);

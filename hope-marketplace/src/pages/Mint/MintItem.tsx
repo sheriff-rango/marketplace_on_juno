@@ -141,7 +141,7 @@ const MintItem: React.FC<Props> = ({ mintItem }) => {
   const { isXl, isXxl, isXxxl, isXxxxl } = useMatchBreakpoints();
   const { runQuery, runExecute } = useContract();
   const history = useHistory();
-  const { refresh } = useRefresh();
+  const { refreshNft } = useRefresh();
   const account = useAppSelector((state) => state.accounts.keplrAccount);
   // const tokenBalances = useAppSelector((state) => state.balances);
   const globalState = useAppSelector((state) => state);
@@ -344,7 +344,7 @@ const MintItem: React.FC<Props> = ({ mintItem }) => {
             : undefined)
       );
       toast.success("Success!");
-      refresh();
+      refreshNft();
     } catch (err) {
       console.error(err);
       toast.error("Fail!");

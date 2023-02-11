@@ -62,6 +62,7 @@ const useContract = () => {
 
 	const runQuery = useCallback(
 		async (contractAddress: string, queryMsg: any) => {
+			// console.log(`Running query to ${contractAddress}: ${JSON.stringify(queryMsg)}`)
 			const client = await getJunoQueryClient();
 			const result = await client.queryContractSmart(
 				contractAddress,
@@ -167,11 +168,13 @@ const useContract = () => {
 	);
 
 	const getBalances = useCallback(async () => {
+		console.log("Getting balances");
 		const offlineSigner = keplrOfflineSigner || cosmostationOfflineSigner;
 		if (!offlineSigner) return {};
 		const account = state.accounts.keplrAccount;
 		const config = ChainConfigs[ChainTypes.JUNO];
 
+		console.log("Connecting with signer");
 		const cwClient = await SigningCosmWasmClient.connectWithSigner(
 			config["rpcEndpoint"],
 			offlineSigner,
@@ -199,8 +202,10 @@ const useContract = () => {
 				  })
 				: cwClient.getBalance(account.address, TokenType[key]);
 		});
+		console.log("Starting all queries");
 		return await Promise.all(queries)
 			.then((results: any) => {
+				console.log("All queries finished");
 				let returnValue: { [key in TokenType]: any } = {} as {
 					[key in TokenType]: any;
 				};
