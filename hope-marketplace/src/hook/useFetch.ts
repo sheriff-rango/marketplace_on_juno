@@ -13,7 +13,6 @@ import { TokenType, TokenStatus } from "../types/tokens";
 import { setRarityRankState } from "../features/rarityRanks/rarityRanksSlice";
 import {
 	BalancesType,
-	clearBalances,
 	setTokenBalances,
 } from "../features/balances/balancesSlice";
 import { TPool, TPoolConfig } from "../types/pools";
@@ -39,7 +38,6 @@ const useFetch = () => {
 	const dispatch = useAppDispatch();
 
 	const tokenPrices = useAppSelector((state) => state.tokenPrices);
-	const junoPrice = tokenPrices[TokenType.JUNO];
 
 	useEffect(() => {
 		Collections.forEach(async (collection: MarketplaceInfo) => {
@@ -107,7 +105,7 @@ const useFetch = () => {
 		[dispatch, runQuery]
 	);
 
-	const fetchMarketplaceNFTs = useCallback(
+	const setMarketplaceNFTsState = useCallback(
 		(account, basicData: any) => {
 			Collections.forEach((collection: MarketplaceInfo) => {
 				const basicNFTInfo =
@@ -128,6 +126,8 @@ const useFetch = () => {
 						listedNFTs = [...listedNFTs, item];
 					}
 				});
+				
+				console.log(`Setting collection ${collection.title} NFTs`);
 				dispatch(
 					setNFTs([`${collection.collectionId}_listed`, listedNFTs])
 				);
@@ -178,27 +178,23 @@ const useFetch = () => {
 		const result = await getBalances();
 		if (!result) return;
 		dispatch(setTokenBalances(result as BalancesType));
+		return result;
 	}, [dispatch, getBalances]);
 
-	const fetchAllNFTs = useCallback(
-		(account, basicData: any) => {
-			fetchMarketplaceNFTs(account, basicData);
-			fetchCollectionInfo(account, basicData?.collectionInfo);
-			if (!account) {
-				dispatch(clearBalances());
-				return;
-			}
-			fetchMyNFTs(account);
-			getTokenBalances();
-		},
-		[
-			dispatch,
-			fetchCollectionInfo,
-			fetchMarketplaceNFTs,
-			fetchMyNFTs,
-			getTokenBalances,
-		]
-	);
+	// const fetchAllNFTs = useCallback(
+	// 	(account, basicData: any) => {
+	// 		setMarketplaceNFTsState(account, basicData);
+	// 		fetchCollectionInfo(account, basicData?.collectionInfo);
+	// 		fetchMyNFTs(account);
+	// 	},
+	// 	[
+	// 		dispatch,
+	// 		fetchCollectionInfo,
+	// 		setMarketplaceNFTsState,
+	// 		fetchMyNFTs,
+	// 		getTokenBalances,
+	// 	]
+	// );
 
 	const clearAllNFTs = useCallback(() => {
 		Collections.forEach(async (collection: MarketplaceInfo) => {
@@ -382,55 +378,7 @@ const useFetch = () => {
 		[dispatch, runQuery, tokenPrices]
 	);
 
-	const fetchOtherTokenPrice = useCallback((liquiditiesInfo:TPool[]) => {
-		// First, calculate HOPERS price
-		const hopersJunoLiquidity = liquiditiesInfo.find(
-			(liquidity) =>
-				liquidity.token1 === TokenType.HOPERS &&
-				liquidity.token2 === TokenType.JUNO
-		);
-		
-		const junoPriceInUsd =
-			Number(junoPrice?.market_data?.current_price?.usd) || 0;
-		const ratio = hopersJunoLiquidity?.ratio || 0;
-		const hopersPrice = junoPriceInUsd * ratio;
-		
-		dispatch(
-			setTokenPrice([
-				TokenType.HOPERS,
-				{ market_data: { current_price: { usd: hopersPrice } } },
-			])
-		);
-
-		// Second calculates price of tokens which can't be fetched from coingecko
-		Object.keys(TokenCoingeckoIds).forEach((key: string) => {
-			const tokenType = key as TokenType;
-			if (
-				tokenType !== TokenType.HOPERS &&
-				!TokenCoingeckoIds[tokenType]
-			) {
-				const targetPool = liquiditiesInfo.find(
-					(liquidity) =>
-						liquidity.token1 === TokenType.HOPERS &&
-						liquidity.token2 === tokenType
-				);
-				const ratio = targetPool?.ratio || 0;
-				const targetPrice = ratio ? hopersPrice / ratio : 0;
-				dispatch(
-					setTokenPrice([
-						tokenType,
-						{
-							market_data: {
-								current_price: { usd: targetPrice },
-							},
-						},
-					])
-				);
-			}
-		});
-	}, [dispatch, junoPrice?.market_data?.current_price?.usd, liquiditiesInfo]);
-
-	const fetchTokenPricesUsingPools = useCallback((poolLiquidityInfos:TPool[] = []) => {
+	const fetchTokenPricesUsingPools = useCallback((poolLiquidityInfos:TPool[] = [], onlyHopers:boolean = false) => {
 		if(poolLiquidityInfos?.length < 1){
 			if(liquiditiesInfo?.length > 0){
 				poolLiquidityInfos = liquiditiesInfo;
@@ -455,40 +403,40 @@ const useFetch = () => {
 				{ market_data: { current_price: { usd: hopersPrice } } },
 			])
 		);
-		// Second calculates price of tokens which can't be fetched from coingecko
-		Object.keys(TokenCoingeckoIds).forEach((key: string) => {
-			const tokenType = key as TokenType;
-			if (tokenType !== TokenType.HOPERS) {
-				const targetPool = liquiditiesInfo.find(
-					(liquidity) =>
-						liquidity.token1 === TokenType.HOPERS &&
-						liquidity.token2 === tokenType
-				);
-				const ratio = targetPool?.ratio || 0;
-				const targetPrice = ratio ? hopersPrice / ratio : 0;
-				dispatch(
-					setTokenPrice([
-						tokenType,
-						{
-							market_data: {
-								current_price: { usd: targetPrice },
+		if(!onlyHopers){
+			// Second calculates price of tokens which can't be fetched from coingecko
+			Object.keys(TokenCoingeckoIds).forEach((key: string) => {
+				const tokenType = key as TokenType;
+				if (tokenType !== TokenType.HOPERS) {
+					const targetPool = liquiditiesInfo.find(
+						(liquidity) =>
+							liquidity.token1 === TokenType.HOPERS &&
+							liquidity.token2 === tokenType
+					);
+					const ratio = targetPool?.ratio || 0;
+					const targetPrice = ratio ? hopersPrice / ratio : 0;
+					dispatch(
+						setTokenPrice([
+							tokenType,
+							{
+								market_data: {
+									current_price: { usd: targetPrice },
+								},
 							},
-						},
-					])
-				);
-			}
-		});
+						])
+					);
+				}
+			});
+		}
 	}, [dispatch, liquiditiesInfo]);
 
 	return {
-		fetchAllNFTs,
 		fetchCollectionInfo,
-		fetchMarketplaceNFTs,
+		setMarketplaceNFTsState,
 		fetchMyNFTs,
 		getTokenBalances,
 		clearAllNFTs,
 		fetchLiquidities,
-		fetchOtherTokenPrice,
 		fetchTokenPricesUsingPools,
 	};
 };

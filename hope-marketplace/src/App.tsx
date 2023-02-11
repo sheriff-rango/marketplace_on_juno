@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Helmet from "react-helmet";
 import {
 	// HashRouter,
@@ -30,6 +30,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-slideshow-image/dist/styles.css";
 import { WalletProvider } from "./context/Wallet";
 import { ModalContextProvider } from "./context/ModalContext";
+import useRefresh from "./hook/useRefresh";
 
 const history = createBrowserHistory();
 
@@ -69,11 +70,28 @@ const MainWrapper = styled.div`
 	background-color: ${({ theme }) => theme.colors.backgroundColor};
 `;
 
-const ScrollToTopOnRouting = () => {
+const RouteChangeListener = () => {
 	const { pathname } = useLocation(); // consider about the key when you want to trigger on change params
+	const {refreshNft, refreshPrice, refreshBalances, refreshLiquidity} = useRefresh();
+	const isFirstRef = useRef(true);
 	useEffect(() => {
+		if(!isFirstRef.current)
+		{
+			console.log("---------REFRESH_FROM_ROUTE_CHANGE---------------")
+			refreshNft();
+			refreshPrice();
+			refreshBalances();
+			refreshLiquidity();
+		}
 		window.scrollTo(0, 0);
+	 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [pathname]);
+
+	//Leave this as last to set that the first updater render ended
+	useEffect(() => {
+		isFirstRef.current = false;
+	}, []);
+
 	return null;
 };
 
@@ -132,7 +150,7 @@ function App() {
 								<Updater />
 								<MainWrapper className="main">
 									<Router history={history}>
-										<ScrollToTopOnRouting />
+										<RouteChangeListener />
 										<Header />
 										<Main />
 										<Footer />

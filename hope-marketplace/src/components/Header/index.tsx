@@ -80,6 +80,7 @@ import {
 	TelegramLink,
 	TwitterLink,
 } from "../../constants/SocialLinks";
+import { clearBalances } from "../../features/balances/balancesSlice";
 // import { useCosmodal } from "../../features/accounts/useCosmodal";
 
 const HeaderLinks = [
@@ -186,7 +187,12 @@ const Header: React.FC = () => {
 	const { pathname } = useLocation();
 	const history = useHistory();
 	// const { initContracts } = useContract();
-
+	const {
+		refreshNft,
+		refreshLiquidity,
+		refreshBalances,
+		refreshPrice,
+	} = useRefresh();
 	const { isMobile } = useWindowSize(900);
 
 	useEffect(() => {
@@ -209,8 +215,11 @@ const Header: React.FC = () => {
 	}, [account]);
 
 	useEffect(() => {
+		console.log("---------REFRESH_FROM_HEADER_CONNECTED_WALLET---------------")
 		if (!connectedWallet) {
 			dispatch(setKeplrAccount());
+			console.log("Clear balances")
+			dispatch(clearBalances())
 		} else {
 			const { name: label, address } = connectedWallet;
 			dispatch(
@@ -221,7 +230,12 @@ const Header: React.FC = () => {
 					balance: coin(0, config["microDenom"]),
 				})
 			);
+			refreshNft();
+			refreshPrice();
+			refreshBalances();
+			refreshLiquidity();
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [connectedWallet, dispatch, config]);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,15 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import useRefresh from "../hook/useRefresh";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import useFetch from "../hook/useFetch";
 import getQuery, { BACKEND_URL } from "../util/useAxios";
-// import { setTokenPrice } from "../features/tokenPrices/tokenPricesSlice";
-// import { TokenType } from "../types/tokens";
 
 export default function Updater(): null {
-	const allowedFetchLiquiditiesPaths:string[] = ["", "/", "/liquidity", "/swap", "/bond", "/stake"];
-	const allowedFetchNftsPaths:string[] = ["/collections/explore", "/activity", "/collections/marketplace"];
+	const allowedFetchLiquiditiesPaths:string[] = ["","/","/liquidity", "/swap", "/bond", "/stake", "/profile"];
+	const allowedFetchBalancesPaths:string[] = ["/liquidity", "/swap", "/profile"];
+	const allowedFetchNftsPaths:string[] = ["/collections/explore", "/activity", "/collections/marketplace", "/profile"];
 	const isFirstRef = useRef(true);
 	const [basicData, setBasicData] = useState<any>({});
 	const {
@@ -21,8 +20,9 @@ export default function Updater(): null {
 	} = useRefresh();
 
 	const {
-		fetchAllNFTs,
-		clearAllNFTs,
+		fetchCollectionInfo,
+		setMarketplaceNFTsState,
+		fetchMyNFTs,
 		fetchLiquidities,
 		fetchTokenPricesUsingPools,
 		getTokenBalances
@@ -36,14 +36,36 @@ export default function Updater(): null {
 
 	const account = useAppSelector((state) => state?.accounts?.keplrAccount);
 
-	const updateFromCache = (fields:string):Promise<any> =>{
-		return getQuery({
-			url: `${BACKEND_URL}/cache?fields=${fields}`,
-		});
+	useAppDispatch();
+	
+	const updateFromCache = async(fields:string) => {
+		console.log(`Fetching from cache:${fields}`)
+		let cacheResult = await getQuery({
+						url: `${BACKEND_URL}/cache?fields=${fields}`,
+					});
+		console.log(`Fetching from cache ended`)
+		if(cacheResult)
+		{
+			let ret = {...basicData, ...cacheResult};
+			console.log(`Setting basic data`)
+			setBasicData(ret);
+			console.log(`Basic data set`)
+			return ret;
+		}
+		else {
+			console.log(`Empty cache received`)
+			return {};	
+		}
 	};
 
-	const updateLiquiditiesFromCache  = ():Promise<any> =>{
-		return updateFromCache(`${cacheLiquiditiesKey},${cacheTokenPriceKey}`);
+	const updateLiquiditiesFromCache  = async()=>{
+		let ret = await updateFromCache(`${cacheLiquiditiesKey},${cacheTokenPriceKey}`);
+		return ret;
+	};
+
+	const updateNftsFromCache  = async()=>{
+		let ret = await updateFromCache(`${cacheCollectionInfoKey},${cacheCollectionTraitsKey},${cacheMarketplaceNFTsKey}`);
+		return ret;
 	};
 
 	useEffect(() => {
@@ -52,22 +74,30 @@ export default function Updater(): null {
 		if(allowedFetchLiquiditiesPaths.indexOf(window.location.pathname) >= 0){
 			fields += `,${cacheTokenPriceKey}`;
 		}
-		if(allowedFetchNftsPaths.indexOf(window.location.pathname) >= 0){
-			fields += `${cacheCollectionInfoKey},${cacheCollectionTraitsKey},${cacheMarketplaceNFTsKey}`;
-		}
+		fields += `,${cacheCollectionInfoKey},${cacheCollectionTraitsKey},${cacheMarketplaceNFTsKey}`;
 		updateFromCache(fields).then(data => {
 			console.log("____initial_cache_fetch_finished fetch___")
-			setBasicData(data || {});
-			fetchTokenPricesUsingPools(data.liquiditiesInfo);
-			//even if account is still null, this populate the state for the useFetch
-			fetchLiquidities(account, data.liquiditiesInfo)
-		})
 
+			console.log("____initial_cache_fetchTokenPricesUsingPools___")
+			fetchTokenPricesUsingPools(data.liquiditiesInfo, true);
+		
+			console.log("____initial_cache_fetchLiquidities___")
+			//even if account is null, this populate the state for the useFetch
+			fetchLiquidities(null, data.liquiditiesInfo);
+
+			console.log("____initial_cache_fetchNfts___")
+			//even if account is null, this populate the state
+			fetchCollectionInfo(null, data);
+			setMarketplaceNFTsState(null, data);
+
+			console.log("____initial_cache_fetchHopersPrice___")
+		})
+		
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
-		if(isFirstRef.current){
+		if(isFirstRef.current || onCacheRefresh === 0){
 			return;
 		}
 		console.log("____cache_fetch____")
@@ -78,10 +108,11 @@ export default function Updater(): null {
 				setBasicData(data || {});
 				console.log("basic data set");
 			})
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [onCacheRefresh]);
 
 	useEffect(() => {
-		if(isFirstRef.current){
+		if(isFirstRef.current || onLiquidityRefresh === 0){
 			return;
 		}
 		console.log("____fetchLiquidities____")
@@ -92,6 +123,8 @@ export default function Updater(): null {
 				console.log("executing")
 				updateLiquiditiesFromCache().then(() => {
 					fetchLiquidities(account, basicData.liquiditiesInfo);
+					console.log("____fetchTokenPricesUsingPools____")
+					fetchTokenPricesUsingPools();
 				})
 			}
 			else {
@@ -105,17 +138,42 @@ export default function Updater(): null {
 			return;
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [onLiquidityRefresh, account?.address]);
+	}, [onLiquidityRefresh]);
 
 	useEffect(() => {
-		if(isFirstRef.current){
+		if(isFirstRef.current || onBalancesRefresh === 0){
 			return;
 		}
 		console.log("____fetchBalances____")
+		if(allowedFetchBalancesPaths.indexOf(window.location.pathname) >= 0)
+		{
+			if(basicData?.liquiditiesInfo)
+			{
+				console.log("executing")
+				getTokenBalances();
+			}
+			else {
+				console.log("returning because of empty basic data")
+				return;
+			}
+		}
+		else
+		{
+			console.log("returning")
+			return;
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [onBalancesRefresh, account?.address]);
+
+	useEffect(() => {
+		if(isFirstRef.current || onPriceRefresh === 0){
+			return;
+		}
+		console.log("____fetchHopersPrice____")
 		if(basicData?.liquiditiesInfo)
 		{
 			console.log("executing")
-			getTokenBalances();
+			fetchTokenPricesUsingPools([], true);
 		}
 		else {
 			console.log("returning because of empty basic data")
@@ -123,35 +181,35 @@ export default function Updater(): null {
 		}
 		
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [onBalancesRefresh, account]);
+	}, [onPriceRefresh]);
 
 	useEffect(() => {
-		if(isFirstRef.current){
+		if(isFirstRef.current || onNftRefresh === 0){
 			return;
 		}
-		console.log("____fetchTokenPricesUsingPools____")
-		if(basicData?.liquiditiesInfo)
-		{
-			console.log("executing")
-			updateLiquiditiesFromCache().then(() => {
-				fetchTokenPricesUsingPools();
-			})
-		}
-		else {
-			console.log("returning because of empty basic data")
-			return;
-		}
-		
-	}, [onPriceRefresh, account, basicData?.liquiditiesInfo]);
-
-	useEffect(() => {
 		console.log("____fetchAllNFTs____")
 		if(allowedFetchNftsPaths.indexOf(window.location.pathname) >= 0)
 		{
 			console.log("executing")
-			fetchAllNFTs(account, basicData);
-			if (!account) {
-				clearAllNFTs();
+			if(!basicData.collectionInfo){
+				updateNftsFromCache().then(() => {
+					setMarketplaceNFTsState(account,basicData);
+					fetchCollectionInfo(account, basicData);
+					console.log("Fetching my nfts");
+					
+					if(window.location.pathname === "/profile")
+						fetchMyNFTs(account);
+				});
+			}
+			else{
+				updateNftsFromCache().then(() => {
+					setMarketplaceNFTsState(account,basicData);
+					fetchCollectionInfo(account, basicData);
+					console.log("Fetching my nfts");
+					
+					if(window.location.pathname === "/profile")
+						fetchMyNFTs(account);
+				});
 			}
 		}
 		else
@@ -162,6 +220,13 @@ export default function Updater(): null {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [onNftRefresh, account]);
 
+	useEffect(() => {
+		console.log("Updater ended hooks");
+	},[onNftRefresh,
+		onPriceRefresh,
+		onCacheRefresh,
+		onLiquidityRefresh,
+		onBalancesRefresh,])
 	//Leave this as last to set that the first updater render ended
 	useEffect(() => {
 		isFirstRef.current = false;
