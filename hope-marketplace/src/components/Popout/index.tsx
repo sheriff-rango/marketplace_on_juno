@@ -443,110 +443,122 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			setStatusMsg("executing transaction...");
 			// toast.info("executing transaction...");
 			if (originChainConfig.isEVM) {
-				const junoClient = clients[ChainTypes.JUNO];
-				const junoBlockHeight = junoClient.client
-					? await junoClient.client.getHeight()
-					: 0;
-				const ibcMsg = {
-					receiver: receiverAddress,
-					sender: senderAddress,
-					sourceChannel: sourceChannel,
-					sourcePort: "transfer",
-					timeoutTimestamp: String(timeoutTimestampNanoseconds),
-					amount: transferAmount,
-					denom: originChainConfig.microDenom,
-					revisionNumber: 1,
-					revisionHeight: junoBlockHeight + 150,
-				};
-				const chainInfoForMsg = {
-					chainId: originChainConfig.evmChainId || 0,
-					cosmosChainId: originChainConfig.chainId,
-				};
+				try {
+					const junoClient = clients[ChainTypes.JUNO];
+					const junoBlockHeight = junoClient.client
+						? await junoClient.client.getHeight()
+						: 0;
+					const ibcMsg = {
+						receiver: receiverAddress,
+						sender: senderAddress,
+						sourceChannel,
+						sourcePort: "transfer",
+						timeoutTimestamp: String(timeoutTimestampNanoseconds),
+						amount: transferAmount,
+						denom: originChainConfig.microDenom,
+						revisionNumber: 1,
+						revisionHeight: junoBlockHeight + 150,
+					};
+					const chainInfoForMsg = {
+						chainId: originChainConfig.evmChainId || 0,
+						cosmosChainId: originChainConfig.chainId,
+					};
+					console.log("debug ibc msg", ibcMsg, wallets);
 
-				const accountResult = await getQuery({
-					method: "get",
-					url: `${
-						originChainConfig.restEndpoint
-					}/${generateEndpointAccount(senderAddress)}`,
-				});
+					const accountResult = await getQuery({
+						method: "get",
+						url: `${
+							originChainConfig.restEndpoint
+						}${generateEndpointAccount(senderAddress)}`,
+					});
+					console.log("debug account result", accountResult);
 
-				const sender = {
-					accountAddress: accountResult.account.base_account.address,
-					sequence: accountResult.account.base_account.sequence,
-					accountNumber:
-						accountResult.account.base_account.account_number,
-					pubkey: accountResult.account.base_account.pub_key.key,
-				};
+					const sender = {
+						accountAddress:
+							accountResult.account.base_account.address,
+						sequence: accountResult.account.base_account.sequence,
+						accountNumber:
+							accountResult.account.base_account.account_number,
+						pubkey:
+							accountResult.account.base_account.pub_key?.key ||
+							"",
+					};
 
-				const fee = {
-					amount: "20",
-					denom: originChainConfig.microDenom,
-					gas: "200000",
-				};
+					const fee = {
+						amount: "20",
+						denom: originChainConfig.microDenom,
+						gas: "200000",
+					};
 
-				const transferMsg = createTxIBCMsgTransfer(
-					chainInfoForMsg,
-					sender,
-					fee,
-					"ibc_transfer",
-					ibcMsg
-				);
-
-				console.log("debug evm transfer message", transferMsg);
-				const sign = await window?.keplr?.signDirect(
-					chainInfoForMsg.cosmosChainId,
-					sender.accountAddress,
-					{
-						bodyBytes:
-							transferMsg.signDirect.body.serializeBinary(),
-						authInfoBytes:
-							transferMsg.signDirect.authInfo.serializeBinary(),
-						chainId: chainInfoForMsg.cosmosChainId,
-						accountNumber: new Long(sender.accountNumber),
-					},
-					// @ts-expect-error the types are not updated on Keplr side
-					{ isEthereum: true }
-				);
-				console.log("debug evm sign", sign);
-
-				if (sign !== undefined) {
-					let rawTx = createTxRaw(
-						sign.signed.bodyBytes,
-						sign.signed.authInfoBytes,
-						[
-							new Uint8Array(
-								Buffer.from(sign.signature.signature, "base64")
-							),
-						]
+					const transferMsg = createTxIBCMsgTransfer(
+						chainInfoForMsg,
+						sender,
+						fee,
+						"ibc_transfer",
+						ibcMsg
 					);
 
-					// Broadcast it
-					const postOptions = {
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: generatePostBodyBroadcast(rawTx),
-					};
-					try {
-						let broadcastPost = await fetch(
-							`${
-								originChainConfig.restEndpoint
-							}/${generateEndpointBroadcast()}`,
-							postOptions
+					console.log("debug evm transfer message", transferMsg);
+					const sign = await window?.keplr?.signDirect(
+						chainInfoForMsg.cosmosChainId,
+						sender.accountAddress,
+						{
+							bodyBytes:
+								transferMsg.signDirect.body.serializeBinary(),
+							authInfoBytes:
+								transferMsg.signDirect.authInfo.serializeBinary(),
+							chainId: chainInfoForMsg.cosmosChainId,
+							accountNumber: new Long(sender.accountNumber),
+						},
+						// @ts-expect-error the types are not updated on Keplr side
+						{ isEthereum: true }
+					);
+					console.log("debug evm sign", sign);
+
+					if (sign !== undefined) {
+						let rawTx = createTxRaw(
+							sign.signed.bodyBytes,
+							sign.signed.authInfoBytes,
+							[
+								new Uint8Array(
+									Buffer.from(
+										sign.signature.signature,
+										"base64"
+									)
+								),
+							]
 						);
-						let response = await broadcastPost.json();
-						console.log(
-							"debug popout transaction successfully",
-							response
-						);
-						await getTokenBalances();
-						closeNewWindow(true);
-						setStatusMsg("");
-					} catch (e) {
-						console.error("debug popout transaction error", e);
-						setErrorMsg("error occured during transaction");
-						setStatusMsg("");
-						setSendingTx(false);
+
+						// Broadcast it
+						const postOptions = {
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: generatePostBodyBroadcast(rawTx),
+						};
+						try {
+							let broadcastPost = await fetch(
+								`${
+									originChainConfig.restEndpoint
+								}/${generateEndpointBroadcast()}`,
+								postOptions
+							);
+							let response = await broadcastPost.json();
+							console.log(
+								"debug popout transaction successfully",
+								response
+							);
+							await getTokenBalances();
+							closeNewWindow(true);
+							setStatusMsg("");
+						} catch (e) {
+							console.error("debug popout transaction error", e);
+							setErrorMsg("error occured during transaction");
+							setStatusMsg("");
+							setSendingTx(false);
+						}
 					}
+				} catch (e) {
+					console.log("debug evm transfer error", e);
 				}
 			} else {
 				const transferMsg = {

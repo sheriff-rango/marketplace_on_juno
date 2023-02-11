@@ -42,7 +42,7 @@ export const IBCConfig: {
 	[ChainTypes.KUJIRA]: { channel: "channel-1", juno_channel: "channel-87" },
 	[ChainTypes.STARGAZE]: { channel: "channel-5", juno_channel: "channel-20" },
 	[ChainTypes.MARS]: { channel: "channel-3", juno_channel: "channel-209" },
-	[ChainTypes.PLANQ]: { channel: "", juno_channel: "channel-204" },
+	[ChainTypes.PLANQ]: { channel: "channel-43", juno_channel: "channel-204" },
 	[ChainTypes.EVMOS]: { channel: "channel-5", juno_channel: "channel-70" },
 };
 
