@@ -8,11 +8,11 @@ import React, {
 
 // import { toast } from "react-toastify";
 // import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
-import {
-	// MsgTransferEncodeObject,
-	// GasPrice,
-	MsgTransferEncodeObject,
-} from "@cosmjs/stargate";
+// import {
+// 	// MsgTransferEncodeObject,
+// 	// GasPrice,
+// 	MsgTransferEncodeObject,
+// } from "@cosmjs/stargate";
 // import {
 // 	SigningCosmWasmClient,
 // 	// CosmWasmClient,
@@ -41,6 +41,14 @@ import { addSuffix, convertStringToNumber } from "../../util/string";
 import useClient from "./useClient";
 import { isMobileDevice } from "../../util/basic";
 import { toast } from "react-toastify";
+import { createTxIBCMsgTransfer } from "@tharsis/transactions";
+import getQuery from "../../util/useAxios";
+import { generateEndpointAccount } from "@tharsis/provider";
+import { createTxRaw } from "@tharsis/proto";
+import {
+	generateEndpointBroadcast,
+	generatePostBodyBroadcast,
+} from "@tharsis/provider/dist/rest/broadcast";
 
 // import {
 //   Wrapper,
@@ -387,8 +395,18 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			swapInfo
 		);
 
-		const senderAddress = wallets.origin.account?.address;
-		const receiverAddress = wallets.foreign.account?.address;
+		const senderAddress = wallets.origin.account?.address || "";
+		const receiverAddress = wallets.foreign.account?.address || "";
+		const sourceChannel =
+			swapInfo.swapType === SwapType.DEPOSIT
+				? IBCConfig[tokenStatus.chain].channel
+				: IBCConfig[tokenStatus.chain].juno_channel;
+		const transferAmount = String(
+			Math.floor(
+				Number(swapAmount) *
+					Math.pow(10, TokenStatus[swapInfo.denom].decimal || 6)
+			)
+		);
 
 		const client = wallets.origin.client;
 		if (swapInfo.swapType === SwapType.DEPOSIT && senderAddress && client) {
@@ -421,56 +439,154 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			}
 		}
 
-		// const transferMsg: MsgTransferEncodeObject = {
-		const transferMsg: MsgTransferEncodeObject = {
-			typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
-			value: MsgTransfer.fromPartial({
-				sourcePort: "transfer",
-				sourceChannel:
-					swapInfo.swapType === SwapType.DEPOSIT
-						? IBCConfig[tokenStatus.chain].channel
-						: IBCConfig[tokenStatus.chain].juno_channel,
-				sender: senderAddress || "",
-				receiver: receiverAddress || "",
-				token: {
-					denom:
-						swapInfo.swapType === SwapType.DEPOSIT
-							? tokenStatus.denom || originChainConfig.microDenom
-							: swapInfo.denom,
-					amount: String(
-						Math.floor(
-							Number(swapAmount) *
-								Math.pow(
-									10,
-									TokenStatus[swapInfo.denom].decimal || 6
-								)
-						)
-					),
-				},
-				timeoutHeight: undefined,
-				timeoutTimestamp: timeoutTimestampNanoseconds,
-			}),
-		};
-		console.log("debug transfer message", transferMsg);
 		if (senderAddress && client) {
 			setStatusMsg("executing transaction...");
 			// toast.info("executing transaction...");
-			try {
-				const tx = await client.signAndBroadcast(
-					senderAddress,
-					[transferMsg],
-					"auto",
-					"memo"
+			if (originChainConfig.isEVM) {
+				const junoClient = clients[ChainTypes.JUNO];
+				const junoBlockHeight = junoClient.client
+					? await junoClient.client.getHeight()
+					: 0;
+				const ibcMsg = {
+					receiver: receiverAddress,
+					sender: senderAddress,
+					sourceChannel: sourceChannel,
+					sourcePort: "transfer",
+					timeoutTimestamp: String(timeoutTimestampNanoseconds),
+					amount: transferAmount,
+					denom: originChainConfig.microDenom,
+					revisionNumber: 1,
+					revisionHeight: junoBlockHeight + 150,
+				};
+				const chainInfoForMsg = {
+					chainId: originChainConfig.evmChainId || 0,
+					cosmosChainId: originChainConfig.chainId,
+				};
+
+				const accountResult = await getQuery({
+					method: "get",
+					url: `${
+						originChainConfig.restEndpoint
+					}/${generateEndpointAccount(senderAddress)}`,
+				});
+
+				const sender = {
+					accountAddress: accountResult.account.base_account.address,
+					sequence: accountResult.account.base_account.sequence,
+					accountNumber:
+						accountResult.account.base_account.account_number,
+					pubkey: accountResult.account.base_account.pub_key.key,
+				};
+
+				const fee = {
+					amount: "20",
+					denom: originChainConfig.microDenom,
+					gas: "200000",
+				};
+
+				const transferMsg = createTxIBCMsgTransfer(
+					chainInfoForMsg,
+					sender,
+					fee,
+					"ibc_transfer",
+					ibcMsg
 				);
-				await getTokenBalances();
-				closeNewWindow(true);
-				setStatusMsg("");
-				console.log("popout transaction successfully", tx);
-			} catch (e) {
-				console.error("debug popout transaction error", e);
-				setErrorMsg("error occured during transaction");
-				setStatusMsg("");
-				setSendingTx(false);
+
+				console.log("debug evm transfer message", transferMsg);
+				const sign = await window?.keplr?.signDirect(
+					chainInfoForMsg.cosmosChainId,
+					sender.accountAddress,
+					{
+						bodyBytes:
+							transferMsg.signDirect.body.serializeBinary(),
+						authInfoBytes:
+							transferMsg.signDirect.authInfo.serializeBinary(),
+						chainId: chainInfoForMsg.cosmosChainId,
+						accountNumber: new Long(sender.accountNumber),
+					},
+					// @ts-expect-error the types are not updated on Keplr side
+					{ isEthereum: true }
+				);
+				console.log("debug evm sign", sign);
+
+				if (sign !== undefined) {
+					let rawTx = createTxRaw(
+						sign.signed.bodyBytes,
+						sign.signed.authInfoBytes,
+						[
+							new Uint8Array(
+								Buffer.from(sign.signature.signature, "base64")
+							),
+						]
+					);
+
+					// Broadcast it
+					const postOptions = {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: generatePostBodyBroadcast(rawTx),
+					};
+					try {
+						let broadcastPost = await fetch(
+							`${
+								originChainConfig.restEndpoint
+							}/${generateEndpointBroadcast()}`,
+							postOptions
+						);
+						let response = await broadcastPost.json();
+						console.log(
+							"debug popout transaction successfully",
+							response
+						);
+						await getTokenBalances();
+						closeNewWindow(true);
+						setStatusMsg("");
+					} catch (e) {
+						console.error("debug popout transaction error", e);
+						setErrorMsg("error occured during transaction");
+						setStatusMsg("");
+						setSendingTx(false);
+					}
+				}
+			} else {
+				const transferMsg = {
+					typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+					value: MsgTransfer.fromPartial({
+						sourcePort: "transfer",
+						sourceChannel,
+						sender: senderAddress,
+						receiver: receiverAddress,
+						token: {
+							denom:
+								swapInfo.swapType === SwapType.DEPOSIT
+									? tokenStatus.denom ||
+									  originChainConfig.microDenom
+									: swapInfo.denom,
+							amount: transferAmount,
+						},
+						timeoutHeight: undefined,
+						timeoutTimestamp: timeoutTimestampNanoseconds,
+					}),
+				};
+				console.log("debug cosmos transfer message", transferMsg);
+
+				try {
+					const tx = await client.signAndBroadcast(
+						senderAddress,
+						[transferMsg],
+						"auto",
+						"memo"
+					);
+					await getTokenBalances();
+					closeNewWindow(true);
+					setStatusMsg("");
+					console.log("popout transaction successfully", tx);
+				} catch (e) {
+					console.error("debug popout transaction error", e);
+					setErrorMsg("error occured during transaction");
+					setStatusMsg("");
+					setSendingTx(false);
+				}
 			}
 		} else {
 			setStatusMsg("");

@@ -21,6 +21,8 @@ export type ConfigType = {
 	microDenom: string;
 	coinDecimals: string;
 	gasPrice: string;
+	isEVM?: boolean;
+	evmChainId?: number;
 };
 
 export const IBCConfig: {
@@ -153,6 +155,8 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 		microDenom: "aplanq",
 		coinDecimals: "18",
 		gasPrice: "0.025",
+		isEVM: true,
+		evmChainId: 7070,
 	},
 	[ChainTypes.EVMOS]: {
 		chainName: "Evmos",
@@ -164,5 +168,7 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 		microDenom: "aevmos",
 		coinDecimals: "18",
 		gasPrice: "0.025",
+		isEVM: true,
+		evmChainId: 9001,
 	},
 };

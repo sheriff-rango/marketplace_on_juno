@@ -5,7 +5,7 @@ import { useWalletManager } from "@noahsaso/cosmodal";
 import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
 import { TokenStatus, TokenType } from "../../types/tokens";
 import { TIbcNativeTokenBalance, TWasmChainClients } from "./type";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 
 const useClient = (tokens?: TokenType[]) => {
 	const { connectedWallet } = useWalletManager();
@@ -21,34 +21,34 @@ const useClient = (tokens?: TokenType[]) => {
 				const chainConfig = ChainConfigs[chainType];
 				// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
 				const { wallet, walletClient } = connectedWallet;
-				if (chainType === ChainTypes.MARS) {
-					toast.info(`getting offline signer ${chainType}`);
-				}
+				// if (chainType === ChainTypes.MARS) {
+				// 	toast.info(`getting offline signer ${chainType}`);
+				// }
 				const offlineSigner = await wallet.getOfflineSignerFunction(
 					walletClient
 				)(chainConfig.chainId);
-				if (chainType === ChainTypes.MARS) {
-					toast.info(
-						`got offline signer ${chainType} ${!!offlineSigner}`
-					);
-				}
+				// if (chainType === ChainTypes.MARS) {
+				// 	toast.info(
+				// 		`got offline signer ${chainType} ${!!offlineSigner}`
+				// 	);
+				// }
 
 				let account = null;
 
 				try {
-					if (chainType === ChainTypes.MARS) {
-						toast.info(`getting account ${chainType} `);
-					}
+					// if (chainType === ChainTypes.MARS) {
+					// 	toast.info(`getting account ${chainType} `);
+					// }
 					account = await offlineSigner?.getAccounts();
-					if (chainType === ChainTypes.MARS) {
-						toast.info(`got account ${chainType} ${!!account}`);
-					}
+					// if (chainType === ChainTypes.MARS) {
+					// 	toast.info(`got account ${chainType} ${!!account}`);
+					// }
 				} catch (e: any) {
-					toast.error(
-						`got account ${chainType} ${JSON.stringify(
-							e?.message || "no error message"
-						)} ${!!wallet}`
-					);
+					// toast.error(
+					// 	`got account ${chainType} ${JSON.stringify(
+					// 		e?.message || "no error message"
+					// 	)} ${!!wallet}`
+					// );
 				}
 
 				let wasmChainClient = null;
