@@ -67,7 +67,6 @@ const useFetch = () => {
 
 	const fetchCollectionInfo = useCallback(
 		(account, basicData: any) => {
-			console.log("debug fetch collection info", basicData);
 			Collections.forEach(async (collection: MarketplaceInfo) => {
 				let storeObject: CollectionStateType = {
 					mintCheck: [],
