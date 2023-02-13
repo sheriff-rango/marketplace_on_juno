@@ -179,7 +179,7 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 						cursor="pointer"
 						onClick={() =>
 							window.open(
-								`https://mintscan.io/juno/account/${rowData.contract}`
+								`https://mintscan.io/juno/wasm/contract/${rowData.contract}`
 							)
 						}
 					>
