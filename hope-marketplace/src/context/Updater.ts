@@ -4,6 +4,7 @@ import useRefresh from "../hook/useRefresh";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import useFetch from "../hook/useFetch";
 import getQuery, { BACKEND_URL } from "../util/useAxios";
+import { useLocation } from "react-router-dom";
 
 export default function Updater(): null {
 	const allowedFetchLiquiditiesPaths: string[] = [
@@ -29,6 +30,7 @@ export default function Updater(): null {
 	];
 	const isFirstRef = useRef(true);
 	const [basicData, setBasicData] = useState<any>({});
+	const { pathname } = useLocation();
 	const {
 		onNftRefresh,
 		onPriceRefresh,
@@ -91,9 +93,7 @@ export default function Updater(): null {
 	useEffect(() => {
 		console.log("____initial_cache_fetch___");
 		let fields = cacheLiquiditiesKey;
-		if (
-			allowedFetchLiquiditiesPaths.indexOf(window.location.pathname) >= 0
-		) {
+		if (allowedFetchLiquiditiesPaths.indexOf(pathname) >= 0) {
 			fields += `,${cacheTokenPriceKey}`;
 		}
 		fields += `,${cacheCollectionInfoKey},${cacheCollectionTraitsKey},${cacheMarketplaceNFTsKey}`;
@@ -116,7 +116,7 @@ export default function Updater(): null {
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [pathname]);
 
 	useEffect(() => {
 		if (isFirstRef.current || onCacheRefresh === 0) {
@@ -137,9 +137,7 @@ export default function Updater(): null {
 			return;
 		}
 		console.log("____fetchLiquidities____");
-		if (
-			allowedFetchLiquiditiesPaths.indexOf(window.location.pathname) >= 0
-		) {
+		if (allowedFetchLiquiditiesPaths.indexOf(pathname) >= 0) {
 			if (basicData?.liquiditiesInfo) {
 				console.log("executing");
 				updateLiquiditiesFromCache().then(() => {
@@ -156,27 +154,27 @@ export default function Updater(): null {
 			return;
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [onLiquidityRefresh]);
+	}, [onLiquidityRefresh, pathname]);
 
 	useEffect(() => {
 		if (isFirstRef.current || onBalancesRefresh === 0) {
 			return;
 		}
 		console.log("____fetchBalances____");
-		if (allowedFetchBalancesPaths.indexOf(window.location.pathname) >= 0) {
-			if (basicData?.liquiditiesInfo) {
-				console.log("executing");
-				getTokenBalances();
-			} else {
-				console.log("returning because of empty basic data");
-				return;
-			}
+		if (allowedFetchBalancesPaths.indexOf(pathname) >= 0) {
+			console.log("executing");
+			getTokenBalances();
+			// if (basicData?.liquiditiesInfo) {
+			// } else {
+			// 	console.log("returning because of empty basic data");
+			// 	return;
+			// }
 		} else {
 			console.log("returning");
 			return;
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [onBalancesRefresh, account?.address]);
+	}, [onBalancesRefresh, account?.address, pathname]);
 
 	useEffect(() => {
 		if (isFirstRef.current || onPriceRefresh === 0) {
@@ -199,7 +197,7 @@ export default function Updater(): null {
 			return;
 		}
 		console.log("____fetchAllNFTs____");
-		if (allowedFetchNftsPaths.indexOf(window.location.pathname) >= 0) {
+		if (allowedFetchNftsPaths.indexOf(pathname) >= 0) {
 			console.log("executing");
 			if (!basicData.collectionInfo) {
 				updateNftsFromCache().then(() => {
@@ -207,8 +205,7 @@ export default function Updater(): null {
 					fetchCollectionInfo(account, basicData);
 					console.log("Fetching my nfts");
 
-					if (window.location.pathname === "/profile")
-						fetchMyNFTs(account);
+					if (pathname === "/profile") fetchMyNFTs(account);
 				});
 			} else {
 				updateNftsFromCache().then(() => {
@@ -216,8 +213,7 @@ export default function Updater(): null {
 					fetchCollectionInfo(account, basicData);
 					console.log("Fetching my nfts");
 
-					if (window.location.pathname === "/profile")
-						fetchMyNFTs(account);
+					if (pathname === "/profile") fetchMyNFTs(account);
 				});
 			}
 		} else {
@@ -225,7 +221,7 @@ export default function Updater(): null {
 			return;
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [onNftRefresh, account]);
+	}, [onNftRefresh, account, pathname]);
 
 	useEffect(() => {
 		console.log("Updater ended hooks");
