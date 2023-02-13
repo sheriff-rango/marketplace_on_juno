@@ -33,7 +33,7 @@ export const TokenCoingeckoIds: { [key in TokenType]: string } = {
 	[TokenType.HOWL]: "",
 	[TokenType.KLEO]: "",
 	[TokenType.JAPE]: "",
-	[TokenType.PLANQ]: "",
+	// [TokenType.PLANQ]: "",
 	[TokenType.EVMOS]: "evmos",
 };
 
