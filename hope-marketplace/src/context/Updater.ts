@@ -116,7 +116,7 @@ export default function Updater(): null {
 		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [pathname]);
+	}, []);
 
 	useEffect(() => {
 		if (isFirstRef.current || onCacheRefresh === 0) {
@@ -154,7 +154,7 @@ export default function Updater(): null {
 			return;
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [onLiquidityRefresh, pathname]);
+	}, [onLiquidityRefresh, pathname, account]);
 
 	useEffect(() => {
 		if (isFirstRef.current || onBalancesRefresh === 0) {
@@ -174,7 +174,7 @@ export default function Updater(): null {
 			return;
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [onBalancesRefresh, account?.address, pathname]);
+	}, [onBalancesRefresh, account?.address, pathname, getTokenBalances]);
 
 	useEffect(() => {
 		if (isFirstRef.current || onPriceRefresh === 0) {
