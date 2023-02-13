@@ -7,6 +7,8 @@ export enum ChainTypes {
 	KUJIRA = "kaiyo-1",
 	STARGAZE = "stargaze-1",
 	MARS = "mars-1",
+	PLANQ = "planq_7070-2",
+	EVMOS = "evmos_9001-2",
 }
 
 export type ConfigType = {
@@ -19,6 +21,8 @@ export type ConfigType = {
 	microDenom: string;
 	coinDecimals: string;
 	gasPrice: string;
+	isEVM?: boolean;
+	evmChainId?: number;
 };
 
 export const IBCConfig: {
@@ -38,6 +42,8 @@ export const IBCConfig: {
 	[ChainTypes.KUJIRA]: { channel: "channel-1", juno_channel: "channel-87" },
 	[ChainTypes.STARGAZE]: { channel: "channel-5", juno_channel: "channel-20" },
 	[ChainTypes.MARS]: { channel: "channel-3", juno_channel: "channel-209" },
+	[ChainTypes.PLANQ]: { channel: "channel-43", juno_channel: "channel-204" },
+	[ChainTypes.EVMOS]: { channel: "channel-5", juno_channel: "channel-70" },
 };
 
 export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
@@ -107,7 +113,8 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 	[ChainTypes.KUJIRA]: {
 		chainName: "Kujura",
 		chainId: "kaiyo-1",
-		rpcEndpoint: "https://rpc-kujira.whispernode.com",
+		// rpcEndpoint: "https://rpc-kujira.whispernode.com",
+		rpcEndpoint: "https://rpc-kujira.ecostake.com/",
 		restEndpoint: "https://rest.cosmos.directory/kujira",
 		faucetEndpoint: "",
 		addressPrefix: "kujira",
@@ -129,12 +136,39 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 	[ChainTypes.MARS]: {
 		chainName: "Mars",
 		chainId: "mars-1",
-		rpcEndpoint: "https://rpc.cosmos.directory/mars",
+		// rpcEndpoint: "https://rpc.cosmos.directory/mars",
+		rpcEndpoint: "https://rpc-mars.keplr.app",
 		restEndpoint: "https://rest.cosmos.directory/mars",
 		faucetEndpoint: "",
 		addressPrefix: "mars",
 		microDenom: "umars",
 		coinDecimals: "6",
 		gasPrice: "0.025",
+	},
+	[ChainTypes.PLANQ]: {
+		chainName: "Planq",
+		chainId: "planq_7070-2",
+		rpcEndpoint: "https://rpc.cosmos.directory/planq",
+		restEndpoint: "https://rest.cosmos.directory/planq",
+		faucetEndpoint: "",
+		addressPrefix: "plq",
+		microDenom: "aplanq",
+		coinDecimals: "18",
+		gasPrice: "0.025",
+		isEVM: true,
+		evmChainId: 7070,
+	},
+	[ChainTypes.EVMOS]: {
+		chainName: "Evmos",
+		chainId: "evmos_9001-2",
+		rpcEndpoint: "https://rpc.cosmos.directory/evmos",
+		restEndpoint: "https://rest.cosmos.directory/evmos",
+		faucetEndpoint: "",
+		addressPrefix: "evmos",
+		microDenom: "aevmos",
+		coinDecimals: "18",
+		gasPrice: "0.025",
+		isEVM: true,
+		evmChainId: 9001,
 	},
 };

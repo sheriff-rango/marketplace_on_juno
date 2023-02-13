@@ -22,18 +22,34 @@ const useClient = (tokens?: TokenType[]) => {
 				const chainConfig = ChainConfigs[chainType];
 				// const offlineSigner = await getOfflineSigner(chainConfig.chainId);
 				const { wallet, walletClient } = connectedWallet;
-				// toast.info(`getting offline signer ${chainType}`);
+				// if (chainType === ChainTypes.MARS) {
+				// 	toast.info(`getting offline signer ${chainType}`);
+				// }
 				const offlineSigner = await wallet.getOfflineSignerFunction(
 					walletClient
 				)(chainConfig.chainId);
-				// toast.info(`getting account ${chainType}`);
+				// if (chainType === ChainTypes.MARS) {
+				// 	toast.info(
+				// 		`got offline signer ${chainType} ${!!offlineSigner}`
+				// 	);
+				// }
 
 				let account = null;
 
 				try {
+					// if (chainType === ChainTypes.MARS) {
+					// 	toast.info(`getting account ${chainType} `);
+					// }
 					account = await offlineSigner?.getAccounts();
+					// if (chainType === ChainTypes.MARS) {
+					// 	toast.info(`got account ${chainType} ${!!account}`);
+					// }
 				} catch (e: any) {
-					if (e.message) toast.error(e.message);
+					// toast.error(
+					// 	`got account ${chainType} ${JSON.stringify(
+					// 		e?.message || "no error message"
+					// 	)} ${!!wallet}`
+					// );
 				}
 
 				let wasmChainClient = null;
