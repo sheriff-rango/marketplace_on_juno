@@ -130,6 +130,7 @@ export const CoinIcon = styled.img<{ size?: string }>`
 	height: ${({ size }) => size || "35px"};
 	margin-right: 5px;
 	cursor: pointer;
+	border-radius: 100%;
 `;
 
 export const TokenBalance = styled.div<{ color?: string; chainName?: string }>`
