@@ -129,6 +129,7 @@ export const SwapItem = styled.div`
 	width: 100%;
 	img {
 		width: 30px;
+		border-radius: 30px;
 	}
 	svg {
 		fill: ${({ theme }) => theme.colors.fontColor};

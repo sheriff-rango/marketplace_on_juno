@@ -140,15 +140,16 @@ export default function Updater(): null {
 		if (allowedFetchLiquiditiesPaths.indexOf(pathname) >= 0) {
 			if (basicData?.liquiditiesInfo) {
 				console.log("executing");
-				updateLiquiditiesFromCache().then(() => {
-					fetchLiquidities(account, basicData.liquiditiesInfo);
-					console.log("____fetchTokenPricesUsingPools____");
-					fetchTokenPricesUsingPools();
-				});
+				fetchLiquidities(account, basicData.liquiditiesInfo);
+				console.log("____fetchTokenPricesUsingPools____");
 			} else {
 				console.log("returning because of empty basic data");
-				return;
+				updateLiquiditiesFromCache().then((data) => {
+					fetchLiquidities(account, data.liquiditiesInfo);
+					console.log("____fetchTokenPricesUsingPools____");
+				});
 			}
+			fetchTokenPricesUsingPools();
 		} else {
 			console.log("returning");
 			return;

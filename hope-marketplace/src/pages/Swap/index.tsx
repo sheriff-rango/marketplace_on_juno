@@ -71,7 +71,8 @@ const Swap: React.FC = () => {
 			amount: 0,
 		},
 	});
-	const [slippage, setSlippage] = useState<typeof AvailableSlippage[number]>(2);
+	const [slippage, setSlippage] =
+		useState<typeof AvailableSlippage[number]>(2);
 	const validPair = useValidPool(swapInfo.from.token, swapInfo.to.token);
 	const { isDark } = useContext(ThemeContext);
 
@@ -115,9 +116,12 @@ const Swap: React.FC = () => {
 			Math.pow(10, TokenStatus[toToken].decimal || 6);
 		const toTokenPrice =
 			tokenPrices[toToken]?.market_data?.current_price?.usd || 0;
-		const toPrice = (Number(toBalance) * toTokenPrice).toLocaleString("en-US", {
-			maximumFractionDigits: 2,
-		});
+		const toPrice = (Number(toBalance) * toTokenPrice).toLocaleString(
+			"en-US",
+			{
+				maximumFractionDigits: 2,
+			}
+		);
 
 		return {
 			from: {
@@ -154,24 +158,36 @@ const Swap: React.FC = () => {
 		}
 		if (!validPair.subPools) {
 			setTimeout(async () => {
-				const queryResult = await runQuery(validPair.pool.contractAddress, {
-					[validPair.reverse
-						? "token2_for_token1_price"
-						: "token1_for_token2_price"]: {
-						[validPair.reverse ? "token2_amount" : "token1_amount"]:
-							"" +
-							Math.ceil(
-								Number(swapInfo.from.amount) *
-									Math.pow(10, TokenStatus[swapInfo.from.token].decimal || 6)
-							),
-					},
-				});
+				const queryResult = await runQuery(
+					validPair.pool.contractAddress,
+					{
+						[validPair.reverse
+							? "token2_for_token1_price"
+							: "token1_for_token2_price"]: {
+							[validPair.reverse
+								? "token2_amount"
+								: "token1_amount"]:
+								"" +
+								Math.ceil(
+									Number(swapInfo.from.amount) *
+										Math.pow(
+											10,
+											TokenStatus[swapInfo.from.token]
+												.decimal || 6
+										)
+								),
+						},
+					}
+				);
 				let amount = Number(
-					queryResult[validPair.reverse ? "token1_amount" : "token2_amount"]
+					queryResult[
+						validPair.reverse ? "token1_amount" : "token2_amount"
+					]
 				);
 				amount = isNaN(amount)
 					? 0
-					: amount / Math.pow(10, TokenStatus[swapInfo.to.token].decimal || 6);
+					: amount /
+					  Math.pow(10, TokenStatus[swapInfo.to.token].decimal || 6);
 				setSwapInfo((prev) => ({
 					...prev,
 					to: {
@@ -185,36 +201,54 @@ const Swap: React.FC = () => {
 				const firstPool = validPair.subPools?.[0];
 				const secondPool = validPair.subPools?.[1];
 				if (!firstPool || !secondPool) return;
-				const queryResult1 = await runQuery(firstPool.pool.contractAddress, {
-					[firstPool.reverse
-						? "token2_for_token1_price"
-						: "token1_for_token2_price"]: {
-						[firstPool.reverse ? "token2_amount" : "token1_amount"]:
-							"" +
-							Math.ceil(
-								Number(swapInfo.from.amount) *
-									Math.pow(10, TokenStatus[swapInfo.from.token].decimal || 6)
-							),
-					},
-				});
+				const queryResult1 = await runQuery(
+					firstPool.pool.contractAddress,
+					{
+						[firstPool.reverse
+							? "token2_for_token1_price"
+							: "token1_for_token2_price"]: {
+							[firstPool.reverse
+								? "token2_amount"
+								: "token1_amount"]:
+								"" +
+								Math.ceil(
+									Number(swapInfo.from.amount) *
+										Math.pow(
+											10,
+											TokenStatus[swapInfo.from.token]
+												.decimal || 6
+										)
+								),
+						},
+					}
+				);
 				const middleAmount = Number(
-					queryResult1[firstPool.reverse ? "token1_amount" : "token2_amount"]
+					queryResult1[
+						firstPool.reverse ? "token1_amount" : "token2_amount"
+					]
 				);
 				if (isNaN(middleAmount) || !middleAmount) return;
-				const queryResult2 = await runQuery(secondPool.pool.contractAddress, {
-					[secondPool.reverse
-						? "token2_for_token1_price"
-						: "token1_for_token2_price"]: {
-						[secondPool.reverse ? "token2_amount" : "token1_amount"]:
-							"" + middleAmount,
-					},
-				});
+				const queryResult2 = await runQuery(
+					secondPool.pool.contractAddress,
+					{
+						[secondPool.reverse
+							? "token2_for_token1_price"
+							: "token1_for_token2_price"]: {
+							[secondPool.reverse
+								? "token2_amount"
+								: "token1_amount"]: "" + middleAmount,
+						},
+					}
+				);
 				let amount = Number(
-					queryResult2[secondPool.reverse ? "token1_amount" : "token2_amount"]
+					queryResult2[
+						secondPool.reverse ? "token1_amount" : "token2_amount"
+					]
 				);
 				amount = isNaN(amount)
 					? 0
-					: amount / Math.pow(10, TokenStatus[swapInfo.to.token].decimal || 6);
+					: amount /
+					  Math.pow(10, TokenStatus[swapInfo.to.token].decimal || 6);
 				setSwapInfo((prev) => ({
 					...prev,
 					to: {
@@ -271,7 +305,8 @@ const Swap: React.FC = () => {
 		const toTokenPrice =
 			tokenPrices[toToken]?.market_data?.current_price?.usd || 0;
 		if (toTokenPrice) {
-			toAmount = (Number(swapInfo.from.amount) * fromTokenPrice) / toTokenPrice;
+			toAmount =
+				(Number(swapInfo.from.amount) * fromTokenPrice) / toTokenPrice;
 		}
 		let newSwapInfo = {
 			...swapInfo,
@@ -300,7 +335,10 @@ const Swap: React.FC = () => {
 		setIsPending(true);
 		let transactions = [],
 			funds: any[] = [];
-		if (!TokenStatus[swapInfo.from.token].isIBCCoin && !TokenStatus[swapInfo.from.token].isNativeCoin) {
+		if (
+			!TokenStatus[swapInfo.from.token].isIBCCoin &&
+			!TokenStatus[swapInfo.from.token].isNativeCoin
+		) {
 			transactions.push(
 				createExecuteMessage({
 					senderAddress: account.address,
@@ -311,7 +349,11 @@ const Swap: React.FC = () => {
 							spender: validPair.pool.contractAddress,
 							amount: `${Math.ceil(
 								Number(swapInfo.from.amount) *
-									Math.pow(10, TokenStatus[swapInfo.from.token].decimal || 6)
+									Math.pow(
+										10,
+										TokenStatus[swapInfo.from.token]
+											.decimal || 6
+									)
 							)}`,
 						},
 					},
@@ -321,7 +363,9 @@ const Swap: React.FC = () => {
 			funds = coins(
 				toMicroAmount(
 					"" + swapInfo.from.amount,
-					ChainConfigs[TokenStatus[swapInfo.from.token].chain]["coinDecimals"]
+					ChainConfigs[TokenStatus[swapInfo.from.token].chain][
+						"coinDecimals"
+					]
 				),
 				swapInfo.from.token
 				// ChainConfigs[TokenStatus[swapInfo.from.token].chain]["microDenom"]
@@ -336,7 +380,11 @@ const Swap: React.FC = () => {
 							"" +
 							Math.ceil(
 								Number(swapInfo.from.amount) *
-									Math.pow(10, TokenStatus[swapInfo.from.token].decimal || 6)
+									Math.pow(
+										10,
+										TokenStatus[swapInfo.from.token]
+											.decimal || 6
+									)
 							),
 						output_min_token: "0",
 						// "" +
@@ -355,7 +403,11 @@ const Swap: React.FC = () => {
 							"" +
 							Math.ceil(
 								Number(swapInfo.from.amount) *
-									Math.pow(10, TokenStatus[swapInfo.from.token].decimal || 6)
+									Math.pow(
+										10,
+										TokenStatus[swapInfo.from.token]
+											.decimal || 6
+									)
 							),
 						min_output: "0",
 						// "" +
@@ -379,7 +431,11 @@ const Swap: React.FC = () => {
 
 		try {
 			const client = await getExecuteClient();
-			await client.signAndBroadcast(account.address, transactions, "auto");
+			await client.signAndBroadcast(
+				account.address,
+				transactions,
+				"auto"
+			);
 			toast.success("Swapped Successfully!");
 		} catch (err) {
 			console.log(err);
@@ -405,23 +461,32 @@ const Swap: React.FC = () => {
 							<Text bold alignItems="center" cursor="pointer">
 								Swap{" "}
 								<GearIcon
-									onClick={() => setShowSlippageSelector((prev) => !prev)}
+									onClick={() =>
+										setShowSlippageSelector((prev) => !prev)
+									}
 								/>
 							</Text>
 							<Text>Trade tokens in an instant</Text>
 						</SwapAreaHeader>
 						<SwapAreaBody>
 							<SlippageSelector expanded={showSlippageSelector}>
-								<Text fontSize="18px" justifyContent="flex-start">
+								<Text
+									fontSize="18px"
+									justifyContent="flex-start"
+								>
 									Slippage tolerance
 								</Text>
 								<SlippageItemsContainer>
-									{AvailableSlippage.map((slippage, index: number) => (
-										<SlippageItem
-											key={index}
-											onClick={() => setSlippage(slippage)}
-										>{`${slippage}%`}</SlippageItem>
-									))}
+									{AvailableSlippage.map(
+										(slippage, index: number) => (
+											<SlippageItem
+												key={index}
+												onClick={() =>
+													setSlippage(slippage)
+												}
+											>{`${slippage}%`}</SlippageItem>
+										)
+									)}
 								</SlippageItemsContainer>
 							</SlippageSelector>
 							<SwapItem>
@@ -431,10 +496,15 @@ const Swap: React.FC = () => {
 									justifyContent="flex-start"
 									cursor="pointer"
 								>
-									<img alt="" src={displaySwapInfo.from.icon} />
+									<img
+										alt=""
+										src={displaySwapInfo.from.icon}
+									/>
 									{displaySwapInfo.from.name}
 									<DropDownIcon
-										onClick={() => handleClickTokenSelect("from")}
+										onClick={() =>
+											handleClickTokenSelect("from")
+										}
 									/>
 								</Text>
 								<AmountInputer
@@ -450,7 +520,10 @@ const Swap: React.FC = () => {
 									<AutoInputButtonContainer>
 										<SelectMaxButton
 											onClick={() =>
-												changeSwapAmountLogic(displaySwapInfo.from.rawBalance)
+												changeSwapAmountLogic(
+													displaySwapInfo.from
+														.rawBalance
+												)
 											}
 										>
 											MAX
@@ -458,7 +531,8 @@ const Swap: React.FC = () => {
 										<SelectMaxButton
 											onClick={() =>
 												changeSwapAmountLogic(
-													displaySwapInfo.from.rawBalance / 2
+													displaySwapInfo.from
+														.rawBalance / 2
 												)
 											}
 										>
@@ -482,7 +556,11 @@ const Swap: React.FC = () => {
 								>
 									<img alt="" src={displaySwapInfo.to.icon} />
 									{displaySwapInfo.to.name}
-									<DropDownIcon onClick={() => handleClickTokenSelect("to")} />
+									<DropDownIcon
+										onClick={() =>
+											handleClickTokenSelect("to")
+										}
+									/>
 								</Text>
 								<AmountInputer>
 									<input value={displaySwapInfo.to.amount} />
@@ -514,15 +592,22 @@ const Swap: React.FC = () => {
 								<Text>HOPERS Burned</Text>
 							</Flex>
 							<Flex gap="5px" alignItems="center">
-								<Text flexDirection="column" alignItems="flex-end">
-									<Text>{addSuffix(dexStatus.burningVolume)}</Text>
+								<Text
+									flexDirection="column"
+									alignItems="flex-end"
+								>
+									<Text>
+										{addSuffix(dexStatus.burningVolume)}
+									</Text>
 									<Text>{`(${addSuffix(
 										dexStatus.burningVolume * hopersPrice
 									)}$)`}</Text>
 								</Text>
 								<img
 									alt="flame_image"
-									src={`/others/flame_${isDark ? "black" : "white"}.png`}
+									src={`/others/flame_${
+										isDark ? "black" : "white"
+									}.png`}
 								/>
 							</Flex>
 						</SwapAreaFooter>
