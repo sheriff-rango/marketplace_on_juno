@@ -550,9 +550,11 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 							await getTokenBalances();
 							closeNewWindow(true);
 							setStatusMsg("");
-						} catch (e) {
+						} catch (e: any) {
 							console.error("debug popout transaction error", e);
-							setErrorMsg("error occured during transaction");
+							setErrorMsg(
+								`error occured during transaction: ${e.message}`
+							);
 							setStatusMsg("");
 							setSendingTx(false);
 						}
@@ -593,9 +595,11 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 					closeNewWindow(true);
 					setStatusMsg("");
 					console.log("popout transaction successfully", tx);
-				} catch (e) {
+				} catch (e: any) {
 					console.error("debug popout transaction error", e);
-					setErrorMsg("error occured during transaction");
+					setErrorMsg(
+						`error occured during transaction: ${e.message}`
+					);
 					setStatusMsg("");
 					setSendingTx(false);
 				}
