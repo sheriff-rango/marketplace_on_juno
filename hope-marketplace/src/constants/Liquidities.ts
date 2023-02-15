@@ -217,6 +217,8 @@ export const Liquidities: TLiquidity[] = [
 		tokenB: TokenType.JAPE,
 		contractAddress:
 			"juno1qx73rlq6uqxmxlz5phtz3anzzh2rq8cxmwz56r33m6xskjdt6v4s724ckf",
+		stakingAddress:
+			"juno1suzmq8ejlujgcctyhy7nu8d0d6ykrq6uczxtp3fv3pn4eh59ufyqz8jj37",
 	},
 ];
 
