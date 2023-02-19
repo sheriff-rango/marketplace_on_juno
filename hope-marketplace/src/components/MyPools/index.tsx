@@ -57,10 +57,11 @@ const MyPools: React.FC = () => {
 					];
 				} else {
 					const config = liquidity.config as TPoolConfig[];
-					renderInfo = config.map((item, index) => ({
-						bonded: bonded[index],
-						rewardToken: item.rewardToken || "",
-					}));
+					renderInfo =
+						config?.map((item, index) => ({
+							bonded: bonded[index],
+							rewardToken: item.rewardToken || "",
+						})) || [];
 				}
 				return (
 					<>
@@ -125,14 +126,15 @@ const MyPools: React.FC = () => {
 					];
 				} else {
 					const config = liquidity.config as TPoolConfig[];
-					renderInfo = config.map((item, index) => ({
-						pendingReward: pendingReward[index],
-						rewardToken: item.rewardToken || "",
-						rewardTokenPrice: item.rewardToken
-							? tokenPrices[item.rewardToken]?.market_data
-									?.current_price?.usd || 0
-							: 0,
-					}));
+					renderInfo =
+						config?.map((item, index) => ({
+							pendingReward: pendingReward[index],
+							rewardToken: item.rewardToken || "",
+							rewardTokenPrice: item.rewardToken
+								? tokenPrices[item.rewardToken]?.market_data
+										?.current_price?.usd || 0
+								: 0,
+						})) || [];
 				}
 				return (
 					<>
@@ -183,7 +185,7 @@ const MyPools: React.FC = () => {
 		<LiquiditiesContainer>
 			{/* <Title>My Pools</Title> */}
 			<MyPoolsContainer>
-				{myLiquidities.map((liquidity, index: number) => (
+				{myLiquidities?.map((liquidity, index: number) => (
 					<MyPoolItem key={index}>
 						<MyPoolItemRow>
 							<PoolImage

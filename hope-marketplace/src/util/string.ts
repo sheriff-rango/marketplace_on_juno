@@ -2,6 +2,7 @@ export const convertNumberToString = (
 	number: number,
 	decimal: number = 2
 ): string => {
+	if (!number || isNaN(number)) return "0";
 	return number.toLocaleString(undefined, {
 		maximumFractionDigits: decimal,
 	});
