@@ -5,6 +5,7 @@ import { useWalletManager } from "@noahsaso/cosmodal";
 import { ChainConfigs, ChainTypes } from "../../constants/ChainTypes";
 import { TokenStatus, TokenType } from "../../types/tokens";
 import { TIbcNativeTokenBalance, TWasmChainClients } from "./type";
+import { getChainConfig } from "../../features/accounts/useKeplr";
 // import { toast } from "react-toastify";
 
 const useClient = (tokens?: TokenType[]) => {
@@ -94,6 +95,7 @@ const useClient = (tokens?: TokenType[]) => {
 				try {
 					// toast.info(`getting client start ${key}`);
 					const client = await getClient(chain);
+
 					// toast.info(`getting client success ${key}`);
 					setWasmClients((prev) => ({
 						...prev,
@@ -114,16 +116,20 @@ const useClient = (tokens?: TokenType[]) => {
 			const { client, account } = wasmClients?.[tokenStatus.chain] || {};
 			if (connectedWallet && client && account) {
 				// setHasErrorOnMobileConnection(false);
-				const balance = await client.getBalance(
-					account.address,
-					tokenStatus.isNativeCoin
-						? chainConfig.microDenom
-						: tokenStatus.denom || ""
-				);
-				setIBCNativeTokenBalance((prev) => ({
-					...prev,
-					[token]: balance,
-				}));
+				try {
+					const balance = await client.getBalance(
+						account.address,
+						tokenStatus.isNativeCoin
+							? chainConfig.microDenom
+							: tokenStatus.denom || ""
+					);
+					setIBCNativeTokenBalance((prev) => ({
+						...prev,
+						[token]: balance,
+					}));
+				} catch (e) {
+					console.log("debug error", e);
+				}
 				// else {
 				// 	setHasErrorOnMobileConnection(true);
 				// }
@@ -135,6 +141,13 @@ const useClient = (tokens?: TokenType[]) => {
 	useEffect(() => {
 		if (!tokens) return;
 		for (const token of tokens) {
+			if (window.keplr) {
+				const chain = TokenStatus[token].chain;
+				const chainConfig = ChainConfigs[chain];
+				window.keplr.experimentalSuggestChain(
+					getChainConfig(chainConfig)
+				);
+			}
 			getBalance(token);
 		}
 	}, [getBalance, tokens]);

@@ -9,6 +9,7 @@ export enum ChainTypes {
 	MARS = "mars-1",
 	// PLANQ = "planq_7070-2",
 	EVMOS = "evmos_9001-2",
+	COMDEX = "comdex-1",
 }
 
 export type ConfigType = {
@@ -44,6 +45,7 @@ export const IBCConfig: {
 	[ChainTypes.MARS]: { channel: "channel-3", juno_channel: "channel-209" },
 	// [ChainTypes.PLANQ]: { channel: "channel-43", juno_channel: "channel-204" },
 	[ChainTypes.EVMOS]: { channel: "channel-5", juno_channel: "channel-70" },
+	[ChainTypes.COMDEX]: { channel: "channel-18", juno_channel: "channel-36" },
 };
 
 export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
@@ -170,5 +172,16 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 		gasPrice: "0.025",
 		isEVM: true,
 		evmChainId: 9001,
+	},
+	[ChainTypes.COMDEX]: {
+		chainName: "Comdex",
+		chainId: "comdex-1",
+		rpcEndpoint: "https://rpc-comdex.carbonzero.zone/",
+		restEndpoint: "https://rest.cosmos.directory/comdex",
+		faucetEndpoint: "",
+		addressPrefix: "comdex",
+		microDenom: "ucmdx",
+		coinDecimals: "6",
+		gasPrice: "0.025",
 	},
 };

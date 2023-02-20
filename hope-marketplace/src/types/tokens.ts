@@ -29,6 +29,7 @@ export enum TokenType {
 	HOWL = "howl",
 	KLEO = "kleo",
 	JAPE = "jape",
+	HARBOR = "ibc/2D8FA8721F44AE790D2A4D07775C16DD275B6FD83DA6FF29E76FED5BB6A92764",
 	// PLANQ = "ibc/9AFC3B24C30BE40250D3F40818CFED98C74EA320F744AA6CF2129F0D109E6FF5",
 }
 
@@ -67,6 +68,7 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.JAPE]: "JAPE",
 	// [TokenType.PLANQ]: "PLANQ",
 	[TokenType.EVMOS]: "EVMOS",
+	[TokenType.HARBOR]: "HARBOR",
 };
 
 export type TokenStatusType = {
@@ -277,6 +279,13 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		chain: ChainTypes.EVMOS,
 		originChain: ChainTypes.EVMOS,
 		decimal: 18,
+	},
+	[TokenType.HARBOR]: {
+		isNativeCoin: false,
+		isIBCCoin: true,
+		chain: ChainTypes.COMDEX,
+		originChain: ChainTypes.COMDEX,
+		denom: "uharbor",
 	},
 };
 
