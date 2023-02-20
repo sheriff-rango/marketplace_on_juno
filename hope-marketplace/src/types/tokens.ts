@@ -30,6 +30,8 @@ export enum TokenType {
 	KLEO = "kleo",
 	JAPE = "jape",
 	HARBOR = "ibc/2D8FA8721F44AE790D2A4D07775C16DD275B6FD83DA6FF29E76FED5BB6A92764",
+	CMDX = "ibc/946AD96F278770521526D7283F58268DA2F6ACDDE40324A9D1C86811D78C86A0",
+	CMST = "ibc/DD057BB58DCBEE8F7C0CDF0B9AE4A2656B00E3C9745341180400B60833EEC9FD",
 	// PLANQ = "ibc/9AFC3B24C30BE40250D3F40818CFED98C74EA320F744AA6CF2129F0D109E6FF5",
 }
 
@@ -69,6 +71,8 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	// [TokenType.PLANQ]: "PLANQ",
 	[TokenType.EVMOS]: "EVMOS",
 	[TokenType.HARBOR]: "HARBOR",
+	[TokenType.CMDX]: "CMDX",
+	[TokenType.CMST]: "CMST",
 };
 
 export type TokenStatusType = {
@@ -286,6 +290,19 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		chain: ChainTypes.COMDEX,
 		originChain: ChainTypes.COMDEX,
 		denom: "uharbor",
+	},
+	[TokenType.CMDX]: {
+		isNativeCoin: true,
+		isIBCCoin: true,
+		chain: ChainTypes.COMDEX,
+		originChain: ChainTypes.COMDEX,
+	},
+	[TokenType.CMST]: {
+		isNativeCoin: false,
+		isIBCCoin: true,
+		chain: ChainTypes.COMDEX,
+		originChain: ChainTypes.COMDEX,
+		denom: "ucmst",
 	},
 };
 
