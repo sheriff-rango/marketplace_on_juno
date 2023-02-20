@@ -97,23 +97,33 @@ const Liquidity: React.FC = () => {
 		{
 			name: "isVerified",
 			title: "Verified",
-			render: (value, data) => (value ? <VerifiedBadge /> : <CancelIcon />),
+			render: (value, data) =>
+				value ? <VerifiedBadge /> : <CancelIcon />,
 		},
-		{ name: "volume", title: "Volume", type: ColumnTypes.NUMBER, sort: true },
+		{
+			name: "volume",
+			title: "Volume",
+			type: ColumnTypes.NUMBER,
+			sort: true,
+		},
 		{
 			name: "apr",
 			title: "APR Rewards",
 			render: (value, data) => {
 				const apr = data.apr;
 				if (typeof apr === "string") {
-					const rewardToken = (data.config as TPoolConfig)?.rewardToken;
+					const rewardToken = (data.config as TPoolConfig)
+						?.rewardToken;
 					return (
 						<Text gap="10px" color="black" alignItems="center">
 							{rewardToken && (
 								<img
 									width={25}
 									alt=""
-									src={`/coin-images/${rewardToken.replace(/\//g, "")}.png`}
+									src={`/coin-images/${rewardToken.replace(
+										/\//g,
+										""
+									)}.png`}
 								/>
 							)}
 							{apr}
@@ -123,8 +133,9 @@ const Liquidity: React.FC = () => {
 					return (
 						<Flex alignItems="center" gap="20px">
 							{apr.map((item, index) => {
-								const rewardToken = (data.config as TPoolConfig[])?.[index]
-									?.rewardToken;
+								const rewardToken = (
+									data.config as TPoolConfig[]
+								)?.[index]?.rewardToken;
 								return (
 									<Text
 										key={index}
@@ -162,16 +173,20 @@ const Liquidity: React.FC = () => {
 			title: "Value",
 			sort: true,
 			render: (value, data) => (
-				<Text bold color="black">{`1${getTokenName(data.token1)} = ${addSuffix(
-					value || 0
-				)}${getTokenName(data.token2)}`}</Text>
+				<Text bold color="black">{`1${getTokenName(
+					data.token1
+				)} = ${addSuffix(value || 0)}${getTokenName(
+					data.token2
+				)}`}</Text>
 			),
 		},
 		{
 			name: "",
 			title: "",
 			render: (value: any, data: TPool) => (
-				<PlusInGreenCircleIcon onClick={() => handleClickPlusButton(data)} />
+				<PlusInGreenCircleIcon
+					onClick={() => handleClickPlusButton(data)}
+				/>
 			),
 		},
 	];
@@ -247,7 +262,9 @@ const Liquidity: React.FC = () => {
 								Connect to a wallet to view your liquidity
 							</MessageContainer>
 						</ListBody>
-						<ConnectWalletButton onClick={handleClickConnectWalletButton}>
+						<ConnectWalletButton
+							onClick={handleClickConnectWalletButton}
+						>
 							Connect Wallet
 						</ConnectWalletButton>
 					</LiquidityList>
@@ -276,7 +293,8 @@ const Liquidity: React.FC = () => {
 					<Table<TPool>
 						data={liquidities.filter(
 							(liquidity) =>
-								selectedTab === PoolType.ALL || !!liquidity.stakingAddress
+								selectedTab === PoolType.ALL ||
+								!!liquidity.stakingAddress
 						)}
 						columns={Columns}
 						defaultExpanded={(rowData) => rowData.id === 1}
@@ -291,7 +309,9 @@ const Liquidity: React.FC = () => {
 							tab: {
 								defaultSelected: PoolType.ALL as string,
 								tabs: (
-									Object.keys(PoolType) as Array<keyof typeof PoolType>
+									Object.keys(PoolType) as Array<
+										keyof typeof PoolType
+									>
 								).map((key) => PoolType[key]),
 								onClick: (tab) => setSelectedTab(tab),
 							},
@@ -302,10 +322,14 @@ const Liquidity: React.FC = () => {
 											!searchValue ||
 											liquidity.token1
 												.toLowerCase()
-												.includes(searchValue.toLowerCase()) ||
+												.includes(
+													searchValue.toLowerCase()
+												) ||
 											liquidity.token2
 												.toLowerCase()
-												.includes(searchValue.toLowerCase())
+												.includes(
+													searchValue.toLowerCase()
+												)
 									),
 							},
 						}}
