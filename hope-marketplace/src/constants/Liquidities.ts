@@ -66,6 +66,14 @@ export const Liquidities: TLiquidity[] = [
 	},
 	{
 		tokenA: TokenType.HOPERS,
+		tokenB: TokenType.CMDX,
+		contractAddress:
+			"juno10w575236gq3nhkr8zdz8cmhgdfpltrjk32ws3ffuntzgzwtprp0s6447lx",
+		stakingAddress:
+			"juno1wjp039yd49rxyhjdcpq7pr9q9l5mjnvmc0ffrsvvfyguutkcz2gsck0vwc",
+	},
+	{
+		tokenA: TokenType.HOPERS,
 		tokenB: TokenType.STARS,
 		contractAddress:
 			"juno1dwehqyxtez0yegrvvnn8980xjwudnd7yl2zx4x6z4rq6kh74jptq0u98uy",
@@ -79,6 +87,22 @@ export const Liquidities: TLiquidity[] = [
 			"juno162xnar9ndm7e66dzc2tzt2rx495v9ey0xw3zkjqur36dghqd600s0e3mzz",
 		stakingAddress:
 			"juno1g5na5yq4qj5wxprcrknhcww469v440658schln8s80l7gxl7f5pq9w2z5t",
+	},
+	{
+		tokenA: TokenType.HOPERS,
+		tokenB: TokenType.CMST,
+		contractAddress:
+			"juno1pzaz688t5f4j3k37gecz49aynke0u5d6emkq4c5y672m4tam8kss8wdpch",
+		stakingAddress:
+			"juno1a0yvt5f6lvsmwqxv3ke9lmff56a0fpzttlyrq8u3h5ntsergppwqsd4sdm",
+	},
+	{
+		tokenA: TokenType.HOPERS,
+		tokenB: TokenType.HARBOR,
+		contractAddress:
+			"juno1q8l2lu0yku0dlaa2jjg9rgy55th30takrxurlxt48ssd8qtrumqqatkxk6",
+		stakingAddress:
+			"juno1sxtq943f6mnymm57s3w84tewffddegxuvvlrjxl853nlf0wlyn2shrqh4c",
 	},
 	{
 		tokenA: TokenType.HOPERS,
@@ -113,6 +137,14 @@ export const Liquidities: TLiquidity[] = [
 			"juno15myaq4rxwlg7pvm5e2fr598puj26945k3rpek6rj6ve5276fndxs7ctjg9",
 			"juno1m7m283d60727qksd5g3zk5tkk4evgerucvcpylanw4plhahq8jasy0vc60",
 		],
+	},
+	{
+		tokenA: TokenType.HOPERS,
+		tokenB: TokenType.JAPE,
+		contractAddress:
+			"juno1qx73rlq6uqxmxlz5phtz3anzzh2rq8cxmwz56r33m6xskjdt6v4s724ckf",
+		stakingAddress:
+			"juno1suzmq8ejlujgcctyhy7nu8d0d6ykrq6uczxtp3fv3pn4eh59ufyqz8jj37",
 	},
 	{
 		tokenA: TokenType.HOPERS,
@@ -211,14 +243,6 @@ export const Liquidities: TLiquidity[] = [
 		tokenB: TokenType.KLEO,
 		contractAddress:
 			"juno13amkjs0mtwpjsz65lpk30pacxhx7jlscwmzq5jegqs583zmk7fkq9c8scx",
-	},
-	{
-		tokenA: TokenType.HOPERS,
-		tokenB: TokenType.JAPE,
-		contractAddress:
-			"juno1qx73rlq6uqxmxlz5phtz3anzzh2rq8cxmwz56r33m6xskjdt6v4s724ckf",
-		stakingAddress:
-			"juno1suzmq8ejlujgcctyhy7nu8d0d6ykrq6uczxtp3fv3pn4eh59ufyqz8jj37",
 	},
 ];
 

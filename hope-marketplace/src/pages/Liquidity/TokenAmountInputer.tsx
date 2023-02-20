@@ -85,7 +85,10 @@ const TokenAmountInputer: React.FC<TTokenAmountInputer> = ({
 		));
 	};
 
-	const CustomControl = ({ children, ...props }: ControlProps<any, false>) => {
+	const CustomControl = ({
+		children,
+		...props
+	}: ControlProps<any, false>) => {
 		const {
 			innerProps: { onMouseDown, onTouchEnd },
 		} = props;
@@ -115,7 +118,9 @@ const TokenAmountInputer: React.FC<TTokenAmountInputer> = ({
 			<TokenAmountInput hasError={Number(amount) > (balanceRaw || 0)}>
 				{hasSelect ? (
 					<ReactSelect
-						value={token ? { value: token, title: token } : undefined}
+						value={
+							token ? { value: token, title: token } : undefined
+						}
 						onChange={handleChangeToken}
 						options={SelectOptions}
 						isSearchable={false}
@@ -164,7 +169,11 @@ const TokenAmountInputer: React.FC<TTokenAmountInputer> = ({
 					onChange={handleChangeAmount}
 				/>
 			</TokenAmountInput>
-			<Flex alignItems="center" justifyContent="space-between" width="100%">
+			<Flex
+				alignItems="center"
+				justifyContent="space-between"
+				width="100%"
+			>
 				<Text color="#787878" cursor="pointer">
 					Balance
 				</Text>

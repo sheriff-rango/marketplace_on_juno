@@ -273,6 +273,7 @@ export const TokenImage = styled(Flex)<{ horizontalName?: boolean }>`
 	width: max-content;
 
 	& > img {
+		border-radius: 50%;
 		width: 40px;
 		height: 40px;
 	}
