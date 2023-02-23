@@ -10,7 +10,7 @@ import {
 	showInsufficientToast,
 	ToastType,
 } from "../components/CustomToast";
-import usePopoutQuickSwap, { SwapType } from "../components/Popout";
+import { usePopoutQuickSwap, SwapType } from "../components/Popout";
 import { ChainTypes } from "../constants/ChainTypes";
 import {
 	CollectionIds,
@@ -32,7 +32,12 @@ const useHandleNftItem = () => {
 	const balances = useAppSelector((state) => state.balances);
 
 	const sellNft = useCallback(
-		async (item: any, nftPrice: any, tokenType: any, expireDate: number) => {
+		async (
+			item: any,
+			nftPrice: any,
+			tokenType: any,
+			expireDate: number
+		) => {
 			const targetCollection = getCollectionById(item.collectionId);
 			const regExp = /^(\d+(\.\d+)?)$/;
 			const price = +nftPrice;
@@ -69,10 +74,17 @@ const useHandleNftItem = () => {
 								denom: tokenType,
 								amount: `${
 									price *
-									Math.pow(10, TokenStatus[tokenType as TokenType].decimal || 6)
+									Math.pow(
+										10,
+										TokenStatus[tokenType as TokenType]
+											.decimal || 6
+									)
 								}`,
 							},
-							expire: `${(Number(new Date()) + 180 * 24 * 3600 * 1000) * 1e6}`,
+							expire: `${
+								(Number(new Date()) + 180 * 24 * 3600 * 1000) *
+								1e6
+							}`,
 							...(!tokenStatus.isNativeCoin && {
 								token_address: tokenStatus.contractAddress,
 							}),
@@ -159,7 +171,11 @@ const useHandleNftItem = () => {
 							contract: item.contractAddress,
 							amount: `${
 								price *
-								Math.pow(10, TokenStatus[tokenType as TokenType].decimal || 6)
+								Math.pow(
+									10,
+									TokenStatus[tokenType as TokenType]
+										.decimal || 6
+								)
 							}`,
 							msg: btoa(
 								JSON.stringify({
@@ -179,7 +195,8 @@ const useHandleNftItem = () => {
 					});
 				} else {
 					await runExecute(
-						TokenStatus[tokenType as TokenType].contractAddress || "",
+						TokenStatus[tokenType as TokenType].contractAddress ||
+							"",
 						message
 					);
 				}
@@ -230,7 +247,11 @@ const useHandleNftItem = () => {
 							contract: MarketplaceContracts[0],
 							amount: `${
 								price *
-								Math.pow(10, TokenStatus[tokenType as TokenType].decimal || 6)
+								Math.pow(
+									10,
+									TokenStatus[tokenType as TokenType]
+										.decimal || 6
+								)
 							}`,
 							msg: btoa(
 								JSON.stringify({
@@ -249,7 +270,8 @@ const useHandleNftItem = () => {
 					});
 				} else {
 					await runExecute(
-						TokenStatus[tokenType as TokenType].contractAddress || "",
+						TokenStatus[tokenType as TokenType].contractAddress ||
+							"",
 						message
 					);
 				}
@@ -288,7 +310,8 @@ const useHandleNftItem = () => {
 								msg: btoa(
 									JSON.stringify({
 										sale_type: "fixed_price",
-										nft_address: targetCollection.nftContract,
+										nft_address:
+											targetCollection.nftContract,
 										token_id: item.token_id,
 										expire: "0",
 									})
@@ -300,7 +323,9 @@ const useHandleNftItem = () => {
 					? {
 							buy_nft: {
 								offering_id: item.id,
-								...(MarketplaceContracts.includes(item.contractAddress) && {
+								...(MarketplaceContracts.includes(
+									item.contractAddress
+								) && {
 									nft_address: targetCollection.nftContract,
 								}),
 							},
@@ -312,8 +337,11 @@ const useHandleNftItem = () => {
 								msg: btoa(
 									JSON.stringify({
 										offering_id: item.id,
-										...(MarketplaceContracts.includes(item.contractAddress) && {
-											nft_address: targetCollection.nftContract,
+										...(MarketplaceContracts.includes(
+											item.contractAddress
+										) && {
+											nft_address:
+												targetCollection.nftContract,
 										}),
 									})
 								),
@@ -328,7 +356,8 @@ const useHandleNftItem = () => {
 					});
 				} else {
 					await runExecute(
-						TokenStatus[price.denom as TokenType].contractAddress || "",
+						TokenStatus[price.denom as TokenType].contractAddress ||
+							"",
 						message
 					);
 				}
@@ -430,7 +459,9 @@ const useHandleNftItem = () => {
 		async (offer: any) => {
 			if (!offer) return;
 			const selectedNFT: any = pickNFTByTokenId(offer.token_id || "");
-			const targetCollection = getCollectionById(selectedNFT.collectionId);
+			const targetCollection = getCollectionById(
+				selectedNFT.collectionId
+			);
 			const message = {
 				accept_bid: {
 					nft_address: targetCollection.nftContract,

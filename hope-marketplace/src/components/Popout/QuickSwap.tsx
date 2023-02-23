@@ -971,7 +971,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 	);
 };
 
-const usePopoutQuickSwap = () => {
+export const usePopoutQuickSwap = () => {
 	const { showNewWindow, closeNewWindow } = useContext(PopoutContext);
 
 	const popoutQuickSwap = useCallback(
@@ -992,5 +992,3 @@ const usePopoutQuickSwap = () => {
 	);
 	return popoutQuickSwap;
 };
-
-export default usePopoutQuickSwap;

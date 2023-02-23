@@ -86,6 +86,7 @@ export type TokenStatusType = {
 	coinName?: string;
 	decimal?: number;
 	denom?: string;
+	externalLink?: string;
 };
 
 export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
@@ -128,6 +129,8 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		chain: ChainTypes.AXELAR,
 		originChain: ChainTypes.AXELAR,
 		denom: "uusdc",
+		externalLink:
+			"https://satellite.money/?destination_address=&asset_denom=uusdc&source=ethereum&destination=juno",
 	},
 	[TokenType.HOPERS]: {
 		isNativeCoin: false,
@@ -238,6 +241,8 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		isIBCCoin: true,
 		chain: ChainTypes.KUJIRA,
 		originChain: ChainTypes.KUJIRA,
+		externalLink:
+			"https://blue.kujira.app/ibc?destination=juno-1&denom=ukuji",
 	},
 	[TokenType.STARS]: {
 		isNativeCoin: true,
@@ -285,6 +290,7 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		chain: ChainTypes.EVMOS,
 		originChain: ChainTypes.EVMOS,
 		decimal: 18,
+		externalLink: "https://app.evmos.org/assets",
 	},
 	[TokenType.HARBOR]: {
 		isNativeCoin: false,
@@ -313,6 +319,8 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		originChain: ChainTypes.AXELAR,
 		denom: "weth-wei",
 		decimal: 18,
+		externalLink:
+			"https://satellite.money/?destination_address=&asset_denom=eth&source=ethereum&destination=juno",
 	},
 };
 
