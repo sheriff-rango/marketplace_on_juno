@@ -129,7 +129,7 @@ const Swap: React.FC = () => {
 				amount: swapInfo.from.amount,
 				icon: `/coin-images/${fromToken.replace(/\//g, "")}.png`,
 				rawBalance: fromBalance,
-				balance: addSuffix(fromBalance),
+				balance: addSuffix(fromBalance, 6),
 				tokenPrice: fromTokenPrice,
 				price: fromPrice,
 			},
@@ -138,7 +138,7 @@ const Swap: React.FC = () => {
 				amount: swapInfo.to.amount,
 				icon: `/coin-images/${toToken.replace(/\//g, "")}.png`,
 				rawBalance: toBalance,
-				balance: addSuffix(toBalance),
+				balance: addSuffix(toBalance, 6),
 				tokenPrice: toTokenPrice,
 				price: toPrice,
 			},
@@ -363,9 +363,10 @@ const Swap: React.FC = () => {
 			funds = coins(
 				toMicroAmount(
 					"" + swapInfo.from.amount,
-					ChainConfigs[TokenStatus[swapInfo.from.token].chain][
-						"coinDecimals"
-					]
+					"" + TokenStatus[swapInfo.from.token].decimal ||
+						ChainConfigs[TokenStatus[swapInfo.from.token].chain][
+							"coinDecimals"
+						]
 				),
 				swapInfo.from.token
 				// ChainConfigs[TokenStatus[swapInfo.from.token].chain]["microDenom"]
