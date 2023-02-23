@@ -74,6 +74,7 @@ import useHandleNftItem from "../../hook/useHandleNftItem";
 import MyPools from "../../components/MyPools";
 // import { getCustomTokenId } from "../../hook/useFetch";
 import { usePopoutTransfer } from "../../components/Popout/Transfer";
+import { addSuffix } from "../../util/string";
 
 enum TAB_TYPE {
 	ITEMS = "NFTs",
@@ -711,15 +712,11 @@ const MyNFT: React.FC = () => {
 										</TokenBalance>
 									</CoinIconWrapper>
 									<TokenBalance>
-										{tokenBalance.toLocaleString("en-US", {
-											maximumFractionDigits: 6,
-										})}
+										{addSuffix(tokenBalance)}
 										<Text style={{ fontSize: "0.9em" }}>
-											{`${(
+											{addSuffix(
 												tokenBalance * tokenPrice
-											).toLocaleString("en-US", {
-												maximumFractionDigits: 3,
-											})}$`}
+											)}
 										</Text>
 									</TokenBalance>
 									{/* <WithdrawButton

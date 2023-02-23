@@ -721,7 +721,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 				<div className="token-balance">
 					<span>
 						{swapInfo.swapType === SwapType.DEPOSIT
-							? addSuffix(ibcTokenBalance, 6)
+							? addSuffix(ibcTokenBalance)
 							: addSuffix(tokenBalance)}
 					</span>
 					<span>{`$${addSuffix(
@@ -779,8 +779,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 						{addSuffix(
 							swapInfo.swapType === SwapType.DEPOSIT
 								? ibcTokenBalance
-								: tokenBalance,
-							6
+								: tokenBalance
 						)}
 					</span>
 					<span>{`$${addSuffix(

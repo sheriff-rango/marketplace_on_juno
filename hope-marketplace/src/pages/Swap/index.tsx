@@ -102,6 +102,7 @@ const Swap: React.FC = () => {
 		const fromBalance =
 			(balances[fromToken]?.amount || 0) /
 			Math.pow(10, TokenStatus[fromToken].decimal || 6);
+		console.log("debug", fromBalance, addSuffix(fromBalance));
 		const fromTokenPrice =
 			tokenPrices[fromToken]?.market_data?.current_price?.usd || 0;
 		const fromPrice = (Number(fromBalance) * fromTokenPrice).toLocaleString(
@@ -129,7 +130,7 @@ const Swap: React.FC = () => {
 				amount: swapInfo.from.amount,
 				icon: `/coin-images/${fromToken.replace(/\//g, "")}.png`,
 				rawBalance: fromBalance,
-				balance: addSuffix(fromBalance, 6),
+				balance: addSuffix(fromBalance),
 				tokenPrice: fromTokenPrice,
 				price: fromPrice,
 			},
@@ -138,7 +139,7 @@ const Swap: React.FC = () => {
 				amount: swapInfo.to.amount,
 				icon: `/coin-images/${toToken.replace(/\//g, "")}.png`,
 				rawBalance: toBalance,
-				balance: addSuffix(toBalance, 6),
+				balance: addSuffix(toBalance),
 				tokenPrice: toTokenPrice,
 				price: toPrice,
 			},

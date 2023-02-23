@@ -56,8 +56,8 @@ const TokenAmountInputer: React.FC<TTokenAmountInputer> = ({
 			? tokenPrices[token]?.market_data?.current_price?.usd || 0
 			: 0;
 		return {
-			tokenPriceInUsd: addSuffix(balanceInRaw * tokenPriceInRaw, 6),
-			balance: addSuffix(balanceInRaw, 6),
+			tokenPriceInUsd: addSuffix(balanceInRaw * tokenPriceInRaw),
+			balance: addSuffix(balanceInRaw),
 			balanceRaw: balanceInRaw,
 		};
 	}, [balances, token, tokenPrices]);

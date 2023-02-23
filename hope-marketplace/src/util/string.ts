@@ -3,9 +3,17 @@ export const convertNumberToString = (
 	decimal: number = 2
 ): string => {
 	if (!number || isNaN(number)) return "0";
-	return number.toLocaleString(undefined, {
-		maximumFractionDigits: decimal,
-	});
+	let calcDecimal = decimal;
+	const powNumber = Math.pow(10, calcDecimal);
+	let result = (Math.trunc(number * powNumber) / powNumber).toString();
+	if (Number(result) === 0) {
+		while (Number(result) === 0) {
+			calcDecimal += 1;
+			const powNumber = Math.pow(10, calcDecimal);
+			result = (Math.trunc(number * powNumber) / powNumber).toString();
+		}
+	}
+	return result;
 };
 
 export const addSuffix = (number: number, decimal: number = 2): string => {
