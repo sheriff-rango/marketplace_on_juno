@@ -296,10 +296,6 @@ const MyNFT: React.FC = () => {
 		};
 	}, [nfts, searchValue]);
 
-	const handleOpenNewWindow = (link: string) => {
-		if (link) window.open(link);
-	};
-
 	const handleClickBalanceItem = (
 		tokenType: TokenType,
 		swapType = SwapType.WITHDRAW
@@ -667,7 +663,7 @@ const MyNFT: React.FC = () => {
 							Withdraw
 						</IBCDepositWithdrawButton>
 						<IBCDepositWithdrawButton
-							onClick={() => popoutTranfer(handleOpenNewWindow)}
+							onClick={() => popoutTranfer()}
 						>
 							Transfer
 						</IBCDepositWithdrawButton>
