@@ -32,6 +32,7 @@ export enum TokenType {
 	HOWL = "howl",
 	KLEO = "kleo",
 	JAPE = "jape",
+	AXELARETHER = "ibc/95A45A81521EAFDBEDAEEB6DA975C02E55B414C95AD3CE50709272366A90CA17",
 	// PLANQ = "ibc/9AFC3B24C30BE40250D3F40818CFED98C74EA320F744AA6CF2129F0D109E6FF5",
 }
 
@@ -73,6 +74,7 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.HARBOR]: "HARBOR",
 	[TokenType.CMDX]: "CMDX",
 	[TokenType.CMST]: "CMST",
+	[TokenType.AXELARETHER]: "WEHT",
 };
 
 export type TokenStatusType = {
@@ -303,6 +305,13 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		chain: ChainTypes.COMDEX,
 		originChain: ChainTypes.COMDEX,
 		denom: "ucmst",
+	},
+	[TokenType.AXELARETHER]: {
+		isNativeCoin: false,
+		isIBCCoin: true,
+		chain: ChainTypes.AXELAR,
+		originChain: ChainTypes.AXELAR,
+		denom: "weth-wei",
 	},
 };
 
