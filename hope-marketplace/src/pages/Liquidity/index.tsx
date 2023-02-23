@@ -175,7 +175,7 @@ const Liquidity: React.FC = () => {
 			render: (value, data) => (
 				<Text bold color="black">{`1${getTokenName(
 					data.token1
-				)} = ${addSuffix(value || 0)}${getTokenName(
+				)} = ${addSuffix(value || 0, 6)}${getTokenName(
 					data.token2
 				)}`}</Text>
 			),
