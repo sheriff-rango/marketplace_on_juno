@@ -113,7 +113,7 @@ export const ChainConfigs: { [key in ChainTypes]: ConfigType } = {
 		gasPrice: "0.025",
 	},
 	[ChainTypes.KUJIRA]: {
-		chainName: "Kujura",
+		chainName: "Kujira",
 		chainId: "kaiyo-1",
 		// rpcEndpoint: "https://rpc-kujira.whispernode.com",
 		rpcEndpoint: "https://rpc-kujira.ecostake.com/",

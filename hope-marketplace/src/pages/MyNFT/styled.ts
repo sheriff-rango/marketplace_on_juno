@@ -44,7 +44,7 @@ export const IBCDepositWithdrawButton = styled(Button)`
 	width: 110px;
 	height: max-content;
 	font-size: 18px;
-	background: rgba(2, 226, 150, 0.2);
+	background-color: rgba(2, 226, 150, 0.2);
 	border: 2px solid #02e296;
 	border-radius: 10px;
 	color: ${({ theme }) => theme.colors.fontColor};

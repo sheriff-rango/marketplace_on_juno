@@ -7,6 +7,10 @@ import { ThemeContext } from "../../context/ThemeContext";
 import { TokenStatus, TokenType } from "../../types/tokens";
 import { ChainConfigs } from "../../constants/ChainTypes";
 
+interface TransferProps {
+	openNewWindow: (link: string) => void;
+}
+
 const ExternalIcon = ({ ...props }) => (
 	<svg
 		width="20"
@@ -27,7 +31,7 @@ const ExternalIcon = ({ ...props }) => (
 	</svg>
 );
 
-const Tranfer: React.FC = () => {
+const Tranfer: React.FC<TransferProps> = ({ openNewWindow }) => {
 	const [logoHeight, setLogoHeight] = useState(0);
 	const { isDark } = useContext(ThemeContext);
 
@@ -58,7 +62,7 @@ const Tranfer: React.FC = () => {
 					className="container"
 				>
 					<div className="transfer-title">
-						<div>Tranfer</div>
+						<div>Transfer</div>
 						<div>From official third part dApps</div>
 					</div>
 					<div className="transfer-assets-wrapper">
@@ -97,7 +101,7 @@ const Tranfer: React.FC = () => {
 										<ExternalIcon
 											className="external-link"
 											onClick={() =>
-												window.open(externalLink)
+												openNewWindow(externalLink)
 											}
 										/>
 									</div>
@@ -114,10 +118,13 @@ const Tranfer: React.FC = () => {
 export const usePopoutTransfer = () => {
 	const { showNewWindow } = useContext(PopoutContext);
 
-	const popoutTranfer = useCallback(() => {
-		showNewWindow(<Tranfer />, {
-			title: "Transfer",
-		});
-	}, [showNewWindow]);
+	const popoutTranfer = useCallback(
+		(openNewWindow: (link: string) => void) => {
+			showNewWindow(<Tranfer openNewWindow={openNewWindow} />, {
+				title: "Transfer",
+			});
+		},
+		[showNewWindow]
+	);
 	return popoutTranfer;
 };

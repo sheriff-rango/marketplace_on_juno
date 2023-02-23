@@ -196,6 +196,7 @@
 						flex-direction: column;
 						align-items: flex-start;
 						position: relative;
+						color: black;
 						&::after {
 							content: attr(data-chainname);
 							width: max-content;
