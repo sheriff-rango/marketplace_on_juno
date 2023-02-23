@@ -102,7 +102,6 @@ const Swap: React.FC = () => {
 		const fromBalance =
 			(balances[fromToken]?.amount || 0) /
 			Math.pow(10, TokenStatus[fromToken].decimal || 6);
-		console.log("debug", fromBalance, addSuffix(fromBalance));
 		const fromTokenPrice =
 			tokenPrices[fromToken]?.market_data?.current_price?.usd || 0;
 		const fromPrice = (Number(fromBalance) * fromTokenPrice).toLocaleString(
@@ -364,10 +363,11 @@ const Swap: React.FC = () => {
 			funds = coins(
 				toMicroAmount(
 					"" + swapInfo.from.amount,
-					"" + TokenStatus[swapInfo.from.token].decimal ||
-						ChainConfigs[TokenStatus[swapInfo.from.token].chain][
-							"coinDecimals"
-						]
+					"" +
+						(TokenStatus[swapInfo.from.token].decimal ||
+							ChainConfigs[
+								TokenStatus[swapInfo.from.token].chain
+							]["coinDecimals"])
 				),
 				swapInfo.from.token
 				// ChainConfigs[TokenStatus[swapInfo.from.token].chain]["microDenom"]
