@@ -621,7 +621,7 @@ const MyNFT: React.FC = () => {
 									</CoinIconWrapper>
 									<TokenBalance>
 										{tokenBalance.toLocaleString("en-US", {
-											maximumFractionDigits: 3,
+											maximumFractionDigits: 6,
 										})}
 										<Text style={{ fontSize: "0.8em" }}>
 											{`${(
@@ -705,7 +705,7 @@ const MyNFT: React.FC = () => {
 									</CoinIconWrapper>
 									<TokenBalance>
 										{tokenBalance.toLocaleString("en-US", {
-											maximumFractionDigits: 3,
+											maximumFractionDigits: 6,
 										})}
 										<Text style={{ fontSize: "0.9em" }}>
 											{`${(
