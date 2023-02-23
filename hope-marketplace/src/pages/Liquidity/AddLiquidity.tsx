@@ -145,24 +145,17 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 					},
 				})
 			);
-			console.log("debug", {
-				increase_allowance: {
-					spender: pool.contract,
-					amount: `${Math.ceil(
-						token1Amount *
-							Math.pow(10, TokenStatus[pool.token1].decimal || 6)
-					)}`,
-				},
-			});
 		} else {
 			funds = [
 				...funds,
 				...coins(
 					toMicroAmount(
 						"" + token1Amount,
-						ChainConfigs[TokenStatus[pool.token1].chain][
-							"coinDecimals"
-						]
+						"" +
+							(TokenStatus[pool.token2].decimal ||
+								ChainConfigs[TokenStatus[pool.token1].chain][
+									"coinDecimals"
+								])
 					),
 					pool.token1
 				),
@@ -191,24 +184,17 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 					},
 				})
 			);
-			console.log("debug", {
-				increase_allowance: {
-					spender: pool.contract,
-					amount: `${Math.ceil(
-						token2Amount *
-							Math.pow(10, TokenStatus[pool.token2].decimal || 6)
-					)}`,
-				},
-			});
 		} else {
 			funds = [
 				...funds,
 				...coins(
 					toMicroAmount(
 						"" + token2Amount,
-						ChainConfigs[TokenStatus[pool.token2].chain][
-							"coinDecimals"
-						]
+						"" +
+							(TokenStatus[pool.token2].decimal ||
+								ChainConfigs[TokenStatus[pool.token2].chain][
+									"coinDecimals"
+								])
 					),
 					pool.token2
 				),
@@ -245,23 +231,6 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 				funds,
 			})
 		);
-		console.log("debug", {
-			add_liquidity: {
-				token1_amount:
-					"" +
-					Math.ceil(
-						token1Amount *
-							Math.pow(10, TokenStatus[pool.token1].decimal || 6)
-					),
-				min_liquidity: "0",
-				max_token2:
-					"" +
-					Math.ceil(
-						token2Amount *
-							Math.pow(10, TokenStatus[pool.token2].decimal || 6)
-					),
-			},
-		});
 
 		try {
 			const client = await getExecuteClient();
