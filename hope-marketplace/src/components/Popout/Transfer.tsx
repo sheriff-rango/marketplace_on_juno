@@ -7,6 +7,10 @@ import { ThemeContext } from "../../context/ThemeContext";
 import { TokenStatus, TokenType } from "../../types/tokens";
 import { ChainConfigs } from "../../constants/ChainTypes";
 
+interface TransferProps {
+	closeNewWindow: () => void;
+}
+
 const ExternalIcon = ({ ...props }) => (
 	<svg
 		width="20"
@@ -27,7 +31,7 @@ const ExternalIcon = ({ ...props }) => (
 	</svg>
 );
 
-const Tranfer: React.FC = () => {
+const Tranfer: React.FC<TransferProps> = ({ closeNewWindow }) => {
 	const [logoHeight, setLogoHeight] = useState(0);
 	const { isDark } = useContext(ThemeContext);
 
@@ -99,7 +103,10 @@ const Tranfer: React.FC = () => {
 											target="_blank"
 											rel="noreferrer"
 										>
-											<ExternalIcon className="external-link" />
+											<ExternalIcon
+												className="external-link"
+												onClick={() => closeNewWindow()}
+											/>
 										</a>
 									</div>
 								);
@@ -113,12 +120,12 @@ const Tranfer: React.FC = () => {
 };
 
 export const usePopoutTransfer = () => {
-	const { showNewWindow } = useContext(PopoutContext);
+	const { showNewWindow, closeNewWindow } = useContext(PopoutContext);
 
 	const popoutTranfer = useCallback(() => {
-		showNewWindow(<Tranfer />, {
+		showNewWindow(<Tranfer closeNewWindow={closeNewWindow} />, {
 			title: "Transfer",
 		});
-	}, [showNewWindow]);
+	}, [closeNewWindow, showNewWindow]);
 	return popoutTranfer;
 };
