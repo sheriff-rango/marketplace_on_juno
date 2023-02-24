@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { useHistory } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
 import { addSuffix } from "../../util/string";
 import PoolImage from "../PoolImage";
@@ -16,6 +17,7 @@ import {
 import { TPool, TPoolConfig } from "../../types/pools";
 
 const MyPools: React.FC = () => {
+	const history = useHistory();
 	const liquidities = useAppSelector((state) => state.liquidities);
 	const tokenPrices = useAppSelector((state) => state.tokenPrices);
 	const myLiquidities = useMemo(
@@ -186,7 +188,13 @@ const MyPools: React.FC = () => {
 			{/* <Title>My Pools</Title> */}
 			<MyPoolsContainer>
 				{myLiquidities?.map((liquidity, index: number) => (
-					<MyPoolItem key={index}>
+					<MyPoolItem
+						key={index}
+						onClick={() =>
+							liquidity.stakingAddress &&
+							history.push(`/bond?poolId=${liquidity.id}`)
+						}
+					>
 						<MyPoolItemRow>
 							<PoolImage
 								token1={liquidity.token1}

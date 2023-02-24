@@ -55,6 +55,7 @@ const BondTableDetailRow: React.FC<{ rowData: TPool; focus: boolean }> = ({
 			const headerHeight = headerElement?.clientHeight || 0;
 			// wrapperElement.style.scrollMargin = `${headerHeight}px`;
 			wrapperElement.style.cssText = `scroll-margin-top: ${headerHeight}px`;
+			wrapperElement.style.cssText = `scroll-padding-top: ${headerHeight}px`;
 			wrapperElement.scrollIntoView({ behavior: "smooth" });
 			// window.scrollTo(0, 0);
 		}

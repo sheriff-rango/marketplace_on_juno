@@ -623,15 +623,11 @@ const MyNFT: React.FC = () => {
 										<TokenBalance>{key}</TokenBalance>
 									</CoinIconWrapper>
 									<TokenBalance>
-										{tokenBalance.toLocaleString("en-US", {
-											maximumFractionDigits: 6,
-										})}
+										{addSuffix(tokenBalance)}
 										<Text style={{ fontSize: "0.8em" }}>
-											{`${(
+											{`${addSuffix(
 												tokenBalance * tokenPrice
-											).toLocaleString("en-US", {
-												maximumFractionDigits: 3,
-											})}$`}
+											)}$`}
 										</Text>
 									</TokenBalance>
 								</TokenBalanceItem>
@@ -714,9 +710,9 @@ const MyNFT: React.FC = () => {
 									<TokenBalance>
 										{addSuffix(tokenBalance)}
 										<Text style={{ fontSize: "0.9em" }}>
-											{addSuffix(
+											{`${addSuffix(
 												tokenBalance * tokenPrice
-											)}
+											)}$`}
 										</Text>
 									</TokenBalance>
 									{/* <WithdrawButton

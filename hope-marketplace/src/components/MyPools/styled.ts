@@ -31,6 +31,7 @@ export const MyPoolItem = styled.div`
 	align-items: center;
 	padding: 20px;
 	gap: 20px;
+	cursor: pointer;
 `;
 
 export const MyPoolItemRow = styled.div`
