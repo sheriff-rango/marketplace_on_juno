@@ -25,6 +25,7 @@ export const TokenTypeString = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
+	flex-wrap: wrap;
 	gap: 20px;
 	& > span {
 		font-size: 16px;
@@ -36,6 +37,7 @@ export const IBCDepositWithdrawButtons = styled.div`
 	display: flex;
 	align-items: center;
 	gap: 10px;
+	overflow: auto;
 `;
 
 export const IBCDepositWithdrawButton = styled(Button)`
