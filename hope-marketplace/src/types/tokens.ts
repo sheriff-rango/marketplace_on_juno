@@ -277,13 +277,6 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		contractAddress:
 			"juno1zkwveux7y6fmsr88atf3cyffx96p0c96qr8tgcsj7vfnhx7sal3s3zu3ps",
 	},
-	[TokenType.PLANQ]: {
-		isNativeCoin: true,
-		isIBCCoin: true,
-		chain: ChainTypes.PLANQ,
-		originChain: ChainTypes.PLANQ,
-		decimal: 18,
-	},
 	[TokenType.EVMOS]: {
 		isNativeCoin: true,
 		isIBCCoin: true,
@@ -291,6 +284,13 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		originChain: ChainTypes.EVMOS,
 		decimal: 18,
 		externalLink: "https://app.evmos.org/assets",
+	},
+	[TokenType.PLANQ]: {
+		isNativeCoin: true,
+		isIBCCoin: true,
+		chain: ChainTypes.PLANQ,
+		originChain: ChainTypes.PLANQ,
+		decimal: 18,
 	},
 	[TokenType.HARBOR]: {
 		isNativeCoin: false,
