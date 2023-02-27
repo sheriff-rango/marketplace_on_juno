@@ -33,7 +33,7 @@ export enum TokenType {
 	HOWL = "howl",
 	KLEO = "kleo",
 	JAPE = "jape",
-	// PLANQ = "ibc/9AFC3B24C30BE40250D3F40818CFED98C74EA320F744AA6CF2129F0D109E6FF5",
+	PLANQ = "ibc/9AFC3B24C30BE40250D3F40818CFED98C74EA320F744AA6CF2129F0D109E6FF5",
 }
 
 export const getTokenName = (tokenType: TokenType): string =>
@@ -69,7 +69,7 @@ export const TokenFullName: { [key in TokenType]: string } = {
 	[TokenType.HOWL]: "HOWL",
 	[TokenType.KLEO]: "KLEO",
 	[TokenType.JAPE]: "JAPE",
-	// [TokenType.PLANQ]: "PLANQ",
+	[TokenType.PLANQ]: "PLANQ",
 	[TokenType.EVMOS]: "EVMOS",
 	[TokenType.HARBOR]: "HARBOR",
 	[TokenType.CMDX]: "CMDX",
@@ -277,13 +277,13 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
 		contractAddress:
 			"juno1zkwveux7y6fmsr88atf3cyffx96p0c96qr8tgcsj7vfnhx7sal3s3zu3ps",
 	},
-	// [TokenType.PLANQ]: {
-	// 	isNativeCoin: true,
-	// 	isIBCCoin: true,
-	// 	chain: ChainTypes.PLANQ,
-	// 	originChain: ChainTypes.PLANQ,
-	// 	decimal: 18,
-	// },
+	[TokenType.PLANQ]: {
+		isNativeCoin: true,
+		isIBCCoin: true,
+		chain: ChainTypes.PLANQ,
+		originChain: ChainTypes.PLANQ,
+		decimal: 18,
+	},
 	[TokenType.EVMOS]: {
 		isNativeCoin: true,
 		isIBCCoin: true,

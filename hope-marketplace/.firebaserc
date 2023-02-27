@@ -1,7 +1,7 @@
 {
-  "projects": {
-    "default": "marketplace-on-juno-chain",
-    "staging": "marketplace-on-juno-chain"
-  },
-  "targets": {}
+    "projects": {
+        "default": "marketplace-on-juno-chain",
+        "staging": "marketplace-on-juno-chain"
+    },
+    "targets": {}
 }
