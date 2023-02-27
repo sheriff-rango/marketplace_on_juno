@@ -17,6 +17,13 @@ export interface TTable<T extends object> {
 	renderDetailRow?: TRenderDetailRow<T>;
 }
 
+export interface ITablePaginator{
+	pageSize:number;
+	pagesRange:number[];
+	currentPage:number;
+	onClick?: (selectedPage: number) => void;
+}
+
 export interface TRow<T extends object> {
 	data: T;
 	renderDetailRow?: TRenderDetailRow<T>;
@@ -34,9 +41,10 @@ export type TColumns<T extends object> = {
 		name: K | "";
 		type?: ColumnTypes;
 		title?: string;
+		alignLeft?: boolean;
 		sort?: boolean | ((data1: T, data2: T, direction: "up" | "down") => number);
 		format?: (value: T[K], data: T) => string | number;
-		render?: (value: T[K] | "" | 0, data: T) => JSX.Element | null;
+		render?: (value: T[K] | "" | 0, data: T, expanded: boolean) => JSX.Element | null;
 	};
 }[keyof T];
 

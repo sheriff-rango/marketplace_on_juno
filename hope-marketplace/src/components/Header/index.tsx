@@ -99,8 +99,8 @@ const HeaderLinks = [
 				title: "Liquidity",
 				url: "/liquidity",
 				icon: SwapIcon,
-			},
-		],
+			}
+		]
 	},
 	{
 		title: "Earn",

@@ -2,6 +2,7 @@ import { BasicProps } from "../../constants/BasicTypes";
 
 export interface TextProps extends BasicProps {
 	fontSize?: string;
+	fixedFontSize?: string;
 	bold?: boolean;
 	color?: string;
 	margin?: string;
@@ -17,4 +18,6 @@ export interface TextProps extends BasicProps {
 	gap?: string;
 	id?: string;
 	letterSpacing?: string;
+	lineHeight?: string;
+	whiteSpace?: string;
 }

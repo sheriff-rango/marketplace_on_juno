@@ -130,7 +130,6 @@ export const LiquiditiesTableBody = styled.div`
 export const LiquiditiesTableRow = styled.div`
 	display: contents;
 	${LiquidityTableContent} {
-		border-bottom: 1px solid #d9d9d9;
 		&:first-child {
 			border-left: 1px solid ${tableBodyBorderColor};
 		}
@@ -151,7 +150,6 @@ export const LiquiditiesTableRow = styled.div`
 	}
 	&:last-child {
 		${LiquidityTableContent} {
-			border-bottom: 1px solid ${tableBodyBorderColor};
 			&:first-child {
 				border-bottom-left-radius: ${tableBorderRadius};
 			}
@@ -339,23 +337,18 @@ export const DetailRowBlock = styled.div`
 	height: 100%;
 `;
 
-export const StyledButton = styled(Button)<{ order: number }>`
+export const StyledButton = styled(Button)<{primary: boolean, margin?: string, float:'right'|'left'}>`
 	position: relative;
-	width: 165px;
+	width: auto;
 	height: 40px;
-	background-color: rgba(2, 226, 150, 0.12);
-	border: 1px solid #787878;
+	background-color: ${({ primary, theme }) => (primary ? theme.colors.flatBackgroundColor : "white")};
+	border: 1px solid #02e296;
+	color: ${({ primary, theme }) => (primary ? "black" : theme.colors.flatBackgroundColor)};
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 	border-radius: 10px;
-	color: black;
-	margin: auto;
+	margin: ${({ margin }) => (margin ? margin : "auto")};
 	font-size: 16px;
 	text-align: center;
-	&:before {
-		content: "${({ order }) => order})";
-		position: absolute;
-		left: 5px;
-		top: 50%:
-		transform: translateY(-50%);
-	}
+	font-weight: normal;
+	float: ${({ float }) => (float)};
 `;

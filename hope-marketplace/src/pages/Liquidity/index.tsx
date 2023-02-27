@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { useWalletManager } from "@noahsaso/cosmodal";
 import { useAppSelector } from "../../app/hooks";
 import ExploreHeader from "../../components/ExploreHeader";
@@ -22,18 +22,19 @@ import {
 } from "./styled";
 // import TokenListModal from "../../components/TokenListModal";
 import {
-	getTokenName,
+	getTokenName, TokenStatus, TokenType,
 	//  TokenType
 } from "../../types/tokens";
 import {
-	CancelIcon,
-	PlusInGreenCircleIcon,
-	VerifiedBadge,
+	ChevronDown,
+	ChevronUp,
+	ClaimRewardsWithBackground,
+	GearIconWithBackground
 } from "../../components/SvgIcons";
 import { addSuffix } from "../../util/string";
 import PoolImage from "../../components/PoolImage";
 import { TPool, TPoolConfig } from "../../types/pools";
-import Table, { ColumnTypes, TColumns } from "../../components/Table";
+import Table, { TColumns } from "../../components/Table";
 import PoolName from "../../components/PoolName";
 import AddLiquidity from "./AddLiquidity";
 import { ModalType, PoolType } from "./type";
@@ -41,18 +42,30 @@ import CreateLiquidity from "./CreateLiquidity";
 import RemoveLiquidity from "./RemoveLiquidity";
 import LiquidityTableDetailRow from "./LiquidityTableDetailRow";
 import Flex from "../../components/Flex";
+import { useTheme } from "styled-components";
+import ManageBondModal from "../../components/ManageBonModal";
+import ReactTooltip from "react-tooltip";
+import useContract from "../../hook/useContract";
+import useRefresh from "../../hook/useRefresh";
+import { toast } from "react-toastify";
 
 const Liquidity: React.FC = () => {
 	// const [showTokenListModal, setShowTokenListModal] = useState(false);
+	const history = useHistory();
 	const [wrapperElement, setWrapperElement] = useState<HTMLDivElement | null>(
 		null
 	);
 	const [addingPool, setAddingPool] = useState<TPool | undefined>();
-
+	const theme = useTheme();
 	const [modalType, setModalType] = useState<ModalType>(ModalType.ADD);
 	const [selectedTab, setSelectedTab] = useState<string>(PoolType.ALL);
 	const account = useAppSelector((state) => state.accounts.keplrAccount);
 	const liquidities = useAppSelector((state) => state.liquidities);
+	const { runExecute } = useContract();
+	const { refreshPrice } = useRefresh();
+	
+	const tokenPrices = useAppSelector((state) => state.tokenPrices);
+
 	// const { connect: connectWithCosmodal } = useCosmodal();
 	const { connect: connectKeplr } = useWalletManager();
 	const { connect: connectCosmostation } = useContext(
@@ -60,22 +73,108 @@ const Liquidity: React.FC = () => {
 	);
 	const { search } = useLocation();
 	const type = new URLSearchParams(search).get("type");
+	const [isPendingClaim, setIsPendingClaim] = useState(false);
+	const handleClickClaim = async (pendingReward: number, stakingAddress: string) => {
+		if (isPendingClaim || !pendingReward || !stakingAddress)
+			return;
+		setIsPendingClaim(true);
+		try {
+			await runExecute(stakingAddress, {
+				withdraw: {},
+			});
+			toast.success("Successfully claimed!");
+			refreshPrice();
+		} catch (err) {
+			console.log(err);
+			toast.error("Claim Failed!");
+		} finally {
+			setIsPendingClaim(false);
+		}
+	};
+
+	type TPoolUserDetailInfo = {
+		rewardToken?: TokenType;
+		pendingReward: number;
+		bonded: number;
+		stakingAddress: string;
+		priceInUsd: number;
+	};
+	const [isOpenManageBondModal, setIsOpenManageBondModal] = useState<TPool>();
+	const handleClickBondManageModal = async (pool:TPool) => {
+		setIsOpenManageBondModal(pool);
+	};
+
+	const getPoolUserDetails = ((pool:TPool): TPoolUserDetailInfo[] => {
+		let result: TPoolUserDetailInfo[] = [];
+		const config = pool.config;
+		if (Array.isArray(config)) {
+			result = config.map((item, index) => {
+				const pendingReward =
+					((pool.pendingReward || []) as number[])[index] || 0;
+				const tokenPriceInUsd = item.rewardToken
+					? tokenPrices[item.rewardToken]?.market_data.current_price
+							?.usd || 0
+					: 0;
+				return {
+					rewardToken: item.rewardToken,
+					pendingReward,
+					bonded: ((pool.bonded || []) as number[])[index],
+					stakingAddress: (
+						(pool.stakingAddress || []) as string[]
+					)[index],
+					priceInUsd: pendingReward * tokenPriceInUsd,
+				};
+			});
+		} else {
+			const pendingReward = (pool.pendingReward || 0) as number;
+			const tokenPriceInUsd = config?.rewardToken
+				? tokenPrices[config.rewardToken]?.market_data.current_price
+						?.usd || 0
+				: 0;
+			result = [
+				{
+					rewardToken: config?.rewardToken,
+					pendingReward,
+					bonded: (pool.bonded || 0) as number,
+					stakingAddress: (pool.stakingAddress || "") as string,
+					priceInUsd: pendingReward * tokenPriceInUsd,
+				},
+			];
+		}
+		return result;
+	});
 
 	useEffect(() => {
 		if (type === "add") setModalType(ModalType.ADD);
 	}, [type]);
 
+	const getUSDCValue = ((pool:TPool): string => {
+		let ret = (tokenPrices[pool.token2]?.market_data?.current_price?.usd || 0).toLocaleString(
+			"en-US",
+			{
+				maximumFractionDigits: 12,
+			}
+		)
+		var parts = ret.split('.');
+		if(parts.length === 1)
+			return ret;
+		let decimalPart = ret.split('.')[1];
+		let trimmedDecimalPart = "";
+		for(let i = 0; i < decimalPart.length; i++){
+			trimmedDecimalPart+= decimalPart[i];
+			if(decimalPart[i] !== '0'){
+				break;
+			}
+		}
+		ret = `${ret.split('.')[0]}.${trimmedDecimalPart}`;
+		return ret;
+	});
+
 	const Columns: TColumns<TPool>[] = [
 		{
 			name: "",
-			title: "",
-			render: (value: any, data: TPool) => (
-				<PoolImage token1={data.token1} token2={data.token2} />
-			),
-		},
-		{
-			name: "",
-			title: "Pool Name",
+			title: "Pool name",
+			alignLeft: true,
 			sort: (data1, data2, direction) => {
 				const name1 = `${getTokenName(data1.token1)}-${getTokenName(
 					data1.token2
@@ -92,32 +191,72 @@ const Liquidity: React.FC = () => {
 					? 1
 					: -1;
 			},
-			render: (value: any, data: TPool) => <PoolName pool={data} />,
+			render: (value: any, data: TPool) => (
+				<Flex flexDirection="row">
+					<PoolImage token1={data.token1} token2={data.token2} />
+					<PoolName pool={data} />	
+				</Flex>
+			),
 		},
+	
 		{
-			name: "isVerified",
-			title: "Verified",
-			render: (value, data) =>
-				value ? <VerifiedBadge /> : <CancelIcon />,
-		},
-		{
-			name: "volume",
-			title: "Volume",
-			type: ColumnTypes.NUMBER,
+			name: "pool",
+			title: "TVL",
 			sort: true,
+			render: (value, data) => {
+				if(!tokenPrices[TokenType.HOPERS])
+				{
+					return null;
+				}
+				const token1Reserve =
+				data.token1Reserve /
+				Math.pow(
+					10,
+					TokenStatus[data.token1].decimal || 6
+				);
+			const token1Price =
+				tokenPrices[data.token1]?.market_data
+					?.current_price?.usd || 0;
+			const token2Reserve =
+			data.token2Reserve /
+				Math.pow(
+					10,
+					TokenStatus[data.token2].decimal || 6
+				);
+			const token2Price =
+				tokenPrices[data.token2]?.market_data
+					?.current_price?.usd || 0;
+			const totalLocked =
+				token1Reserve * token1Price +
+				token2Reserve * token2Price;
+			const totalHopersLocked = totalLocked / tokenPrices[TokenType.HOPERS].market_data
+			?.current_price?.usd ;
+			return (
+				<Flex flexDirection="column">
+					<Text color="black">
+						{`${addSuffix(totalHopersLocked)}`}
+					</Text>
+					<Text fixedFontSize=".8em" color="#777">
+						{`$ ${addSuffix(totalLocked)}`}
+					</Text>
+				</Flex>
+				)
+			}
 		},
 		{
 			name: "apr",
-			title: "APR Rewards",
+			title: "APR",
 			render: (value, data) => {
 				const apr = data.apr;
 				if (typeof apr === "string") {
 					const rewardToken = (data.config as TPoolConfig)
 						?.rewardToken;
 					return (
-						<Text gap="10px" color="black" alignItems="center">
+						<Text gap="10px" color="black" alignItems="center" 
+							flexWrap="nowrap"
+							whiteSpace="nowrap">
 							{rewardToken && (
-								<img
+							<img
 									width={25}
 									alt=""
 									src={`/coin-images/${rewardToken.replace(
@@ -131,7 +270,7 @@ const Liquidity: React.FC = () => {
 					);
 				} else {
 					return (
-						<Flex alignItems="center" gap="20px">
+						<Flex alignItems="center" gap="10px" flexDirection="column">
 							{apr.map((item, index) => {
 								const rewardToken = (
 									data.config as TPoolConfig[]
@@ -142,10 +281,12 @@ const Liquidity: React.FC = () => {
 										gap="10px"
 										color="black"
 										alignItems="center"
+										flexWrap="nowrap"
+										whiteSpace="nowrap"
 									>
 										{rewardToken && (
 											<img
-												width={25}
+												width={30}
 												alt=""
 												src={`/coin-images/${rewardToken.replace(
 													/\//g,
@@ -153,7 +294,7 @@ const Liquidity: React.FC = () => {
 												)}.png`}
 											/>
 										)}
-										{item}
+											{item}
 									</Text>
 								);
 							})}
@@ -163,30 +304,202 @@ const Liquidity: React.FC = () => {
 			},
 		},
 		{
-			name: "pool",
-			title: "Liquidity Pool",
-			sort: true,
-			format: (value) => addSuffix(value),
+			name: "config",
+			title: "End in",
+			render: (value:any, data) => {
+				const now = Number(new Date());
+				const config = value;
+				var result: {
+							apr: string;
+							distributionEnd: number;
+							rewardToken?: string;
+						}[] = [];
+				const apr = data.apr;
+					if (typeof apr === "string") {
+						const distributionEnd = Math.max(
+							0,
+							Math.floor(
+								(((config as TPoolConfig)?.distributionEnd || 0) - now) /
+									(1000 * 60 * 60 * 24)
+							)
+						);
+						result = [
+							{
+								apr,
+								distributionEnd,
+								rewardToken: (config as TPoolConfig)?.rewardToken,
+							},
+						];
+					} else {
+						apr.forEach((item:any, index: number) => {
+							const crrConfig = (config as TPoolConfig[])[index];
+							const distributionEnd = Math.max(
+								0,
+								Math.floor(
+									((crrConfig.distributionEnd || 0) - now) / (1000 * 60 * 60 * 24)
+								)
+							);
+							result.push({
+								apr: item,
+								distributionEnd,
+								rewardToken: crrConfig.rewardToken,
+							});
+						});
+					}
+				const distributionEnd = Math.max(
+					0,
+					...result.map(x=> x.distributionEnd)
+				);
+				return (
+					<Flex flexDirection="column">
+						<Text gap="10px" color="black" alignItems="center" 
+						  	lineHeight="27px"
+							flexWrap="nowrap"
+							whiteSpace="nowrap"
+					>
+						{distributionEnd > 0 ? `${distributionEnd} Days` : ''}
+					</Text>
+
+					</Flex>
+				);
+			}
+		},
+		{
+			name: "",
+			title: "My Rewards",
+			render: (value:any, data:TPool) => {
+				const result = getPoolUserDetails(data);
+				return (
+					<Flex flexDirection="column">
+						{result.map((item, index) => {
+								return item.pendingReward > 0 && (
+									<Flex>
+										<Text
+											key={index}
+											gap="10px"
+											margin="0 8px 0 0 "
+											color="black"
+											alignItems="center"
+											flexWrap="nowrap"
+											whiteSpace="nowrap">
+											{`${addSuffix(item.pendingReward)} ($ ${item.priceInUsd.toLocaleString("en-US", {
+													maximumFractionDigits: 2,
+												})})`}
+										</Text>
+										<ReactTooltip
+											id="tooltip-claim"
+											place="top"
+											class="fixed-top-tooltip"
+										>
+											Claim rewards
+										</ReactTooltip>
+										<ClaimRewardsWithBackground theme={theme} data-for="tooltip-claim" data-tip  onClick={(e:any) => {
+											e.stopPropagation();
+											handleClickClaim(item.pendingReward, item.stakingAddress);
+										} }></ClaimRewardsWithBackground>
+									</Flex>
+								);
+							})}
+					</Flex>
+				)
+			},
+		},
+		{
+			name: "",
+			title: "My Liquidity",
+			render: (value:any, data:TPool) => {
+				const result = getPoolUserDetails(data);
+				let totalLiquidityValue = data.balance || 0;
+				result?.forEach(r => {
+					if(r.bonded > 0)
+					{
+						totalLiquidityValue += r.bonded;
+					}
+				})
+				totalLiquidityValue = totalLiquidityValue * (data.lpPrice || 0);
+				return (
+				<>	
+					<Flex flexDirection="column" alignItems="flex-start" margin="0 8px 0 0">
+						{(((data.balance || 0) > 0 )|| result.find(x => x.bonded > 0)) && 
+							<Text color="black">{` LP Available: ${addSuffix(data.balance || 0)}`}
+							</Text>
+						}
+						{result.map((item, index) => {
+								return item.bonded > 0 && (
+									<Text
+										key={index}
+										gap="10px"
+										color="black"
+										alignItems="center"
+										flexWrap="nowrap"
+										whiteSpace="nowrap"
+									>
+										 {`LP Bonded: ${addSuffix(item.bonded)}`}
+									</Text>
+								);
+							})}
+						{totalLiquidityValue > 0 && 
+							<Text fixedFontSize=".8em" color="#777">
+								{`$ ${addSuffix(totalLiquidityValue)}`}
+							</Text>
+						}
+						
+					</Flex>
+					
+					{(((data.balance || 0 )> 0) || result.find(x => x.bonded > 0)) && 
+					<>
+						<ReactTooltip
+							id="tooltip-manage"
+							place="top"
+							class="fixed-top-tooltip"
+						>
+							Manage liquidity
+						</ReactTooltip>
+						<GearIconWithBackground theme={theme}  data-for="tooltip-manage" data-tip onClick={
+							(e:any) => {											
+								e.stopPropagation();
+								handleClickBondManageModal(data)} 
+						}/>
+					</>
+					}
+				</>
+			)}
 		},
 		{
 			name: "ratio",
 			title: "Value",
 			sort: true,
 			render: (value, data) => (
-				<Text bold color="black">{`1${getTokenName(
-					data.token1
-				)} = ${addSuffix(value || 0)}${getTokenName(
-					data.token2
-				)}`}</Text>
+				<Flex flexDirection="column" >
+					<Text fixedFontSize="1.2em" bold color="black" flexWrap="nowrap"
+							whiteSpace="nowrap">
+						1
+						<Text fixedFontSize=".8em" bold color="black">
+							{getTokenName(data.token1)} ≃
+						</Text>
+						{addSuffix(
+							value || 0)}
+						<Text fixedFontSize=".8em" bold color="black">
+							 {getTokenName(data.token2)}
+						</Text>
+					</Text>
+					{data.token1 !== TokenType.USDC && data.token1 !== TokenType.HOPERS && (<Text fixedFontSize=".8em" color="#777">{`1 ${getTokenName(data.token1)} ≃ ${
+						getUSDCValue(data)
+					}  USDC`}</Text>)}
+					{data.token2 !== TokenType.USDC && data.token2 !== TokenType.HOPERS && (<Text fixedFontSize=".8em" color="#777">{`1 ${getTokenName(data.token2)} ≃ ${
+						getUSDCValue(data)
+					}  USDC`}</Text>)}
+				</Flex>
 			),
 		},
 		{
 			name: "",
 			title: "",
-			render: (value: any, data: TPool) => (
-				<PlusInGreenCircleIcon
-					onClick={() => handleClickPlusButton(data)}
-				/>
+			render: (value: any, data: TPool, expanded: boolean) => (
+				<Flex>
+					{!expanded && (<ChevronDown theme={theme}/>)}
+					{expanded && (<ChevronUp theme={theme}/>)}
+				</Flex>
 			),
 		},
 	];
@@ -213,6 +526,12 @@ const Liquidity: React.FC = () => {
 			wrapperElement.scrollIntoView({ behavior: "smooth" });
 			// window.scrollTo(0, 0);
 		}
+	};
+
+	const handleClickSwapButton = (pool: TPool) => {
+		let to = pool.token1;
+		let from = pool.token2;
+		history.push(`/swap?from=${from}&to=${to}`);
 	};
 
 	// const handleSelectToken = (token: TokenType) => {
@@ -293,8 +612,20 @@ const Liquidity: React.FC = () => {
 					<Table<TPool>
 						data={liquidities.filter(
 							(liquidity) =>
-								selectedTab === PoolType.ALL ||
-								!!liquidity.stakingAddress
+								{
+									switch(selectedTab){
+										case PoolType.ALL:
+											return true;
+										case PoolType.INCENTIVIZED:
+											return !!liquidity.stakingAddress;
+										case PoolType.MYPOOL:
+											return !!liquidity.balance || 
+													((typeof liquidity.bonded  === "number") && !!liquidity.bonded) ||
+													((liquidity.bonded as number[]) && (liquidity.bonded as number[])?.find(x => x > 0))
+										default:
+											return false;
+									}
+								}
 						)}
 						columns={Columns}
 						defaultExpanded={(rowData) => rowData.id === 1}
@@ -302,12 +633,13 @@ const Liquidity: React.FC = () => {
 							<LiquidityTableDetailRow
 								rowData={rowData}
 								onClickAddLiquidity={handleClickPlusButton}
+								onClickSwap={handleClickSwapButton}
 							/>
 						)}
 						option={{
 							emptyString: "No Liquidities",
 							tab: {
-								defaultSelected: PoolType.ALL as string,
+								defaultSelected: PoolType.INCENTIVIZED as string,
 								tabs: (
 									Object.keys(PoolType) as Array<
 										keyof typeof PoolType
@@ -334,58 +666,13 @@ const Liquidity: React.FC = () => {
 							},
 						}}
 					/>
-					{/* <LiquiditiesTable>
-						<LiquiditiesTableHeaderRow>
-							<LiquidityTableHeader />
-							<LiquidityTableHeader>Pool Name</LiquidityTableHeader>
-							<LiquidityTableHeader>Verified</LiquidityTableHeader>
-							<LiquidityTableHeader>Volume</LiquidityTableHeader>
-							<LiquidityTableHeader>APR Rewards</LiquidityTableHeader>
-							<LiquidityTableHeader>Liquidity Pool</LiquidityTableHeader>
-							<LiquidityTableHeader>Value</LiquidityTableHeader>
-							<LiquidityTableHeader>Add</LiquidityTableHeader>
-						</LiquiditiesTableHeaderRow>
-						<LiquiditiesTableBody>
-							{TempLiquidities.map((liquidity, index: number) => (
-								<LiquiditiesTableRow key={index}>
-									<LiquidityTableContent>
-										<PoolImage
-											token1={liquidity.token1}
-											token2={liquidity.token2}
-										/>
-									</LiquidityTableContent>
-									<LiquidityTableContent>
-										<PoolName pool={liquidity} />
-									</LiquidityTableContent>
-									<LiquidityTableContent>
-										{liquidity.isVerified ? <VerifiedBadge /> : <CancelIcon />}
-									</LiquidityTableContent>
-									<LiquidityTableContent>
-										<StyledText>Volume 7D</StyledText>
-									</LiquidityTableContent>
-									<LiquidityTableContent>
-										<StyledText>{liquidity.apr}</StyledText>
-									</LiquidityTableContent>
-									<LiquidityTableContent>
-										<StyledText>{liquidity.pool}</StyledText>
-									</LiquidityTableContent>
-									<LiquidityTableContent>
-										<StyledText>{`1${getTokenName(liquidity.token1)} = ${
-											liquidity.ratio
-										}${getTokenName(liquidity.token2)}`}</StyledText>
-									</LiquidityTableContent>
-									<LiquidityTableContent />
-								</LiquiditiesTableRow>
-							))}
-						</LiquiditiesTableBody>
-					</LiquiditiesTable> */}
 				</LiquiditiesContainer>
-				{/* <TokenListModal
-					isOpen={showTokenListModal}
-					onClose={() => setShowTokenListModal(false)}
-					onSelectToken={handleSelectToken}
-				/> */}
 			</Wrapper>
+			<ManageBondModal
+						isOpen={isOpenManageBondModal !== null}
+						onClose={() => setIsOpenManageBondModal(undefined)}
+						liquidity={isOpenManageBondModal as TPool}
+			/>
 		</PageWrapper>
 	);
 };

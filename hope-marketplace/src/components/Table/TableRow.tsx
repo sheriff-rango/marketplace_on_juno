@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	TableContent,
 	TableDetailRow,
@@ -7,7 +7,7 @@ import {
 } from "./styled";
 import { ColumnTypes, TRow } from "./type";
 
-const AnimationTime = 500; // in ms
+const AnimationTime = 160; // in ms
 
 const Row = <T extends object>({
 	renderDetailRow,
@@ -19,9 +19,16 @@ const Row = <T extends object>({
 	const [expanded, setExpanded] = useState<boolean | undefined>(undefined);
 	const [finishedExpanding, setFinishedExpanding] = useState<boolean>(false);
 	const [element, setElement] = useState<HTMLDivElement | null>(null);
+	
+	
+	useEffect(() => {
+		setExpanded(defaultExpanded);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [(data as any)?.id]);
 
 	useEffect(() => {
-		if (defaultExpanded) setExpanded(defaultExpanded);
+		if(defaultExpanded)
+			setExpanded(defaultExpanded);
 	}, [defaultExpanded]);
 
 	const handleClickRow = () => {
@@ -38,7 +45,6 @@ const Row = <T extends object>({
 
 	const detailRowHeight = element?.scrollHeight || 0;
 
-	// const height = useMemo(() => element?.scrollHeight || 0, [element]);
 
 	return (
 		<TableRow
@@ -58,8 +64,9 @@ const Row = <T extends object>({
 						? format(data[column.name], data)
 						: defaultValue;
 					return (
-						<TableContent key={columnIndex}>
-							{column.render ? column.render(value, data) : displayValue}
+						<TableContent key={columnIndex} alignLeft={column.alignLeft}>
+							{column.alignLeft}
+							{column.render ? column.render(value, data, expanded === true) : displayValue}
 						</TableContent>
 					);
 				})}

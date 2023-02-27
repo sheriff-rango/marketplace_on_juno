@@ -10,6 +10,7 @@ export interface IBasicModal extends BasicProps {
 export enum PoolType {
 	INCENTIVIZED = "Incentivized",
 	ALL = "All Pools",
+	MYPOOL = "My Pool"
 }
 
 export enum ModalType {

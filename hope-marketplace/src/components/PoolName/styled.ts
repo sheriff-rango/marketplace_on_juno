@@ -7,6 +7,7 @@ export const Wrapper = styled.div<{ poolId?: number }>`
 	font-weight: bold;
 	height: max-content;
 	justify-content: flex-start;
+	white-space: nowrap;
 	${({ poolId }) =>
 		poolId &&
 		css`
@@ -14,9 +15,10 @@ export const Wrapper = styled.div<{ poolId?: number }>`
 				content: "Pool #${poolId > 99 ? "" : poolId > 9 ? "0" : "00"}${poolId}";
 				position: absolute;
 				left: 0;
-				top: 100%;
+				top: 85%;
 				width: max-content;
 				color: #c5c5c5;
+				font-size: 15px;
 			}
 		`}
 `;

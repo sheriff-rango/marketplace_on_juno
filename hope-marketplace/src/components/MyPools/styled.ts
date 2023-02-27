@@ -50,7 +50,6 @@ export const MyPoolContentRow = styled.div`
 export const MyPoolsContainer = styled.div`
 	width: 100%;
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
 	flex-wrap: wrap;
 	gap: 20px;

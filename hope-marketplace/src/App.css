@@ -12,7 +12,6 @@
   border-radius: 10px;
   border: 3px solid #444857;
 } */
-
 body,
 pre {
     /* font-family: "Courier New", Courier, monospace; */
@@ -89,4 +88,11 @@ sl-divider {
 
 *:focus {
     outline: none;
+}
+
+.fixed-top-tooltip::before{
+    height: 0px !important;
+}
+.fixed-top-tooltip::after{
+    height: 10px !important;
 }

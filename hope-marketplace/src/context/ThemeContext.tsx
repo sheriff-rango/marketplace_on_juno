@@ -10,7 +10,11 @@ type ThemeType = {
   colors: {
     backgroundColor: string;
     panelBackgroundColor: string;
+    flatBackgroundColor: string;
+    flatTextColor: string;
     fontColor: string;
+    tabDefaultFontColor: string;
+    tabActiveFontColor: string;
   };
 };
 
@@ -19,14 +23,22 @@ const THEMES: { LIGHT: ThemeType; DARK: ThemeType } = {
     colors: {
       backgroundColor: "white",
       panelBackgroundColor: "white",
+      flatBackgroundColor: "rgba(15,206,137,0.8)",
+      flatTextColor: "white",
       fontColor: "black",
+      tabDefaultFontColor: "#7e7e7e", 
+      tabActiveFontColor: "black"
     },
   },
   DARK: {
     colors: {
       backgroundColor: "#313131",
       panelBackgroundColor: "#838383",
+      flatBackgroundColor: "rgba(15,206,137,0.8)",
+      flatTextColor: "white",
       fontColor: "white",
+      tabDefaultFontColor: "#dadada",
+      tabActiveFontColor: "black"
     },
   },
 };

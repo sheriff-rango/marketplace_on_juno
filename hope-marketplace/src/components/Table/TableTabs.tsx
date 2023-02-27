@@ -9,6 +9,8 @@ const TableTabs: React.FC<ITableTab> = ({ defaultSelected, tabs, onClick }) => {
 	const [highLightElementInfo, setHighLightElementInfo] = useState({
 		width: 0,
 		left: 0,
+		first: false,
+		last: false
 	});
 
 	useEffect(() => {
@@ -22,8 +24,10 @@ const TableTabs: React.FC<ITableTab> = ({ defaultSelected, tabs, onClick }) => {
 		setHighLightElementInfo({
 			left: selectedTabElement?.offsetLeft || 0,
 			width: selectedTabElement?.offsetWidth || 0,
+			first: tabs.indexOf(selectedTab) === 0,
+			last: tabs.indexOf(selectedTab) === tabs.length -1
 		});
-	}, [selectedTab]);
+	}, [selectedTab, tabs]);
 
 	const handleClickTab = (tab: string) => {
 		setSelectedTab(tab);
@@ -34,6 +38,8 @@ const TableTabs: React.FC<ITableTab> = ({ defaultSelected, tabs, onClick }) => {
 		<TableTabContainer
 			left={highLightElementInfo.left}
 			width={highLightElementInfo.width}
+			first={highLightElementInfo.first}
+			last={highLightElementInfo.last}
 		>
 			{tabs.map((tab, index) => (
 				<TableTab

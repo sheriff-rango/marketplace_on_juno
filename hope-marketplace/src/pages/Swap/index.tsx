@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { coins } from "@cosmjs/proto-signing";
 import { useAppSelector } from "../../app/hooks";
-import ExploreHeader from "../../components/ExploreHeader";
 import PageWrapper from "../../components/PageWrapper";
 import {
 	DropDownIcon,
@@ -38,6 +37,8 @@ import { addSuffix } from "../../util/string";
 import useDexStatus from "../../hook/useDexStatus";
 import Flex from "../../components/Flex";
 import { ThemeContext } from "../../context/ThemeContext";
+import { useLocation } from "react-router-dom";
+import ExploreHeader from "../../components/ExploreHeader";
 
 type TSwapInfo = {
 	from: {
@@ -53,6 +54,11 @@ type TSwapInfo = {
 const AvailableSlippage = [2, 5, 10, 15] as const;
 
 const Swap: React.FC = () => {
+	const { search } = useLocation();
+	const params = new URLSearchParams(search);
+	const from = params.get("from");
+	const to = params.get("to");
+
 	const [isPending, setIsPending] = useState(false);
 	const [showTokenListModal, setShowTokenListModal] = useState(false);
 	const [showSlippageSelector, setShowSlippageSelector] = useState<
@@ -63,11 +69,11 @@ const Swap: React.FC = () => {
 	);
 	const [swapInfo, setSwapInfo] = useState<TSwapInfo>({
 		from: {
-			token: TokenType.JUNO,
+			token: (from as TokenType) ?? TokenType.JUNO,
 			amount: 0,
 		},
 		to: {
-			token: TokenType.HOPERS,
+			token: (to as TokenType) ?? TokenType.HOPERS,
 			amount: 0,
 		},
 	});

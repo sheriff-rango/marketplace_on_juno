@@ -1,10 +1,30 @@
 import styled, { css, keyframes } from "styled-components";
+import Button from "../Button";
 import Text from "../Text";
 
 export const Wrapper = styled.div`
 	width: 100%;
 `;
+export const TablePaginator = 
+styled.div`
+	width: 100%;
+	margin-top: 8px;
+`;
 
+export const PaginatorButton = styled(Button)<{active?: boolean, enabled?: boolean}>`
+	position: relative;
+	width: 40px;
+	height: 40px;
+	margin: 4px;
+	border: ${({ enabled, theme }) => (enabled ? `1px solid ${theme.colors.flatBackgroundColor}` : "1px solid #dadada")};
+	pointer-events: ${({ enabled }) => (enabled ? "all" : "none")};
+	background-color: ${({ active, enabled, theme }) => (active ? theme.colors.flatBackgroundColor : enabled ? "white" : "white")};
+	color: ${({ active, enabled, theme }) => (active ? "white" : enabled ? theme.colors.flatBackgroundColor : "#dadada")};
+	font-weight: ${({ active }) => (active ? "bold" : "")};
+	border-radius: 100%;
+	font-size: 16px;
+	text-align: center;
+`;
 export const TableControlPanel = styled.div`
 	display: flex;
 	justify-content: space-between;
@@ -14,40 +34,49 @@ export const TableControlPanel = styled.div`
 	overflow: auto;
 `;
 
-export const TableTabContainer = styled.div<{ left: number; width: number }>`
+export const TableTabContainer = styled.div<{ left: number; width: number, first: boolean, last: boolean }>`
 	display: flex;
 	align-items: center;
 	position: relative;
+
 	&:before {
 		content: "";
 		position: absolute;
-		background: #02e296;
+		background: ${({ theme }) => (theme.colors.flatBackgroundColor)};
 		height: 100%;
-		border-radius: 15px;
-		transition: all 0.5s;
+		transition: all 0.2s;
+	
 		${({ left, width }) => css`
 			left: ${left}px;
 			width: ${width}px;
 		`}
+
+		border-top-left-radius: ${({ first }) => (first ? '15px' : '0px')};
+		border-bottom-left-radius: ${({ first }) => (first ? '15px' : '0px')};
+		border-top-right-radius: ${({ last }) => (last ? '15px' : '0px')};
+		border-bottom-right-radius: ${({ last }) => (last ? '15px' : '0px')};
 	}
 `;
 
 export const TableTab = styled(Text)<{ checked: boolean }>`
 	cursor: pointer;
-	border-radius: 15px;
 	position: relative;
 	font-size: 18px;
 	font-weight: bold;
 	padding: 10px 30px;
 	text-align: center;
-	color: ${({ checked }) => (checked ? "white" : "#7e7e7e")};
-	background: rgba(15, 206, 137, 0.4);
+	color: ${({ checked, theme }) => (checked ? theme.colors.tabActiveFontColor : theme.colors.tabDefaultFontColor)};
+	border: ${({ theme }) => (`1px solid ${theme.colors.flatBackgroundColor}`)};
 	align-self: stretch;
 	align-items: center;
 	/* width: 165px; */
+	&:first-child {
+		border-top-left-radius: 15px;
+		border-bottom-left-radius: 15px;
+	}
 	&:last-child {
-		left: -20px;
-		/* width: 140px; */
+		border-top-right-radius: 15px;
+		border-bottom-right-radius: 15px;
 	}
 `;
 
@@ -88,7 +117,6 @@ export const TableHeaderRow = styled.div`
 	display: contents;
 `;
 
-const tableBodyBorderColor = "#02e296";
 const tableBorderRadius = "15px";
 
 export const EmptyRow = styled.div<{ columnsCount: number }>`
@@ -119,9 +147,8 @@ export const TableHeader = styled.div`
 	width: 100%;
 	height: 50px;
 	margin-bottom: 10px;
-	font-weight: bold;
-	background: rgba(15, 206, 137, 0.4);
-	color: ${({ theme }) => theme.colors.fontColor};
+	background: ${({ theme }) => (theme.colors.flatBackgroundColor)};
+	color: black;
 	position: relative;
 	cursor: pointer;
 	&:first-child {
@@ -142,12 +169,15 @@ export const TableHeader = styled.div`
 export const TableHeaderContent = styled.div`
 	position: relative;
 	padding: 0 15px;
+	font-weight: bold;
 `;
 
-export const TableContent = styled.div`
+export const TableContent = styled.div<{
+	alignLeft?: boolean;
+}>`
 	display: flex;
+	justify-content: ${({alignLeft}) => alignLeft ? 'flex-start' : 'center'};	
 	align-items: center;
-	justify-content: center;
 	width: 100%;
 	height: 95px;
 	padding: 10px;
@@ -164,12 +194,11 @@ export const TableBody = styled.div`
 export const TableRowMainContent = styled.div`
 	display: contents;
 	${TableContent} {
-		border-bottom: 1px solid #d9d9d9;
 		&:first-child {
-			border-left: 1px solid ${tableBodyBorderColor};
+			border-left: ${({ theme }) => (`1px solid ${theme.colors.flatBackgroundColor}`)};
 		}
 		&:last-child {
-			border-right: 1px solid ${tableBodyBorderColor};
+			border-right: ${({ theme }) => (`1px solid ${theme.colors.flatBackgroundColor}`)};
 		}
 	}
 `;
@@ -183,9 +212,9 @@ export const TableDetailRow = styled.div<{
 		`${(index + 1) * 2 + 1} / 1 / ${(index + 1) * 2 + 2} / ${
 			columnsCount + 1
 		}`};
-	border-left: 1px solid ${tableBodyBorderColor};
-	border-right: 1px solid ${tableBodyBorderColor};
-	border-bottom: 1px solid #d9d9d9;
+		border-left: ${({ theme }) => (`1px solid ${theme.colors.flatBackgroundColor}`)};
+		border-right: ${({ theme }) => (`1px solid ${theme.colors.flatBackgroundColor}`)};
+		border-bottom: 1px solid #d9d9d9;
 	box-sizing: border-box;
 	overflow: hidden;
 `;
@@ -200,7 +229,7 @@ export const TableRow = styled.div<{
 
 	&:first-child {
 		${TableContent} {
-			border-top: 1px solid ${tableBodyBorderColor};
+		border-top: ${({ theme }) => (`1px solid ${theme.colors.flatBackgroundColor}`)};
 			&:first-child {
 				border-top-left-radius: ${tableBorderRadius};
 			}
@@ -213,7 +242,7 @@ export const TableRow = styled.div<{
 		${TableRowMainContent} {
 			&:last-child {
 				${TableContent} {
-					border-bottom: 1px solid ${tableBodyBorderColor};
+					border-bottom: ${({ theme }) => (`1px solid ${theme.colors.flatBackgroundColor}`)};
 					&:first-child {
 						border-bottom-left-radius: ${tableBorderRadius};
 					}
@@ -228,7 +257,7 @@ export const TableRow = styled.div<{
 			finishedExpanded
 				? css`
 						${TableDetailRow} {
-							border-bottom: 1px solid ${tableBodyBorderColor};
+							border-bottom: ${({ theme }) => (`1px solid ${theme.colors.flatBackgroundColor}`)};
 							border-bottom-left-radius: ${tableBorderRadius};
 							border-bottom-right-radius: ${tableBorderRadius};
 							&:last-child {
@@ -238,7 +267,7 @@ export const TableRow = styled.div<{
 				: css`
 						${TableRowMainContent} {
 							${TableContent} {
-								border-bottom: 1px solid ${tableBodyBorderColor};
+								border-bottom: ${({ theme }) => (`1px solid ${theme.colors.flatBackgroundColor}`)};
 								&:first-child {
 									border-bottom-left-radius: ${tableBorderRadius};
 								}
@@ -273,6 +302,6 @@ export const TableRow = styled.div<{
                         }
                     `
 					: null}
-			${({ animationTime }) => animationTime ?? 500}ms ease-in-out forwards;
+			${({ animationTime }) => animationTime ?? 160}ms ease-in-out forwards;
 	}
 `;

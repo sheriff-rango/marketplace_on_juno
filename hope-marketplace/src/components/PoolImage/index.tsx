@@ -19,8 +19,8 @@ const PoolImage: React.FC<IPoolImage> = ({ token1, token2, size }) => {
 
 	return (
 		<LiquidityImage size={imageSize}>
-			<img alt="" src={`/coin-images/${token2.replace(/\//g, "")}.png`} />
 			<img alt="" src={`/coin-images/${token1.replace(/\//g, "")}.png`} />
+			<img alt="" src={`/coin-images/${token2.replace(/\//g, "")}.png`} />
 		</LiquidityImage>
 	);
 };

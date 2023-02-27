@@ -11,6 +11,21 @@ export const Wrapper = styled.div<TextProps>`
 	font-weight: ${({ bold }) => (bold ? "bold" : "normal")};
 	color: ${({ color, theme }) => color ?? theme.colors.fontColor};
 	flex-wrap: ${({ flexWrap }) => flexWrap ?? "wrap"};
+	${({ whiteSpace }) =>
+	whiteSpace &&
+		css`
+			white-space: ${whiteSpace};
+		`}
+	${({ fixedFontSize }) =>
+	fixedFontSize &&
+		css`
+			font-size: ${fixedFontSize};
+		`}
+	${({ lineHeight }) =>
+	lineHeight &&
+		css`
+			line-height: ${lineHeight};
+		`}
 	${({ flexDirection }) =>
 		flexDirection &&
 		css`

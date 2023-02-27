@@ -65,6 +65,8 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 	const { refreshPrice } = useRefresh();
 
 	useEffect(() => {
+		if(!liquidity)
+			return;
 		const stakingAddress = liquidity.stakingAddress;
 		if (!account || !stakingAddress) return;
 		const now = new Date();
@@ -155,6 +157,8 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 	}, [selectedTab]);
 
 	const stakingContracts = useMemo(() => {
+		if(!liquidity)
+			return;
 		const stakingAddress = liquidity.stakingAddress;
 		if (!stakingAddress) return [];
 		if (typeof stakingAddress === "string") {
@@ -176,7 +180,8 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 				rewardToken: config[index]?.rewardToken || "",
 			}));
 		}
-	}, [liquidity.bonded, liquidity.config, liquidity.stakingAddress]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [liquidity?.bonded, liquidity?.config, liquidity, liquidity?.stakingAddress]);
 
 	const handleCloseModal = () => {
 		if (isPendingAction || isPendingRedeem) return;
@@ -227,6 +232,8 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 	};
 
 	const handleClickUnBond = async () => {
+		if(!stakingContracts)
+			return;
 		const address = stakingContracts[selectedUnbondLP].address;
 		if (isPendingAction || !unbondAmount || !address) return;
 		if (Number(unbondAmount) > (liquidity.bonded || 0)) {
@@ -277,8 +284,7 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 			});
 	};
 
-	return (
-		<Wrapper isOpen={isOpen} onClose={handleCloseModal}>
+	return	(!liquidity ? null : <Wrapper isOpen={isOpen} onClose={handleCloseModal}>
 			<ModalHeader>
 				<PoolImage
 					token1={liquidity.token1}
@@ -346,7 +352,7 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 					) : (
 						<Flex alignItems="center" gap="10px">
 							<Text color="black">LP Bonded</Text>
-							{stakingContracts.map((contract, index) => (
+							{stakingContracts?.map((contract, index) => (
 								<Text
 									key={index}
 									color="black"
@@ -382,8 +388,8 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 											(liquidity.balance || 0) * amount
 									  )
 									: setUnbondAmount(
-											(stakingContracts[selectedUnbondLP]
-												.bonded || 0) * amount
+											(stakingContracts? stakingContracts[selectedUnbondLP]
+												.bonded || 0: 0) * amount
 									  )
 							}
 						>{`${amount * 100}%`}</Text>
@@ -398,7 +404,7 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 						) >
 						((selectedTab === ModalTabs.BOND
 							? liquidity.balance
-							: stakingContracts[selectedUnbondLP].bonded) || 0)
+							: stakingContracts ? stakingContracts[selectedUnbondLP].bonded : 0) || 0)
 					}
 					value={
 						selectedTab === ModalTabs.BOND
@@ -415,7 +421,7 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 				>
 					{selectedTab === ModalTabs.BOND ? (
 						<>
-							{stakingContracts.map((contract, index) => (
+							{stakingContracts?.map((contract, index) => (
 								<Button
 									key={index}
 									onClick={() => {
@@ -437,7 +443,7 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 					) : (
 						<Flex alignItems="center" gap="30px">
 							<Flex alignItems="center" gap="10px">
-								{stakingContracts.map((contract, index) => (
+								{stakingContracts?.map((contract, index) => (
 									<img
 										style={{
 											cursor: "pointer",
@@ -508,8 +514,8 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
 						</UnbondHistoryContainer>
 					)}
 			</ModalBody>
-		</Wrapper>
-	);
+		</Wrapper>)
+	;
 };
 
 export default ManageBondModal;

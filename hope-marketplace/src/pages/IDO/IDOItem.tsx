@@ -2,12 +2,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { FilterButtonOptions, PresaleState } from "./type";
 import CountDown from "../../components/CountDown";
-import {
-	DiscordIcon,
-	GlobeIcon,
-	ListIcon,
-	TwitterIcon,
-} from "../../components/SvgIcons";
+
 import Text from "../../components/Text";
 import { BasicProps } from "../../constants/BasicTypes";
 import { IDOInterface } from "../../constants/IDOs";
@@ -21,10 +16,11 @@ import {
 	IDOItemContent,
 	IDOItemHeader,
 	IDOItemSocialLinkContainer,
+	IDOItemSocialLinkItem,
 	IDOItemWrapper as Wrapper,
 	OtherInfoContainer,
 	PresaleStatus,
-	RememberMe,
+	// RememberMe,
 	TokenLogo,
 	TokenLogoContainer,
 	TokenOperationPanel,
@@ -76,10 +72,19 @@ const IDOItem: React.FC<IDOItemProps> = ({ idoInfo }) => {
 					</PresaleStatus>
 				</Text>
 				<IDOItemSocialLinkContainer>
-					<TwitterIcon height={20} />
+					{/* <TwitterIcon height={20} />
 					<DiscordIcon height={20} />
 					<GlobeIcon height={20} />
-					<ListIcon height={20} />
+					<ListIcon height={20} /> */}
+
+					{idoInfo.socialIcons.map((icon, index) => (
+						<IDOItemSocialLinkItem
+							key={index}
+							onClick={() => icon.link && window.open(icon.link)}
+						>
+							<icon.icon />
+						</IDOItemSocialLinkItem>
+					))}
 				</IDOItemSocialLinkContainer>
 			</IDOItemHeader>
 			<IDOItemContent>
@@ -128,10 +133,10 @@ const IDOItem: React.FC<IDOItemProps> = ({ idoInfo }) => {
 						}
 						completedString="Presale ended"
 					/>
-					<RememberMe>
+					{/* <RememberMe>
 						<Text>Remember me...</Text>
 						<input placeholder="Email Alert" />
-					</RememberMe>
+					</RememberMe> */}
 				</OtherInfoContainer>
 			</IDOItemContent>
 		</Wrapper>

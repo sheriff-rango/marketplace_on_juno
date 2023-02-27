@@ -51,6 +51,25 @@ export const IDOItemSocialLinkContainer = styled.div`
 	}
 `;
 
+export const IDOItemSocialLinkItem = styled.div`
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background-color: #2e7d32; */
+  /* background-color: green; */
+  margin: 10px;
+  /* border-radius: 10px; */
+  cursor: pointer;
+  & > svg {
+    width: 30px;
+    path {
+      fill: black;
+    }
+  }
+`;
+
 export const IDOItemContent = styled.div`
 	position: relative;
 	margin-top: 10px;
