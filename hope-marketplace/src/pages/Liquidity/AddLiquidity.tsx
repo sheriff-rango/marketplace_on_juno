@@ -134,13 +134,13 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 					message: {
 						increase_allowance: {
 							spender: pool.contract,
-							amount: `${Math.ceil(
+							amount: BigInt(Math.ceil(
 								token1Amount *
 									Math.pow(
 										10,
 										TokenStatus[pool.token1].decimal || 6
 									)
-							)}`,
+							)).toString(),
 						},
 					},
 				})
