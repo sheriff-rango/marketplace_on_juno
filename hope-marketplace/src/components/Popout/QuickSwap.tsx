@@ -401,12 +401,11 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 			swapInfo.swapType === SwapType.DEPOSIT
 				? IBCConfig[tokenStatus.chain].channel
 				: IBCConfig[tokenStatus.chain].juno_channel;
-		const transferAmount = String(
-			Math.floor(
-				Number(swapAmount) *
-					Math.pow(10, TokenStatus[swapInfo.denom].decimal || 6)
-			)
-		);
+		
+		const transferAmount = BigInt(Math.floor(
+			Number(swapAmount) *
+				Math.pow(10, TokenStatus[swapInfo.denom].decimal || 6)
+		)).toString()
 
 		const client = wallets.origin.client;
 		if (swapInfo.swapType === SwapType.DEPOSIT && senderAddress && client) {

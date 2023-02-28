@@ -49,6 +49,14 @@ import useContract from "../../hook/useContract";
 import useRefresh from "../../hook/useRefresh";
 import { toast } from "react-toastify";
 
+type TPoolUserDetailInfo = {
+	rewardToken?: TokenType;
+	pendingReward: number;
+	bonded: number;
+	stakingAddress: string;
+	priceInUsd: number;
+};
+
 const Liquidity: React.FC = () => {
 	// const [showTokenListModal, setShowTokenListModal] = useState(false);
 	const history = useHistory();
@@ -92,13 +100,6 @@ const Liquidity: React.FC = () => {
 		}
 	};
 
-	type TPoolUserDetailInfo = {
-		rewardToken?: TokenType;
-		pendingReward: number;
-		bonded: number;
-		stakingAddress: string;
-		priceInUsd: number;
-	};
 	const [isOpenManageBondModal, setIsOpenManageBondModal] = useState<TPool>();
 	const handleClickBondManageModal = async (pool:TPool) => {
 		setIsOpenManageBondModal(pool);
