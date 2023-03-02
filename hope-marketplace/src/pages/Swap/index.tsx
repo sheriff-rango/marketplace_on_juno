@@ -605,7 +605,7 @@ const Swap: React.FC = () => {
 									alignItems="flex-end"
 								>
 									<Text>
-										{addSuffix(dexStatus.burningVolume)}
+										{addSuffix(dexStatus.burningVolume, 3)}
 									</Text>
 									<Text>{`(${addSuffix(
 										dexStatus.burningVolume * hopersPrice
