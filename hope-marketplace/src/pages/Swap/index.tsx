@@ -33,7 +33,7 @@ import { useValidPool } from "./hook";
 import useContract from "../../hook/useContract";
 import { toMicroAmount } from "../../util/coins";
 import { ChainConfigs } from "../../constants/ChainTypes";
-import { addSuffix } from "../../util/string";
+import { addSuffix, addThousandSeparator } from "../../util/string";
 import useDexStatus from "../../hook/useDexStatus";
 import Flex from "../../components/Flex";
 import { ThemeContext } from "../../context/ThemeContext";
@@ -605,7 +605,8 @@ const Swap: React.FC = () => {
 									alignItems="flex-end"
 								>
 									<Text>
-										{addSuffix(dexStatus.burningVolume, 3)}
+										{/* {addSuffix(dexStatus.burningVolume, 3)} */}
+										{addThousandSeparator(Math.floor(dexStatus.burningVolume))}
 									</Text>
 									<Text>{`(${addSuffix(
 										dexStatus.burningVolume * hopersPrice

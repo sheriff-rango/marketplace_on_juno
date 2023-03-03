@@ -22,6 +22,13 @@ export const addSuffix = (number: number, decimal: number = 2): string => {
   return convertNumberToString(number, decimal);
 };
 
+export const addThousandSeparator = (number: number | string) => {
+  if (isNaN(Number(number))) return "";
+  let parts = number.toString().split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return parts.join(".");
+};
+
 const SpecialChar = "@";
 
 export const escapeSpecialForUrl = (string: string): string => {

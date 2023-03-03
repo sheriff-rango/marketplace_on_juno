@@ -106,6 +106,7 @@ const AddLiquidity: React.FC<IBasicModal> = ({
 	};
 
 	const handleAddLiquidity = async () => {
+		console.log('debug', pool)
 		if (!account || isPending) return;
 		let transactions = [];
 		let token1Amount = Number(addAmount.token1);
