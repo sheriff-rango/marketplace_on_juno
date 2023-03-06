@@ -423,7 +423,7 @@ const QuickSwap: React.FC<QuickSwapProps> = ({
 					setSendingTx(false);
 					return;
 				}
-				balanceWithoutFee = balanceWithoutFee / Math.pow(10, TokenStatus[swapInfo.denom].decimal || 6) - 0.025;
+				balanceWithoutFee = (balanceWithoutFee - (TokenStatus[swapInfo.denom].isNativeCoin? 0.025 : 0)) / Math.pow(10, TokenStatus[swapInfo.denom].decimal || 6);
 				if (balanceWithoutFee < amount) {
 					setErrMsg("Not enough balance!");
 					setStatusMsg("");
