@@ -328,6 +328,10 @@ const Swap: React.FC = () => {
 
 	const handleSwap = async () => {
 		if (!swapInfo.from.amount || !account || isPending) return;
+		if (TokenStatus[swapInfo.from.token].disabledSwap || TokenStatus[swapInfo.to.token].disabledSwap) {
+			toast.error("Sorry, can't swap for now!")
+			return;
+		}
 		const firstPool = validPair?.subPools?.[0];
 		const secondPool = validPair?.subPools?.[1];
 		if (!validPair || (validPair.subPools && (!firstPool || !secondPool))) {

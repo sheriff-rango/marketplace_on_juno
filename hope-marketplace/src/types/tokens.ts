@@ -89,6 +89,7 @@ export type TokenStatusType = {
   decimal?: number;
   denom?: string;
   externalLink?: string;
+  disabledSwap?: boolean;
 };
 
 export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
@@ -332,6 +333,7 @@ export const TokenStatus: { [key in TokenType]: TokenStatusType } = {
     decimal: 8,
     externalLink:
       "https://satellite.money/?destination_address=&asset_denom=wbtc-satoshi&source=ethereum&destination=juno",
+    disabledSwap: true,
   },
 };
 
