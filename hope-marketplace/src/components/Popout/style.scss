@@ -142,7 +142,8 @@
             margin-bottom: 20px;
         }
         .transfer-assets-wrapper {
-            height: 100%;
+            height: calc(100% - 74px - 20px);
+            padding: 10px;
             width: 100%;
             display: flex;
             justify-content: center;
@@ -155,10 +156,8 @@
                 border: 3px solid #02e296;
                 border-radius: 15px;
                 padding: 20px;
-                width: 50%;
                 height: 100%;
                 box-sizing: border-box;
-                margin: 10px 0;
                 overflow: auto;
                 .transfer-assets-item {
                     box-sizing: border-box;
@@ -166,6 +165,7 @@
                     border: 1px solid #02e296;
                     border-radius: 10px;
                     padding: 15px;
+                    padding-right: 45px;
                     display: flex;
                     align-items: center;
                     position: relative;
