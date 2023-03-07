@@ -8,7 +8,7 @@ import PoolName from "../../components/PoolName";
 import Table, { TColumns } from "../../components/Table";
 import Text from "../../components/Text";
 import { TPool, TPoolConfig } from "../../types/pools";
-import { getTokenName, TokenStatus, TokenType } from "../../types/tokens";
+import { getTokenName, TokenType } from "../../types/tokens";
 import { Wrapper } from "./styled";
 
 import { addSuffix } from "../../util/string";
@@ -22,6 +22,7 @@ import useContract from "../../hook/useContract";
 import useRefresh from "../../hook/useRefresh";
 import ManageBondModal from "../../components/ManageBonModal";
 import LiquidityTableDetailRow from "../Liquidity/LiquidityTableDetailRow";
+import TVL from "../../components/TVL";
 
 type TPoolUserDetailInfo = {
 	rewardToken?: TokenType;
@@ -165,45 +166,7 @@ const Bond: React.FC = () => {
 			name: "pool",
 			title: "TVL",
 			sort: true,
-			render: (value, data) => {
-				if(!tokenPrices[TokenType.HOPERS])
-				{
-					return null;
-				}
-				const token1Reserve =
-				data.token1Reserve /
-				Math.pow(
-					10,
-					TokenStatus[data.token1].decimal || 6
-				);
-			const token1Price =
-				tokenPrices[data.token1]?.market_data
-					?.current_price?.usd || 0;
-			const token2Reserve =
-			data.token2Reserve /
-				Math.pow(
-					10,
-					TokenStatus[data.token2].decimal || 6
-				);
-			const token2Price =
-				tokenPrices[data.token2]?.market_data
-					?.current_price?.usd || 0;
-			const totalLocked =
-				token1Reserve * token1Price +
-				token2Reserve * token2Price;
-			const totalHopersLocked = totalLocked / tokenPrices[TokenType.HOPERS].market_data
-			?.current_price?.usd ;
-			return (
-				<Flex flexDirection="column">
-					<Text color="black">
-						{`${addSuffix(totalHopersLocked)}`}
-					</Text>
-					<Text fixedFontSize=".8em" color="#777">
-						{`$ ${addSuffix(totalLocked)}`}
-					</Text>
-				</Flex>
-				)
-			}
+			render: (value, data) => <TVL pool={data} />
 		},
 		{
 			name: "apr",
