@@ -55,9 +55,6 @@ export default getQuery;
 
 export const getDexStatus = async () => {
   try {
-    // const { data } = await axios.get(
-    //     `${backendBaseUrl}/api/nfts/get_new_nft`
-    // );
     const query = `query {
 	  tradingVolumeEntities  {
 		nodes {
