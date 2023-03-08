@@ -31,6 +31,7 @@ import "react-slideshow-image/dist/styles.css";
 import { WalletProvider } from "./context/Wallet";
 import { ModalContextProvider } from "./context/ModalContext";
 import useRefresh from "./hook/useRefresh";
+import Disclaimer from "./components/Disclaimer";
 
 const history = createBrowserHistory();
 
@@ -144,6 +145,7 @@ function App() {
 			<ThemeContextProvider>
 				<ModalContextProvider>
 					<GlobalStyle isMobile={isMobile} />
+					<Disclaimer></Disclaimer>
 					<WalletProvider>
 						<RefreshContextProvider>
 							<PopoutContextProvider>

@@ -3,11 +3,10 @@ import { headersType, methodType, urlType } from "../constants/BasicTypes";
 
 // export const BACKEND_URL = "http://localhost:5000";
 // export const BACKEND_URL = "https://hackerlist-backend.vercel.app";
-// export const BACKEND_URL = "https://api.hopers.io";
+export const BACKEND_URL = "https://api.hopers.io";
 // export const BACKEND_URL = "https://proxy-backend.vercel.app";
 // export const BACKEND_URL = "https://hopers-backend-beige.vercel.app";
 // export const BACKEND_URL = "https://hopers-backend-v2-psi.vercel.app";
-export const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const subQueryUrl = "https://api.subquery.network/sq/VenusDev0725/hoperswap";
 
