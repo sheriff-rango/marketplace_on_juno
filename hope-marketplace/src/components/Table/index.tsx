@@ -159,7 +159,7 @@ const Table = <T extends object>({
 						return (
 							<TableHeader key={index}>
 								<TableHeaderContent>
-									{column.title ?? column.name ?? ""}
+									{column.headerRender? column.headerRender() : column.title ?? column.name ?? ""}
 									{column.sort && (
 										<SortHeaderIcon
 											className={`fa fa-sort${
