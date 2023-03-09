@@ -24,27 +24,28 @@ export const StyledModal = Modal.styled`
 `;
 
 export const StyledToggleButton = styled(ToggleButton)`
-	margin: 8px;
-	align-self: center;
+    margin: 8px;
+    align-self: center;
 `;
 export const StyledButton = styled(Button)`
-	margin: 16px 0px;
-	align-self: center;
-	background: #02e296;
-	&:disabled{
-		background: #888;
-		cursor: not-allowed;
-	}
+    margin: 16px 0px;
+    align-self: center;
+    background: #02e296;
+    &:disabled {
+        background: #888;
+        cursor: not-allowed;
+    }
 `;
 export const StyledText = styled(Text)`
-	border-bottom: 3px solid #02e296;
-	width: calc(100% - 16px);
-	padding: 8px;
-`
+    border-bottom: 3px solid #02e296;
+    width: calc(100% - 16px);
+    padding: 8px;
+`;
 export const Divider = styled.div`
-	margin: 12px;
-`
+    margin: 12px;
+`;
 
 export const SectionTitle = styled(Text)`
-	margin: 0px 4px 8px 0px;
-`
+    margin: 0px 4px 8px 0px;
+    color: black;
+`;
