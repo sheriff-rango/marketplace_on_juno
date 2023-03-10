@@ -151,6 +151,14 @@ export const UnbondItem = styled(Flex)`
     padding: 10px;
 `;
 
+export const AprText = styled(Text)`
+    color: white;
+    font-weight: bold;
+    background-color: #64d797;
+    border-radius: 30px;
+    padding: 2px 5px;
+`;
+
 export const StyledButton = styled(Button)<{
     colored?: boolean;
     margin?: string;

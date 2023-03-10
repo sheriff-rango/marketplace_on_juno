@@ -29,6 +29,7 @@ import ManageBondModal from "../../components/ManageBonModal";
 import LiquidityTableDetailRow from "../Liquidity/LiquidityTableDetailRow";
 import TVL from "../../components/TVL";
 import { getPoolUserDetails } from "../../util/others";
+
 const Bond: React.FC = () => {
     const account = useAppSelector((state) => state.accounts.keplrAccount);
     const [selectedTab, setSelectedTab] = useState<string>(

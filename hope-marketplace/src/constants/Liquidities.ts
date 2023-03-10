@@ -15,7 +15,8 @@ export const Liquidities: TLiquidity[] = [
             "juno1g5j9vd76cqt7fsq22ne7jqfkz4v9ptkvh4jknsvwchpj753atwfs942a25",
         stakingAddress: [
             "juno19nnwh49lwsqy6c5wg9p943yt9txe5mw6kdztecl5j4q3rgyh0h0sekwl8c",
-            "juno1ayuxk3d7z0r8qgxch8qltv7m0arhc33h5umdfs5hg3l86uvfcxwqzeqs09",
+            "juno1sgrj86ax5hkxkujzky2f4ympwmqkx8pxqym4awhz86yyj0etk93srxtupw",
+            "juno1tadnxatw8qhge8jn3pkyq9302xj8rn578y9vtyfnp6laweyal99q0yqyt9",
         ],
     },
     {
@@ -23,8 +24,11 @@ export const Liquidities: TLiquidity[] = [
         tokenB: TokenType.ATOM,
         contractAddress:
             "juno17estllyc6qyq6tlxg9hv4xwcy069fuu0rmytvkw6xskchcq9czxsd5fd98",
-        stakingAddress:
+        stakingAddress: [
             "juno163upe9ymxtc5fsx0kvrfcyx9e5puu2zhqt82lexrlajzmx9sm79shac88f",
+            "juno1vx4m9ze96hua42fqrxs5vcfru0mk3syacr4medya454z8f94q22shj6gn7",
+            "juno10x9sdvp4q0l489t3ey6u0479hzhqm7uvh8ahlr02z34uw6rljn6sgw8ztd",
+        ],
     },
     {
         tokenA: TokenType.HOPERS,
@@ -47,8 +51,11 @@ export const Liquidities: TLiquidity[] = [
         tokenB: TokenType.USDC,
         contractAddress:
             "juno1pugg623zsg2xanvuumna6y4ca48t0la7pxgtt96ed55rctea47lsqxu36a",
-        stakingAddress:
+        stakingAddress: [
             "juno1vuygss25pehh3rqx0gra09tzfhc32q3clamhdnpq9ueh29dntfmsv9tgds",
+            "juno1a48d5sptfrqjl6gy9ew2v65d9ry93k0335qwahwget8w5njj2masvcd3ld",
+            "juno1ztyqngg75vqylcjaptm2y3ukutmev7yk49hp7cq86zztuumcjr4scclja0",
+        ],
     },
     {
         tokenA: TokenType.HOPERS,

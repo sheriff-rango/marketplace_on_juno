@@ -11,6 +11,7 @@ import { TPool, TPoolConfig } from "../../types/pools";
 import { getTokenName, TokenType } from "../../types/tokens";
 import { addSuffix } from "../../util/string";
 import {
+    AprText,
     BondAmountInputer,
     ManageBondModalWrapper as Wrapper,
     ModalBody,
@@ -455,15 +456,18 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
                     justifyContent="flex-start"
                 >
                     {selectedTab === ModalTabs.BOND ? (
-                        `Available LP: ${addSuffix(
-                            liquidity.balance || 0
-                        )} ${getTokenName(liquidity.token1)}-${getTokenName(
-                            liquidity.token2
-                        )} ${
-                            aprByContract?.[selectedStakingContract]
-                                ? `- ${aprByContract[selectedStakingContract]}`
-                                : ""
-                        }`
+                        <>
+                            {`Available LP: ${addSuffix(
+                                liquidity.balance || 0
+                            )} ${getTokenName(liquidity.token1)}-${getTokenName(
+                                liquidity.token2
+                            )}`}
+                            {aprByContract && (
+                                <AprText>
+                                    {aprByContract[selectedStakingContract]}
+                                </AprText>
+                            )}
+                        </>
                     ) : (
                         <Flex alignItems="center" gap="10px">
                             <Text color="black" bold>
