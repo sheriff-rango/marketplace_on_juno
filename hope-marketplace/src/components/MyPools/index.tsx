@@ -217,13 +217,15 @@ const MyPools: React.FC = () => {
                     const bonded = liquidity.bonded as number[];
                     const pendingReward = liquidity.pendingReward as number[];
                     const apr = liquidity.apr as string[];
-                    return (stakingAdress || []).map((address, index) => ({
-                        rewardToken: config[index].rewardToken as TokenType,
-                        bonded: bonded[index],
-                        pendingReward: pendingReward[index],
-                        apr: apr[index],
-                        stakingAdress: address,
-                    }));
+                    return (stakingAdress || [])
+                        .map((address, index) => ({
+                            rewardToken: config[index].rewardToken as TokenType,
+                            bonded: bonded[index],
+                            pendingReward: pendingReward[index],
+                            apr: apr[index],
+                            stakingAdress: address,
+                        }))
+                        .filter((item) => item.bonded);
                 }
             }),
         [myLiquidities]
