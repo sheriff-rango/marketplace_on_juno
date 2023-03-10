@@ -226,7 +226,7 @@ const Bond: React.FC = () => {
                             const crrRewardToken = config[index]
                                 ?.rewardToken as TokenType;
                             const crrAprNumber = Number(
-                                crrApr.replace(/%/gi, "")
+                                crrApr.replace(/%/gi, "").replace(/,/gi, "")
                             );
                             return {
                                 ...result,
@@ -266,7 +266,7 @@ const Bond: React.FC = () => {
                                                     )}.png`}
                                                 />
                                             )}
-                                            {apr}%
+                                            {apr.toLocaleString()}%
                                         </Text>
                                     );
                                 }

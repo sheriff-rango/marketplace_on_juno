@@ -216,7 +216,7 @@ const Liquidity: React.FC = () => {
                             const crrRewardToken = config[index]
                                 ?.rewardToken as TokenType;
                             const crrAprNumber = Number(
-                                crrApr.replace(/%/gi, "")
+                                crrApr.replace(/%/gi, "").replace(/,/gi, "")
                             );
                             return {
                                 ...result,
@@ -256,7 +256,7 @@ const Liquidity: React.FC = () => {
                                                     )}.png`}
                                                 />
                                             )}
-                                            {apr}%
+                                            {apr.toLocaleString()}%
                                         </Text>
                                     );
                                 }

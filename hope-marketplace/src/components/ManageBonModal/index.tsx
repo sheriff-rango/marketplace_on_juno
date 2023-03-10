@@ -307,6 +307,7 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
             });
             toast.success("Successfully bonded!");
             refreshPrice();
+            handleCloseModal();
         } catch (err) {
             console.log(err);
             toast.error("Bond Failed!");
@@ -331,6 +332,7 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
             });
             toast.success("Successfully unbonded!");
             refreshPrice();
+            handleCloseModal();
         } catch (err) {
             console.log(err);
             toast.error("Unbond Failed!");
@@ -355,6 +357,7 @@ const ManageBondModal: React.FC<IMangeBondModal> = ({
         Promise.all(queries)
             .then(() => {
                 toast.success("Successfully Redeem!");
+                handleCloseModal();
             })
             .catch((err) => {
                 console.log(err);

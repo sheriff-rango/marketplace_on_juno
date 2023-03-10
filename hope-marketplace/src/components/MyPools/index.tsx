@@ -230,7 +230,6 @@ const MyPools: React.FC = () => {
             }),
         [myLiquidities]
     );
-    console.log("debug", displayInfo);
 
     return (
         <LiquiditiesContainer>
