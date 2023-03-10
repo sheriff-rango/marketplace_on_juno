@@ -50,14 +50,7 @@ import useContract from "../../hook/useContract";
 import useRefresh from "../../hook/useRefresh";
 import { toast } from "react-toastify";
 import TVL from "../../components/TVL";
-
-type TPoolUserDetailInfo = {
-    rewardToken?: TokenType;
-    pendingReward: number;
-    bonded: number;
-    stakingAddress: string;
-    priceInUsd: number;
-};
+import { getPoolUserDetails } from "../../util/others";
 
 const Liquidity: React.FC = () => {
     // const [showTokenListModal, setShowTokenListModal] = useState(false);
@@ -71,8 +64,7 @@ const Liquidity: React.FC = () => {
     const [selectedTab, setSelectedTab] = useState<string>(PoolType.ALL);
     const account = useAppSelector((state) => state.accounts.keplrAccount);
     const liquidities = useAppSelector((state) => state.liquidities);
-    const { runExecute, createExecuteMessage, getExecuteClient } =
-        useContract();
+    const { createExecuteMessage, getExecuteClient } = useContract();
     const { refreshPrice } = useRefresh();
 
     const tokenPrices = useAppSelector((state) => state.tokenPrices);
@@ -85,16 +77,36 @@ const Liquidity: React.FC = () => {
     const { search } = useLocation();
     const type = new URLSearchParams(search).get("type");
     const [isPendingClaim, setIsPendingClaim] = useState(false);
+
     const handleClickClaim = async (
-        pendingReward: number,
-        stakingAddress: string
+        pendingReward: number[],
+        stakingAddress: string[]
     ) => {
-        if (isPendingClaim || !pendingReward || !stakingAddress) return;
+        if (isPendingClaim || !pendingReward || !stakingAddress || !account)
+            return;
+        let transactions: any[] = [];
+        stakingAddress.forEach((contractAddress, index) => {
+            if (contractAddress && pendingReward[index]) {
+                transactions.push(
+                    createExecuteMessage({
+                        senderAddress: account.address,
+                        contractAddress,
+                        message: {
+                            withdraw: {},
+                        },
+                    })
+                );
+            }
+        });
+        if (!transactions.length) return;
         setIsPendingClaim(true);
         try {
-            await runExecute(stakingAddress, {
-                withdraw: {},
-            });
+            const client = await getExecuteClient();
+            await client.signAndBroadcast(
+                account.address,
+                transactions,
+                "auto"
+            );
             toast.success("Successfully claimed!");
             refreshPrice();
         } catch (err) {
@@ -108,46 +120,6 @@ const Liquidity: React.FC = () => {
     const [isOpenManageBondModal, setIsOpenManageBondModal] = useState<TPool>();
     const handleClickBondManageModal = async (pool: TPool) => {
         setIsOpenManageBondModal(pool);
-    };
-
-    const getPoolUserDetails = (pool: TPool): TPoolUserDetailInfo[] => {
-        let result: TPoolUserDetailInfo[] = [];
-        const config = pool.config;
-        if (Array.isArray(config)) {
-            result = config.map((item, index) => {
-                const pendingReward =
-                    ((pool.pendingReward || []) as number[])[index] || 0;
-                const tokenPriceInUsd = item.rewardToken
-                    ? tokenPrices[item.rewardToken]?.market_data.current_price
-                          ?.usd || 0
-                    : 0;
-                return {
-                    rewardToken: item.rewardToken,
-                    pendingReward,
-                    bonded: ((pool.bonded || []) as number[])[index],
-                    stakingAddress: ((pool.stakingAddress || []) as string[])[
-                        index
-                    ],
-                    priceInUsd: pendingReward * tokenPriceInUsd,
-                };
-            });
-        } else {
-            const pendingReward = (pool.pendingReward || 0) as number;
-            const tokenPriceInUsd = config?.rewardToken
-                ? tokenPrices[config.rewardToken]?.market_data.current_price
-                      ?.usd || 0
-                : 0;
-            result = [
-                {
-                    rewardToken: config?.rewardToken,
-                    pendingReward,
-                    bonded: (pool.bonded || 0) as number,
-                    stakingAddress: (pool.stakingAddress || "") as string,
-                    priceInUsd: pendingReward * tokenPriceInUsd,
-                },
-            ];
-        }
-        return result;
     };
 
     useEffect(() => {
@@ -238,39 +210,57 @@ const Liquidity: React.FC = () => {
                         </Text>
                     );
                 } else {
+                    const config = data.config as TPoolConfig[];
+                    const groupedApr = apr.reduce(
+                        (result: any, crrApr, index) => {
+                            const crrRewardToken = config[index]
+                                ?.rewardToken as TokenType;
+                            const crrAprNumber = Number(
+                                crrApr.replace(/%/gi, "")
+                            );
+                            return {
+                                ...result,
+                                [crrRewardToken]:
+                                    crrAprNumber > (result[crrRewardToken] || 0)
+                                        ? crrAprNumber
+                                        : result[crrRewardToken],
+                            };
+                        },
+                        {}
+                    );
                     return (
                         <Flex
                             alignItems="center"
                             gap="10px"
                             flexDirection="column"
                         >
-                            {apr.map((item, index) => {
-                                const rewardToken = (
-                                    data.config as TPoolConfig[]
-                                )?.[index]?.rewardToken;
-                                return (
-                                    <Text
-                                        key={index}
-                                        gap="10px"
-                                        color="black"
-                                        alignItems="center"
-                                        flexWrap="nowrap"
-                                        whiteSpace="nowrap"
-                                    >
-                                        {rewardToken && (
-                                            <img
-                                                width={30}
-                                                alt=""
-                                                src={`/coin-images/${rewardToken.replace(
-                                                    /\//g,
-                                                    ""
-                                                )}.png`}
-                                            />
-                                        )}
-                                        {item}
-                                    </Text>
-                                );
-                            })}
+                            {Object.keys(groupedApr).map(
+                                (rewardToken, index) => {
+                                    const apr = groupedApr[rewardToken];
+                                    return (
+                                        <Text
+                                            key={index}
+                                            gap="10px"
+                                            color="black"
+                                            alignItems="center"
+                                            flexWrap="nowrap"
+                                            whiteSpace="nowrap"
+                                        >
+                                            {rewardToken && (
+                                                <img
+                                                    width={30}
+                                                    alt=""
+                                                    src={`/coin-images/${rewardToken.replace(
+                                                        /\//g,
+                                                        ""
+                                                    )}.png`}
+                                                />
+                                            )}
+                                            {apr}%
+                                        </Text>
+                                    );
+                                }
+                            )}
                         </Flex>
                     );
                 }
@@ -347,7 +337,7 @@ const Liquidity: React.FC = () => {
             name: "",
             title: "My Rewards",
             render: (value: any, data: TPool) => {
-                const result = getPoolUserDetails(data);
+                const result = getPoolUserDetails(data, tokenPrices);
                 return (
                     <Flex flexDirection="column">
                         {result.map((item, index) => {
@@ -386,7 +376,7 @@ const Liquidity: React.FC = () => {
                                             onClick={(e: any) => {
                                                 e.stopPropagation();
                                                 handleClickClaim(
-                                                    item.pendingReward,
+                                                    item.pendingRewards,
                                                     item.stakingAddress
                                                 );
                                             }}
@@ -430,7 +420,7 @@ const Liquidity: React.FC = () => {
             name: "",
             title: "My Liquidity",
             render: (value: any, data: TPool) => {
-                const result = getPoolUserDetails(data);
+                const result = getPoolUserDetails(data, tokenPrices);
                 let totalLiquidityValue = data.balance || 0;
                 result?.forEach((r) => {
                     if (r.bonded > 0) {
@@ -592,18 +582,22 @@ const Liquidity: React.FC = () => {
         if (!account || isPendingClaim) return;
         let transactions = [];
         for (const liquidity of liquidities) {
-            const userPoolDetails = getPoolUserDetails(liquidity);
+            const userPoolDetails = getPoolUserDetails(liquidity, tokenPrices);
             for (const userPoolDetail of userPoolDetails) {
                 if (userPoolDetail.pendingReward) {
-                    transactions.push(
-                        createExecuteMessage({
-                            senderAddress: account.address,
-                            contractAddress: userPoolDetail.stakingAddress,
-                            message: {
-                                withdraw: {},
-                            },
-                        })
-                    );
+                    for (const contractAddress of userPoolDetail.stakingAddress) {
+                        if (contractAddress) {
+                            transactions.push(
+                                createExecuteMessage({
+                                    senderAddress: account.address,
+                                    contractAddress,
+                                    message: {
+                                        withdraw: {},
+                                    },
+                                })
+                            );
+                        }
+                    }
                 }
             }
         }
